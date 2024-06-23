@@ -470,12 +470,12 @@ export class Game {
             }
             inputMsg.touchMoveDir = v2.normalizeSafe(
                 inputMsg.touchMoveDir,
-                v2.create(1, 0)
+                v2.create(0, 0)
             );
             inputMsg.touchMoveLen = math.clamp(inputMsg.touchMoveLen, 0, 255);
             inputMsg.toMouseDir = v2.normalizeSafe(
                 inputMsg.toMouseDir,
-                v2.create(1, 0)
+                inputMsg.touchMoveDir
             );
             inputMsg.toMouseLen = math.clamp(
                 inputMsg.toMouseLen,
