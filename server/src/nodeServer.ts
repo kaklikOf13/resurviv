@@ -1,5 +1,4 @@
 import { Config } from "./config";
-
 import {
     App,
     type HttpResponse,
@@ -8,7 +7,6 @@ import {
     type TemplatedApp
 } from "uWebSockets.js";
 import NanoTimer from "nanotimer";
-
 import { URLSearchParams } from "node:url";
 import { AbstractServer, type PlayerContainer } from "./abstractServer";
 
@@ -84,6 +82,7 @@ class NodeServer extends AbstractServer {
 
     constructor() {
         super();
+
         const app = this.app = Config.ssl
             ? SSLApp({
                 key_file_name: Config.ssl.keyFile,

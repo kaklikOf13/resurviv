@@ -283,11 +283,6 @@ export class Obstacle extends BaseGameObject {
             this.game.map.genObstacle(def.destroyType, this.pos, this.layer, this.ori);
         }
 
-        const lootPos = collider.randomPoint(this.collider);
-        if (def.lootSpawn) {
-            v2.set(lootPos, v2.add(this.pos, v2.rotate(def.lootSpawn.offset, this.rot)));
-            collider.randomPoint(this.collider)
-        }
 
         for (const lootTierOrItem of def.loot) {
             if ("tier" in lootTierOrItem) {
@@ -299,7 +294,7 @@ export class Obstacle extends BaseGameObject {
                     for (const item of items) {
                         this.game.lootBarn.addLoot(
                             item.name,
-                            lootPos,
+                            collider.randomPoint(this.collider),
                             this.layer,
                             item.count,
                             undefined,
@@ -311,7 +306,7 @@ export class Obstacle extends BaseGameObject {
             } else {
                 this.game.lootBarn.addLoot(
                     lootTierOrItem.type,
-                    lootPos,
+                    collider.randomPoint(this.collider),
                     this.layer,
                     lootTierOrItem.count,
                     undefined,

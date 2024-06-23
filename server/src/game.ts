@@ -21,6 +21,7 @@ import { ObjectType } from "../../shared/utils/objectSerializeFns";
 import { SmokeBarn } from "./objects/smoke";
 import { AirdropBarn } from "./objects/airdrop";
 import { DecalBarn } from "./objects/decal";
+import { GameTerminal } from "./utils/commands";
 
 export class Game {
     started = false;
@@ -30,6 +31,7 @@ export class Game {
     startedTime = 0;
     id: number;
     config: ConfigType;
+    console:GameTerminal
 
     grid: Grid;
     objectRegister: ObjectRegister;
@@ -68,6 +70,7 @@ export class Game {
         this.logger.log("Creating");
         const start = Date.now();
 
+        this.console=new GameTerminal(this)
         this.config = config;
 
         this.grid = new Grid(1024, 1024);
@@ -97,6 +100,7 @@ export class Game {
     }
 
     start():void{
+        this.gas.advanceGasStage();
         setTimeout(()=>{
             this.allowJoin=false
         },this.config.joinTime*1000)

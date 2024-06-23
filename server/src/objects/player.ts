@@ -154,7 +154,6 @@ export class PlayerBarn {
 
         if (this.game.aliveCount > 1 && !this.game.started) {
             this.game.started = true;
-            this.game.gas.advanceGasStage();
             this.game.start()
         }
 

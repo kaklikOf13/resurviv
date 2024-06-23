@@ -38,6 +38,11 @@ export abstract class AbstractServer {
             if (game) game.update();
         }
     }
+    execute(cmd:string): void {
+        for (const game of this.games) {
+            if (game) game.console.execute(cmd);
+        }
+    }
 
     newGame(id?: number): number {
         if (id !== undefined) {

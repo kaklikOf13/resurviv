@@ -123,7 +123,7 @@ export const GameConfig = {
         minActiveTime: 10,
         boostDecay: 0.33,
         boostMoveSpeed: 1.85,
-        boostHealAmount: 0.33,
+        boostHealAmount: 0.20,
         boostBreakpoints: [1, 1, 1.5, 0.5],
         scopeDelay: 0.25,
         baseSwitchDelay: 0.25,
