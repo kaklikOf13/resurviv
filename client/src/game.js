@@ -432,7 +432,7 @@ export class Game {
                 if (this.touch.moveDetected) {
                     inputMsg.touchMoveDir = v2.normalizeSafe(
                         touchPlayerMovement.toMoveDir,
-                        v2.create(1, 0)
+                        v2.create(0, 0)
                     );
                     inputMsg.touchMoveLen = Math.round(
                         math.clamp(touchPlayerMovement.toMoveLen, 0, 1) * 255
@@ -552,7 +552,6 @@ export class Game {
                 inputMsg.addInput(Input.Interact);
                 inputMsg.addInput(Input.Cancel);
             }
-
             // Process 'use' actions trigger from the ui
             for (let i = 0; i < this.ui2Manager.uiEvents.length; i++) {
                 const e = this.ui2Manager.uiEvents[i];
@@ -588,28 +587,33 @@ export class Game {
             for (let X = 0; X < this.ui2Manager.uiEvents.length; X++) {
                 const e = this.ui2Manager.uiEvents[X];
                 if (e.action == "drop") {
-                    const dropMsg = new DropItemMsg();
-                    if (e.type == "weapon") {
-                        const Y = this.activePlayer.localData.weapons;
-                        dropMsg.item = Y[e.data].type;
-                        dropMsg.weapIdx = e.data;
-                    } else if (e.type == "perk") {
-                        const J = this.activePlayer.netData.perks;
-                        const Q =
-                            J.length > e.data ? J[e.data] : null;
-                        if (Q?.droppable) {
-                            dropMsg.item = Q.type;
+                    switch(e.type){
+                        case "weapon":{
+                            const Y = this.activePlayer.localData.weapons;
+                            dropMsg.item = Y[e.data].type;
+                            dropMsg.weapIdx = e.data;
+                            break
                         }
-                    } else {
-                        let $ = "";
-                        $ =
-                            e.data == "helmet"
-                                ? this.activePlayer.netData.helmet
-                                : e.data == "chest"
-                                    ? this.activePlayer.netData.chest
-                                    : e.data;
-                        dropMsg.item = $;
+                        case "perk":{
+                            const J = this.activePlayer.netData.perks;
+                            const Q =
+                                J.length > e.data ? J[e.data] : null;
+                            if (Q?.droppable) {
+                                dropMsg.item = Q.type;
+                            }
+                            break
+                        }default:{
+                            let $ = "";
+                            $ =
+                                e.data == "helmet"
+                                    ? this.activePlayer.netData.helmet
+                                    : e.data == "chest"
+                                        ? this.activePlayer.netData.chest
+                                        : e.data;
+                            dropMsg.item = $;
+                        }
                     }
+                    const dropMsg = new DropItemMsg();
                     if (dropMsg.item != "") {
                         this.sendMessage(net.MsgType.DropItem, dropMsg, 128);
                         if (dropMsg.item != "fists") {

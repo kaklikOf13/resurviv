@@ -455,7 +455,7 @@ export const Main: MapDef = {
                 silo_01: 8,
                 crate_01: 50,
                 crate_02: 10,
-                crate_03: 10,
+                crate_03: 300,
                 bush_01: 78,
                 cache_06: 12,
                 tree_01: 320,

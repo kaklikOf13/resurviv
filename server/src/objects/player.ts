@@ -1572,6 +1572,17 @@ export class Player extends BaseGameObject {
     dropItem(dropMsg: DropItemMsg): void {
         const itemDef = GameObjectDefs[dropMsg.item] as LootDef;
         switch (itemDef.type) {
+        case "throwable":{
+            const inventoryCount = this.inventory[dropMsg.item];
+            if (inventoryCount === 0) return;
+
+            let amountToDrop = 1
+
+            this.game.lootBarn.splitUpLoot(this, dropMsg.item, amountToDrop, this.dir);
+            this.inventory[dropMsg.item] -= amountToDrop;
+            this.inventoryDirty = true;
+            break;
+        }
         case "ammo": {
             const inventoryCount = this.inventory[dropMsg.item];
 
@@ -1659,7 +1670,9 @@ export class Player extends BaseGameObject {
         case "throwable": {
             const inventoryCount = this.inventory[dropMsg.item];
 
-            if (inventoryCount === 0) return;
+            if (inventoryCount === 0) {
+                return
+            }
 
             const amountToDrop = Math.max(1, Math.floor(inventoryCount / 2));
 
