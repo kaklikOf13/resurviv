@@ -417,7 +417,7 @@ export class Game {
                     // Keep looking in the old aimDir while waiting for the ticker
                     const touchDir = v2.normalizeSafe(
                         touchPlayerMovement.toMoveDir,
-                        v2.create(1, 0)
+                        v2.create(0, 0)
                     );
                     const modifiedAimDir =
                         this.touch.turnDirTicker < 0
@@ -439,6 +439,7 @@ export class Game {
                     );
                 } else {
                     inputMsg.touchMoveLen = 0;
+                    inputMsg.touchMoveDir=v2.create(0,0)
                 }
                 inputMsg.touchMoveActive = true;
                 const aimLen = touchAimMovement.aimMovement.toAimLen;
