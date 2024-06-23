@@ -42,6 +42,7 @@ export interface ConfigType {
     readonly ssl?: {
         readonly keyFile: string
         readonly certFile: string
+        readonly caFile: string
     }
 
     readonly regions: Record<string, {

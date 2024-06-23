@@ -87,7 +87,8 @@ class NodeServer extends AbstractServer {
         const app = this.app = Config.ssl
             ? SSLApp({
                 key_file_name: Config.ssl.keyFile,
-                cert_file_name: Config.ssl.certFile
+                cert_file_name: Config.ssl.certFile,
+                ca_file_name:Config.ssl.caFile
             })
             : App();
 
