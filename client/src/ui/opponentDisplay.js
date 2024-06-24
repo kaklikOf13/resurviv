@@ -16,6 +16,7 @@ import { PlayerBarn } from "../objects/player";
 import { SmokeBarn } from "../objects/smoke";
 import { Creator } from "../objects/objectPool";
 import { ObjectType } from "../../../shared/utils/objectSerializeFns";
+// import { type } from "os";
 
 export class LoadoutDisplay {
     /**
@@ -128,14 +129,14 @@ export class LoadoutDisplay {
                 scopedIn: false,
                 spectatorCountDirty: false,
                 weapsDirty: true,
-                curWeapIdx: 2,
+                curWeapIdx: 0,
                 weapons: [
                     {
-                        name: "",
+                        type: "ots38",
                         ammo: 0
                     },
                     {
-                        name: "",
+                        type: "ots38",
                         ammo: 0
                     },
                     {
@@ -370,6 +371,7 @@ export class LoadoutDisplay {
             ) {
                 this.animSeq = (this.animSeq + 1) % 8;
                 const options = {
+                    // animType: GameConfig.Anim.Melee,
                     animType: GameConfig.Anim.None,
                     animSeq: this.animSeq
                 };
