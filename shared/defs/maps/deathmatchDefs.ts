@@ -11,7 +11,7 @@ import { type MapDef } from "../mapDefs";
 
 export const Deathmatch: MapDef = {
     mapId: 12,
-    desc: { name: "Normal", icon: "", buttonCss: "" },
+    desc: { name: "Deathmatch", icon: "", buttonCss: "" },
     assets: {
         audio: [
             { name: "club_music_01", channel: "ambient" },
@@ -45,7 +45,7 @@ export const Deathmatch: MapDef = {
         }
     },
     gameMode: {
-        maxPlayers: 80,
+        maxPlayers: 40,
         killLeaderEnabled: true,
         selectableGuns:true,
         joinTime:410,

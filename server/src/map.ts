@@ -983,7 +983,9 @@ export class GameMap {
                     if (collided) break;
                 }
             }
-            if((this.game.gas.isInGas(circle.pos)))collided=true
+            if(this.game.gas.isInGas(circle.pos)){
+                collided=true
+            }
         }
 
         return circle.pos;
