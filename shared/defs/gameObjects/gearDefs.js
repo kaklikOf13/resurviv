@@ -8,6 +8,7 @@ const BaseDefs = {
         name: "9mm",
         type: "ammo",
         minStackSize: 15,
+        killSpawnAmmout:100,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -22,6 +23,7 @@ const BaseDefs = {
         name: "7.62mm",
         type: "ammo",
         minStackSize: 10,
+        killSpawnAmmout:90,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -36,6 +38,7 @@ const BaseDefs = {
         name: "5.56mm",
         type: "ammo",
         minStackSize: 10,
+        killSpawnAmmout:90,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -50,6 +53,7 @@ const BaseDefs = {
         name: "12 gauge",
         type: "ammo",
         minStackSize: 5,
+        killSpawnAmmout:60,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -65,6 +69,7 @@ const BaseDefs = {
         type: "ammo",
         special: true,
         minStackSize: 10,
+        killSpawnAmmout:100,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -80,6 +85,7 @@ const BaseDefs = {
         type: "ammo",
         special: true,
         minStackSize: 10,
+        killSpawnAmmout:50,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -110,6 +116,7 @@ const BaseDefs = {
         type: "ammo",
         special: true,
         minStackSize: 10,
+        killSpawnAmmout:100,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,

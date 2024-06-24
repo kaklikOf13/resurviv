@@ -9,7 +9,7 @@ import { GameObjectDefs } from "../../../shared/defs/gameObjectDefs";
 import { type Obstacle } from "./obstacle";
 import { WeaponManager, throwableList } from "../utils/weaponManager";
 import { math } from "../../../shared/utils/math";
-import { type OutfitDef, type GunDef, type MeleeDef, type ThrowableDef, type HelmetDef, type ChestDef, type BackpackDef, type HealDef, type BoostDef, type ScopeDef, type LootDef } from "../../../shared/defs/objectsTypings";
+import { type OutfitDef, type GunDef, type MeleeDef, type ThrowableDef, type HelmetDef, type ChestDef, type BackpackDef, type HealDef, type BoostDef, type ScopeDef, type LootDef, AmmoDef } from "../../../shared/defs/objectsTypings";
 import { MeleeDefs } from "../../../shared/defs/gameObjects/meleeDefs";
 import { Structure } from "./structure";
 import { type Loot } from "./loot";
@@ -1077,42 +1077,8 @@ export class Player extends BaseGameObject {
         //
         // drop loot
         //
-
-        const dropRadius=2
-        for (let i = 0; i < GameConfig.WeaponSlot.Count; i++) {
-            const weap = this.weapons[i];
-            if (!weap.type) continue;
-            const def = GameObjectDefs[weap.type];
-            switch (def.type) {
-            case "gun":
-                this.weaponManager.dropGun(i);
-                break;
-            case "melee":
-                if (def.noDrop || def.noDropOnDeath || weap.type === "fists") break;
-                this.game.lootBarn.addLoot(weap.type, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, 1);
-                break;
-            }
-        }
-
-        for (const item in GameConfig.bagSizes) {
-            // const def = GameObjectDefs[item] as AmmoDef | HealDef;
-            if (item == "1xscope") {
-                continue;
-            }
-
-            if (this.inventory[item] > 0) {
-                this.game.lootBarn.addLoot(item, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, this.inventory[item]);
-            }
-        }
-
-        for (const item of GEAR_TYPES) {
-            const type = this[item];
-            if (!type) continue;
-            const def = GameObjectDefs[type] as HelmetDef | ChestDef | BackpackDef;
-            if (!!def.noDrop || def.level < 1) continue;
-            this.game.lootBarn.addLoot(type, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, 1);
-        }
-
+        const dropRadius=2.5
+        this.dropAllItens(dropRadius)
         if (this.outfit) {
             const def = GameObjectDefs[this.outfit] as OutfitDef;
             if (!def.noDropOnDeath) {
@@ -1131,6 +1097,52 @@ export class Player extends BaseGameObject {
         }
     }
 
+    dropAllItens(dropRadius:number){
+        for (let i = 0; i < GameConfig.WeaponSlot.Count; i++) {
+            const weap = this.weapons[i];
+            if (!weap.type) continue;
+            const def = GameObjectDefs[weap.type];
+            switch (def.type) {
+            case "gun":
+                this.weaponManager.dropGun(i);
+                break;
+            case "melee":
+                if (def.noDrop || def.noDropOnDeath || weap.type === "fists") break;
+                this.game.lootBarn.addLoot(weap.type, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, 1);
+                break;
+            }
+        }
+
+        for (const item in GameConfig.bagSizes) {
+            const def = GameObjectDefs[item] as AmmoDef | HealDef;
+            if (item == "1xscope") {
+                continue;
+            }
+            switch(def.type){
+                case "ammo":
+                    while (this.inventory[item] > 0) {
+                        const rc=Math.min(this.inventory[item],def.killSpawnAmmout??60)
+                        this.game.lootBarn.addLoot(item, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, rc);
+                        this.inventory[item]-=rc
+                    }
+                    break
+                default:
+                    if(this.inventory[item] > 0) {
+                        this.game.lootBarn.addLoot(item, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, this.inventory[item]);
+                    }
+                    break
+            }
+            
+        }
+
+        for (const item of GEAR_TYPES) {
+            const type = this[item];
+            if (!type) continue;
+            const def = GameObjectDefs[type] as HelmetDef | ChestDef | BackpackDef;
+            if (!!def.noDrop || def.level < 1) continue;
+            this.game.lootBarn.addLoot(type, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, 1);
+        }
+    }
     isReloading() {
         return this.actionType == GameConfig.Action.Reload || this.actionType == GameConfig.Action.ReloadAlt;
     }

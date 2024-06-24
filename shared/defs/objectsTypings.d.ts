@@ -48,6 +48,7 @@ interface AmmoDef extends BaseLootDef {
     type: "ammo"
     name: string
     minStackSize: number
+    killSpawnAmmout?:number
     special?: boolean
     hideUi?: boolean
 }
