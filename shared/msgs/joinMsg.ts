@@ -12,6 +12,8 @@ export class JoinMsg extends AbstractMsg {
     loadout = {
         outfit: "",
         melee: "",
+        gun:"",
+        gun2:"",
         heal: "",
         boost: "",
         emotes: [] as string[]
@@ -29,6 +31,8 @@ export class JoinMsg extends AbstractMsg {
 
         this.loadout.outfit = s.readGameType();
         this.loadout.melee = s.readGameType();
+        this.loadout.gun = s.readGameType();
+        this.loadout.gun2 = s.readGameType();
         this.loadout.heal = s.readGameType();
         this.loadout.boost = s.readGameType();
         this.loadout.emotes = [];
@@ -53,6 +57,8 @@ export class JoinMsg extends AbstractMsg {
 
         s.writeGameType(this.loadout.outfit);
         s.writeGameType(this.loadout.melee);
+        s.writeGameType(this.loadout.gun);
+        s.writeGameType(this.loadout.gun2);
         s.writeGameType(this.loadout.heal);
         s.writeGameType(this.loadout.boost);
 

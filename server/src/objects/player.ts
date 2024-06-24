@@ -31,6 +31,7 @@ import { type JoinMsg } from "../../../shared/msgs/joinMsg";
 import { DisconnectMsg } from "../../../shared/msgs/disconnectMsg";
 import { UnlockDefs } from "../../../shared/defs/gameObjects/unlockDefs";
 import { IDAllocator } from "../IDAllocator";
+import { GunDefs } from "../../../shared/defs/gameObjects/gunDefs";
 
 export class Emote {
     playerId: number;
@@ -93,7 +94,9 @@ export class PlayerBarn {
             this.game,
             pos,
             socketData.sendMsg,
-            socketData.closeSocket
+            socketData.closeSocket,
+            this.game.map.mapDef.gameMode.spawnInventory,
+            this.game.map.mapDef.gameMode.spawnEquips
         );
 
         let name = joinMsg.name;
@@ -124,6 +127,54 @@ export class PlayerBarn {
 
         if (isItemInLoadout(joinMsg.loadout.melee, "melee")) {
             player.weapons[GameConfig.WeaponSlot.Melee].type = joinMsg.loadout.melee;
+        }
+
+        
+        if(this.game.map.mapDef.gameMode.selectableGuns){
+            let maxAmmoCountPrimary = 0; 
+            let maxAmmoCountSecondary = 0;
+
+            interface GunDefinition {
+                maxClip: number;
+            }
+    
+            interface GunDefs {
+                [gun: string]: GunDefinition;
+            }
+    
+            const typedGunDefs: GunDefs = GunDefs;
+    
+            const MaxAmmoCounts: {[ammoCount: number]: string[]} = {};
+    
+            for (const gun in typedGunDefs) {
+                const ammoCount = typedGunDefs[gun].maxClip;
+                MaxAmmoCounts[ammoCount] = MaxAmmoCounts[ammoCount] || [];
+                MaxAmmoCounts[ammoCount].push(gun);
+            }
+            for (const [ammoCount, guns] of Object.entries(MaxAmmoCounts)) {
+                if (guns.includes(joinMsg.loadout.gun)) {
+                    maxAmmoCountPrimary = parseInt(ammoCount);
+                    break;
+                }
+            }
+    
+            for (const [ammoCount, guns] of Object.entries(MaxAmmoCounts)) {
+                if (guns.includes(joinMsg.loadout.gun2)) {
+                    maxAmmoCountSecondary = parseInt(ammoCount);
+                    break;
+                }
+            }
+            if(this.game.map.mapDef.gameMode.selectableGuns){
+                if (isItemInLoadout(joinMsg.loadout.gun, "gun")) {
+                    player.weapons[GameConfig.WeaponSlot.Primary].type = joinMsg.loadout.gun;
+                    player.weapons[GameConfig.WeaponSlot.Primary].ammo = maxAmmoCountPrimary;
+                }
+        
+                if (isItemInLoadout(joinMsg.loadout.gun2, "gun")) {
+                    player.weapons[GameConfig.WeaponSlot.Secondary].type = joinMsg.loadout.gun2;
+                    player.weapons[GameConfig.WeaponSlot.Secondary].ammo = maxAmmoCountSecondary;
+                }
+            }
         }
 
         if (isItemInLoadout(joinMsg.loadout.heal, "heal")) {
@@ -501,7 +552,10 @@ export class Player extends BaseGameObject {
         game: Game,
         pos: Vec2,
         public socketSend: (msg: ArrayBuffer | Uint8Array) => void,
-        public closeSocket: () => void) {
+        public closeSocket: () => void,
+        inventory_base:Record<string, number>={},
+        default_equips:Record<string,string>={}
+    ) {
         super(game, pos);
 
         this.collider = collider.createCircle(pos, this.rad);
@@ -515,6 +569,12 @@ export class Player extends BaseGameObject {
         }
         this.inventory["1xscope"] = 1;
         this.inventory[this.scope] = 1;
+        for(const i of Object.keys(inventory_base)){
+            this.inventory[i]=inventory_base[i]
+        }
+        this.helmet=default_equips["helmet"]??""
+        this.chest=default_equips["chest"]??""
+        this.backpack=default_equips["backpack"]??"backpack00"
     }
 
     visibleObjects = new Set<GameObject>();

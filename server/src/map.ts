@@ -254,125 +254,132 @@ export class GameMap {
         const riverWeights: number[] = [];
         const weightedWidths: number[][] = [];
 
-        for (const weightedRiver of mapConfig.rivers.weights) {
-            riverWeights.push(weightedRiver.weight);
-            weightedWidths.push(weightedRiver.widths);
+        if(mapConfig.rivers){
+            for (const weightedRiver of mapConfig.rivers.weights) {
+                riverWeights.push(weightedRiver.weight);
+                weightedWidths.push(weightedRiver.widths);
+            }
         }
         const randomGenerator = util.seededRand(this.seed);
 
         //
-        // Generate lakes
-        //
-        for (const lake of mapConfig.rivers.lakes) {
-            const points: Vec2[] = [];
-
-            const center = v2.add(v2.mulElems(
-                v2.create(this.width, this.height),
-                lake.spawnBound.pos
-            ), util.randomPointInCircle(lake.spawnBound.rad));
-
-            let len = (lake.outerRad - lake.innerRad);
-            const startLen = len;
-
-            for (let i = 0; i < Math.PI * 2; i += randomGenerator(0.2, 0.3)) {
-                const dir = v2.create(Math.sin(i), Math.cos(i));
-                len += randomGenerator(-8, 8);
-                len = math.clamp(len, startLen - 10, startLen + 10);
-
-                points.push(v2.add(center, v2.mul(dir, len)));
-            }
-
-            points.push(v2.copy(points[0]));
-
-            const river = {
-                width: (lake.outerRad - lake.innerRad) / 2,
-                points,
-                looped: true
-            };
-
-            this.riverDescs.push(river);
-
-            this.lakes.push({
-                river,
-                center
-            });
-        }
-
-        //
         // Generate rivers
         //
-        const widths = util.weightedRandom(weightedWidths, riverWeights, randomGenerator);
-        const halfWidth = this.width / 2;
-        const halfHeight = this.height / 2;
+        if(this.mapDef.mapGen.map.rivers){
 
-        const riverRect = collider.createAabb(
-            v2.create(1, 1),
-            v2.create(this.width - 1, this.height - 1)
-        );
-        const center = v2.create(halfWidth, halfHeight);
-        const mapWidth = this.width - 1;
-        const mapHeight = this.height - 1;
+            //
+            // Generate lakes
+            //
+            for (const lake of mapConfig.rivers!.lakes) {
+                const points: Vec2[] = [];
 
-        for (let i = 0; i < widths.length;) {
-            let start: Vec2;
+                const center = v2.add(v2.mulElems(
+                    v2.create(this.width, this.height),
+                    lake.spawnBound.pos
+                ), util.randomPointInCircle(lake.spawnBound.rad));
 
-            const horizontal = randomGenerator() < 0.5;
-            const reverse = randomGenerator() < 0.5;
+                let len = (lake.outerRad - lake.innerRad);
+                const startLen = len;
 
-            if (horizontal) {
-                const topHalf = randomGenerator(1, halfHeight);
-                const bottomHalf = randomGenerator(halfHeight, mapHeight);
-                start = v2.create(1, reverse ? bottomHalf : topHalf);
-            } else {
-                const leftHalf = randomGenerator(1, halfWidth);
-                const rightHalf = randomGenerator(halfWidth, mapWidth);
-                start = v2.create(reverse ? rightHalf : leftHalf, 1);
+                for (let i = 0; i < Math.PI * 2; i += randomGenerator(0.2, 0.3)) {
+                    const dir = v2.create(Math.sin(i), Math.cos(i));
+                    len += randomGenerator(-8, 8);
+                    len = math.clamp(len, startLen - 10, startLen + 10);
+
+                    points.push(v2.add(center, v2.mul(dir, len)));
+                }
+
+                points.push(v2.copy(points[0]));
+
+                const river = {
+                    width: (lake.outerRad - lake.innerRad) / 2,
+                    points,
+                    looped: true
+                };
+
+                this.riverDescs.push(river);
+
+                this.lakes.push({
+                    river,
+                    center
+                });
             }
+            //
+            // Generate rivers
+            //
+            const widths = util.weightedRandom(weightedWidths, riverWeights, randomGenerator);
+            const halfWidth = this.width / 2;
+            const halfHeight = this.height / 2;
 
-            const smoothness = this.mapDef.mapGen.map.rivers.smoothness;
+            const riverRect = collider.createAabb(
+                v2.create(1, 1),
+                v2.create(this.width - 1, this.height - 1)
+            );
+            const center = v2.create(halfWidth, halfHeight);
+            const mapWidth = this.width - 1;
+            const mapHeight = this.height - 1;
 
-            const startAngle = Math.atan2(center.y - start.y, center.x - start.x) + (reverse ? 0 : Math.PI) + randomGenerator(-smoothness, smoothness);
+            for (let i = 0; i < widths.length;) {
+                let start: Vec2;
 
-            const riverPoints: Vec2[] = [];
+                const horizontal = randomGenerator() < 0.5;
+                const reverse = randomGenerator() < 0.5;
 
-            riverPoints.push(start);
+                if (horizontal) {
+                    const topHalf = randomGenerator(1, halfHeight);
+                    const bottomHalf = randomGenerator(halfHeight, mapHeight);
+                    start = v2.create(1, reverse ? bottomHalf : topHalf);
+                } else {
+                    const leftHalf = randomGenerator(1, halfWidth);
+                    const rightHalf = randomGenerator(halfWidth, mapWidth);
+                    start = v2.create(reverse ? rightHalf : leftHalf, 1);
+                }
 
-            const dir = v2.create(Math.cos(startAngle), Math.sin(startAngle));
+                const smoothness = this.mapDef.mapGen.map.rivers.smoothness;
 
-            for (let i = 1; i < 100; i++) {
-                const lastPoint = riverPoints[i - 1];
+                const startAngle = Math.atan2(center.y - start.y, center.x - start.x) + (reverse ? 0 : Math.PI) + randomGenerator(-smoothness, smoothness);
 
-                const len = randomGenerator(15, 25);
+                const riverPoints: Vec2[] = [];
 
-                const x = randomGenerator(-smoothness, smoothness);
-                const newdir = v2.add(dir, v2.create(x, x));
+                riverPoints.push(start);
 
-                const pos = v2.add(lastPoint, v2.mul(newdir, len));
+                const dir = v2.create(Math.cos(startAngle), Math.sin(startAngle));
 
-                let collided = false;
+                for (let i = 1; i < 100; i++) {
+                    const lastPoint = riverPoints[i - 1];
 
-                // end the river if it collides with another river
-                for (const river of this.riverDescs) {
-                    const points = river.points;
-                    for (let j = 1; j < points.length; j++) {
-                        const intersection = coldet.intersectSegmentSegment(lastPoint, pos, points[j - 1], points[j]);
-                        if (intersection) {
-                            const dist = v2.distance(intersection.point, riverPoints[i - 1]);
-                            if (dist > 6) riverPoints[i] = intersection.point;
-                            collided = true;
-                            break;
+                    const len = randomGenerator(15, 25);
+
+                    const x = randomGenerator(-smoothness, smoothness);
+                    const newdir = v2.add(dir, v2.create(x, x));
+
+                    const pos = v2.add(lastPoint, v2.mul(newdir, len));
+
+                    let collided = false;
+
+                    // end the river if it collides with another river
+                    for (const river of this.riverDescs) {
+                        const points = river.points;
+                        for (let j = 1; j < points.length; j++) {
+                            const intersection = coldet.intersectSegmentSegment(lastPoint, pos, points[j - 1], points[j]);
+                            if (intersection) {
+                                const dist = v2.distance(intersection.point, riverPoints[i - 1]);
+                                if (dist > 6) riverPoints[i] = intersection.point;
+                                collided = true;
+                                break;
+                            }
                         }
+                        if (collided) break;
                     }
                     if (collided) break;
-                }
-                if (collided) break;
-                riverPoints[i] = this.clampToMapBounds(pos);
+                    riverPoints[i] = this.clampToMapBounds(pos);
 
-                if (!coldet.testPointAabb(pos, riverRect.min, riverRect.max)) break;
+                    if (!coldet.testPointAabb(pos, riverRect.min, riverRect.max)) break;
+                }
+                if (riverPoints.length < 20) continue;
+                this.riverDescs.push({ width: widths[i], points: riverPoints, looped: false });
+                i++;
             }
-            if (riverPoints.length < 20) continue;
-            this.riverDescs.push({ width: widths[i], points: riverPoints, looped: false });
-            i++;
         }
     }
 
@@ -478,14 +485,16 @@ export class GameMap {
 
             if (def.terrain?.waterEdge) {
                 this.genOnWaterEdge(type);
-            } else if (def.terrain?.bridge) {
-                this.genOnRiver(type);
-            } else if (def.terrain?.lakeCenter) {
-                this.genOnLakeCenter(type);
             } else if (def.terrain?.grass) {
                 this.genOnGrass(type);
             } else if (def.terrain?.beach) {
                 this.genOnBeach(type);
+            } else if(def.terrain?.river){
+                if (def.terrain?.bridge) {
+                    this.genOnRiver(type);
+                } else if (def.terrain?.lakeCenter) {
+                    this.genOnLakeCenter(type);
+                }
             }
         }
     }

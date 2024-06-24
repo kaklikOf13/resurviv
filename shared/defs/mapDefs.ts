@@ -6,6 +6,7 @@ import { Halloween } from "./maps/halloweenDefs";
 import { Main } from "./maps/baseDefs";
 import { MainSpring } from "./maps/mainSpringDefs";
 import { MainSummer } from "./maps/mainSummerDefs";
+import { Deathmatch } from "./maps/deathmatchDefs";
 import { Potato } from "./maps/potatoDefs";
 import { PotatoSpring } from "./maps/potatoSpringDefs";
 import { Savannah } from "./maps/savannahDefs";
@@ -20,6 +21,7 @@ export const MapDefs = {
     main: Main,
     main_spring: MainSpring,
     main_summer: MainSummer,
+    deathmatch:Deathmatch,
     desert: Desert,
     faction: Faction,
     halloween: Halloween,
@@ -87,6 +89,9 @@ export interface MapDef {
         perkModeRoles?: string[]
         factionMode?: boolean
         factions?: number
+        selectableGuns?:boolean
+        spawnInventory?:Record<string,number>
+        spawnEquips?:Record<string,string>
     }
     gameConfig: {
         planes: {
@@ -118,7 +123,7 @@ export interface MapDef {
             extension: number
             shoreInset: number
             grassInset: number
-            rivers: {
+            rivers?: {
                 lakes: Array<{
                     odds: number
                     innerRad: number
