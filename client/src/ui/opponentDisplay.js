@@ -229,6 +229,7 @@ export class LoadoutDisplay {
             helmet: "helmet01",
             chest: "chest03",
             activeWeapon: this.loadout.melee,
+            activeWeapon: this.view === "gun2" ? this.loadout.gun2 : this.loadout.gun,
             layer: 0,
             dead: false,
             downed: false,
@@ -369,7 +370,7 @@ export class LoadoutDisplay {
             ) {
                 this.animSeq = (this.animSeq + 1) % 8;
                 const options = {
-                    animType: GameConfig.Anim.Melee,
+                    animType: GameConfig.Anim.None,
                     animSeq: this.animSeq
                 };
                 this.updateCharDisplay(options);
