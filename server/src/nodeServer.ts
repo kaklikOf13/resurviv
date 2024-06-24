@@ -106,16 +106,21 @@ class NodeServer extends AbstractServer {
             res.writeHeader("Content-Type", "application/json");
             res.end(JSON.stringify(this.getUserProfile()));
         });
-
-        app.post("/api/find_game", async(res) => {
-            readPostedJSON(res, (body: { region: string, zones: any[] }) => {
-                const response = this.findGame(body.region);
+        app.post("/api/find_game", (res) => {
+            readPostedJSON(res, (_body: {version:number}) => {
+                const response = this.findGame();
+                cors(res)
                 res.writeHeader("Content-Type", "application/json");
                 res.end(JSON.stringify(response));
             }, () => {
                 this.logger.warn("/api/find_game: Error retrieving body");
             });
         });
+        app.get("/api/find_game",(res)=>{
+            const response = this.findGame();
+            cors(res)
+            res.end(JSON.stringify(response));
+        })
 
         const This = this;
 

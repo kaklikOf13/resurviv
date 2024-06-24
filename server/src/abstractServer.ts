@@ -96,63 +96,43 @@ export abstract class AbstractServer {
         return { err: "" };
     }
 
-    findGame(regionId: string) {
+    findGame() {
         let response: {
-            zone: string
-            gameId: number
-            useHttps: boolean
-            hosts: string[]
-            addrs: string[]
+            gameId: number,
             data: string
         } | { err: string } = {
-            zone: "",
-            data: "",
             gameId: 0,
-            useHttps: true,
-            hosts: [],
-            addrs: []
+            data:""
         };
 
-        const region = (Config.regions[regionId] ?? Config.regions[Config.defaultRegion]);
-        if (region !== undefined) {
-            response.hosts.push(region.address);
-            response.addrs.push(region.address);
-            response.useHttps = region.https;
-
-            let foundGame = false;
-            for (let gameID = 0; gameID < Config.maxGames; gameID++) {
-                const game = this.games[gameID];
-                if(this.games[gameID]?.over){
-                    this.endGame(gameID,true)
-                }
-                if (this.canJoin(game) && game?.allowJoin) {
-                    response.gameId = game.id;
-                    foundGame = true;
-                    break;
-                }
+        let foundGame = false;
+        for (let gameID = 0; gameID < Config.maxGames; gameID++) {
+            const game = this.games[gameID];
+            if(this.games[gameID]?.over){
+                this.endGame(gameID,true)
             }
-            if (!foundGame) {
-                // Create a game if there's a free slot
-                const gameID = this.newGame();
-                if (gameID !== -1) {
-                    response.gameId = gameID;
-                } else {
-                    // Join the game that most recently started
-                    const game = this.games
-                        .filter(g => g && !g.over)
-                        .reduce((a, b) => (a!).startedTime > (b!).startedTime ? a : b);
-
-                    if (game) response.gameId = game.id;
-                    else response = { err: "failed finding game" };
-                }
+            if (this.canJoin(game) && game?.allowJoin) {
+                response.gameId = game.id;
+                foundGame = true;
+                break;
             }
-        } else {
-            this.logger.warn("/api/find_game: Invalid region");
-            response = {
-                err: "Invalid Region"
-            };
         }
-        return { res: [response] };
+        if (!foundGame) {
+            // Create a game if there's a free slot
+            const gameID = this.newGame();
+            if (gameID !== -1) {
+                response.gameId = gameID;
+            } else {
+                // Join the game that most recently started
+                const game = this.games
+                    .filter(g => g && !g.over)
+                    .reduce((a, b) => (a!).startedTime > (b!).startedTime ? a : b);
+
+                if (game) response.gameId = game.id;
+                else response = { err: "failed finding game" };
+            }
+        }
+        return response
     }
 
     getGameId(params: URLSearchParams): false | number {

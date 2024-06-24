@@ -14,15 +14,6 @@ export const Config = {
 
     map: "deathmatch",
 
-    regions: {
-        local: {
-            https: false,
-            address: "127.0.0.1:8000"
-        }
-    },
-
-    defaultRegion: "local",
-
     spawn: { mode: SpawnMode.Random },
 
     maxGames: 3,
@@ -44,13 +35,6 @@ export interface ConfigType {
         readonly certFile: string
         readonly caFile: string
     }
-
-    readonly regions: Record<string, {
-        readonly https: boolean
-        readonly address: string
-    }>
-
-    readonly defaultRegion: string
 
     readonly map: keyof typeof MapDefs
 

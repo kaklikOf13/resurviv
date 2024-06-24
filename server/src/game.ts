@@ -103,6 +103,7 @@ export class Game {
         this.gas.advanceGasStage();
         setTimeout(()=>{
             this.allowJoin=false
+            this.logger.log("Closed")
         },(this.config.joinTime??this.map.mapDef.gameMode.joinTime)*1000)
     }
 

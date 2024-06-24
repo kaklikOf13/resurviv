@@ -5,11 +5,10 @@ import { GameConfig } from "../../shared/gameConfig";
 import { math } from "../../shared/utils/math";
 import * as net from "../../shared/net";
 import { Account } from "./account";
-import { api } from "./api";
 import { Ambiance } from "./ambiance";
 import { AudioManager } from "./audioManager";
 import { device } from "./device";
-import { ConfigManager } from "./config";
+import { ConfigManager,defaultConfig,region_name, regions } from "./config";
 import { Game } from "./game";
 import { InputHandler } from "./input";
 import { InputBinds, InputBindUi } from "./inputBinds";
@@ -25,7 +24,6 @@ import { ProfileUi } from "./ui/profileUi";
 import { ResourceManager } from "./resources";
 import { SiteInfo } from "./siteInfo";
 import { TeamMenu } from "./ui/teamMenu";
-
 class Application {
     constructor() {
         this.nameInput = $("#player-name-input-solo");
@@ -102,6 +100,13 @@ class Application {
         this.hasFocus = true;
         this.newsDisplayed = false;
         const onLoadComplete = () => {
+            for(const i of Object.keys(regions)){
+                const server=document.createElement("option")
+                server.value=i
+                server.innerHTML=regions[i].name
+                server.label=regions[i].name
+                $("#server-opts").get()[0].appendChild(server)
+            }
             this.config.load(() => {
                 this.configLoaded = true;
                 this.tryLoad();
@@ -627,8 +632,6 @@ class Application {
 
             const matchArgs = {
                 version,
-                region,
-                zones,
                 playerCount: 1,
                 autoFill: true,
                 gameModeIdx
@@ -659,7 +662,8 @@ class Application {
     }
 
     findGame(matchArgs, _cb) {
-        (function findGameImpl(iter, maxAttempts) {
+        const This=this;
+        (async function findGameImpl(iter, maxAttempts) {
             if (iter >= maxAttempts) {
                 _cb("full");
                 return;
@@ -669,29 +673,19 @@ class Application {
                     findGameImpl(iter + 1, maxAttempts);
                 }, 500);
             };
-            $.ajax({
-                type: "POST",
-                url: api.resolveUrl("/api/find_game"),
-                data: JSON.stringify(matchArgs),
-                contentType: "application/json; charset=utf-8",
-                timeout: 10 * 1000,
-                success: function(data) {
-                    if (data?.err && data.err != "full") {
-                        _cb(data.err);
-                        return;
-                    }
-                    const matchData = data?.res ? data.res[0] : null;
-                    if (matchData?.hosts && matchData.addrs) {
-                        _cb(null, matchData);
-                    } else {
-                        retry();
-                    }
-                },
-                error: function(e) {
-                    retry();
+            if(!regions[This.config.get("region")]){
+                This.config.region=defaultConfig.region
+            }
+            const headers=new Headers()
+            headers.set("Access-Control-Allow-Origin","*")
+            fetch(`http${region_name(This.config.get("region"))}/api/find_game`).then((res=>res.json())).then((data)=>{
+                if (data?.err && data.err != "full") {
+                    _cb(data.err);
+                    return;
                 }
-            });
-        })(0, 2);
+                _cb(null, data);
+            })
+        }).call(this,0, 2);
     }
 
     joinGame(matchData) {
@@ -701,13 +695,10 @@ class Application {
             }, 250);
             return;
         }
-        const hosts = matchData.hosts || [];
-        const urls = [];
-        for (let i = 0; i < hosts.length; i++) {
-            urls.push(
-                `ws${matchData.useHttps ? "s" : ""}://${hosts[i]}/play?gameID=${matchData.gameId}`
-            );
-        }
+        const urls=[]
+        urls.push(
+            `ws${region_name(this.config.get("region"))}/play?gameID=${matchData.gameId}`
+        );
         const joinGameImpl = (urls, matchData) => {
             const url = urls.shift();
             if (!url) {

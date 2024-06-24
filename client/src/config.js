@@ -1,7 +1,16 @@
 import { util } from "../../shared/utils/util";
 import loadout from "./ui/loadouts";
-
-const defaultConfig = {
+export const regions={
+    local:{
+        https:false,
+        ip:"localhost:8000",
+        name:"Local"
+    },
+}
+export function region_name(reg){
+    return `${regions[reg].https?"s":""}://${regions[reg].ip}`
+}
+export const defaultConfig = {
     muteAudio: false,
     masterVolume: 1,
     soundVolume: 1,
@@ -15,7 +24,7 @@ const defaultConfig = {
     touchAimLine: true,
     profile: null,
     playerName: "",
-    region: "na",
+    region: "local",
     gameModeIdx: 2,
     teamAutoFill: true,
     language: "",
