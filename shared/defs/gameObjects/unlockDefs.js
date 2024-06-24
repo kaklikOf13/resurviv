@@ -4,6 +4,7 @@ import { PassDefs } from "./passDefs";
 
 const allowedHealEffects = Object.keys(HealEffectDefs);
 const allowedGuns = [
+    "",
     //Pistol:
    "ots38", "m9", "m9_dual", "hud-m9_dual", "m93r", 
    "m93r_dual", "hud_m93r_dual", "glock", "glock_dual", "hud_glock_dual", 
@@ -18,7 +19,7 @@ const allowedGuns = [
     "m870", "m1100", "m1014", "mp220", "usas", "saiga", "spas12",
 
     //Sniper Rifles:
-    "sv98", "awc", "mosin", "m39", "garand", "svd", "vss", "scout_elite", "model94",
+    "sv98", "mosin", "m39", "garand", "svd", "vss", "scout_elite", "model94",
 
     //Assault Rifles:
     "ak47", "scar", "an94", "groza", "grozas", "famas", "hk416", "m4a1", "mk12", "scarssr",
@@ -27,7 +28,7 @@ const allowedGuns = [
     "dp28", "m249", "qbb97", "l86", "bar", "pkp",
 
     //Others:
-    "blr", "m1a1", "mkg45"
+    "blr", "m1a1"
 
 
 ];
