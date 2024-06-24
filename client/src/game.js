@@ -588,6 +588,7 @@ export class Game {
             for (let X = 0; X < this.ui2Manager.uiEvents.length; X++) {
                 const e = this.ui2Manager.uiEvents[X];
                 if (e.action == "drop") {
+                    const dropMsg = new DropItemMsg();
                     switch(e.type){
                         case "weapon":{
                             const Y = this.activePlayer.localData.weapons;
@@ -614,7 +615,6 @@ export class Game {
                             dropMsg.item = $;
                         }
                     }
-                    const dropMsg = new DropItemMsg();
                     if (dropMsg.item != "") {
                         this.sendMessage(net.MsgType.DropItem, dropMsg, 128);
                         if (dropMsg.item != "fists") {
