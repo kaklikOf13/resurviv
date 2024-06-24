@@ -19,7 +19,9 @@ export const Config = {
     maxGames: 3,
     joinTime: 60,
 
-    tps: 30
+    tps: 30,
+
+    country:"US"
 
 } satisfies ConfigType as ConfigType;
 
@@ -66,4 +68,5 @@ export interface ConfigType {
      * Join Time
      */
     readonly joinTime:number
+    readonly country:string
 }

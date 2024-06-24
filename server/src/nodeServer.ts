@@ -97,9 +97,8 @@ class NodeServer extends AbstractServer {
             cors(res);
             const data = this.getSiteInfo();
             if (!aborted) {
-                res.cork(() => {
-                    res.writeHeader("Content-Type", "application/json").end(JSON.stringify(data));
-                });
+                res.writeHeader("Content-Type","application/json")
+                res.end(JSON.stringify(data));
             }
         });
         app.post("/api/user/profile", (res, _req) => {

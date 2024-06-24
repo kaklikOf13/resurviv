@@ -1,32 +1,4 @@
-import { ProxyOptions, defineConfig } from "vite";
-import { Config } from "../server/src/config";
-
-
-const proxyConfig: Record<string, ProxyOptions> = {
-    "/api": {
-        target: `http${Config.ssl ? "s" : ""}://${Config.host}:${Config.port}`,
-        changeOrigin: true,
-        secure: false
-    },
-    "/play": {
-        target: `http${Config.ssl ? "s" : ""}://${Config.host}:${Config.port}`,
-        changeOrigin: true,
-        secure: false,
-        ws: true
-    },
-    "/find_game": {
-        target: `http${Config.ssl ? "s" : ""}://${Config.host}:${Config.port}`,
-        changeOrigin: true,
-        secure: false,
-        ws: true
-    },
-    "/team_v2": {
-        target: `http${Config.ssl ? "s" : ""}://${Config.host}:${Config.port}`,
-        changeOrigin: true,
-        secure: false,
-        ws: true
-    }
-}
+import { defineConfig } from "vite";
 
 export default defineConfig(() => {
     return {
@@ -59,14 +31,12 @@ export default defineConfig(() => {
         server: {
             port: 3000,
             strictPort: true,
-            host: "0.0.0.0",
-            proxy: proxyConfig
+            host: "0.0.0.0"
         },
         preview: {
             port: 3000,
             strictPort: true,
-            host: "0.0.0.0",
-            proxy: proxyConfig
+            host: "0.0.0.0"
         }
     };
 });
