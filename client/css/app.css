@@ -4992,11 +4992,11 @@ input [type="image"]:focus {
     background: rgba(0, 0, 0, 0.5);
     cursor: pointer;
     display: inline-block;
-    height: 72px;
+    height: 60px;
     margin-left: 4px;
     margin-top: 44px;
     position: relative;
-    width: 70px;
+    width: 60px;
 }
 .modal-customize-cat-image {
     background-repeat: no-repeat;
@@ -5213,7 +5213,7 @@ input [type="image"]:focus {
     top: 50%;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
-    width: 578px;
+    width: 660px;
 }
 .modal-content-right {
     background: #83af50;

@@ -36,6 +36,8 @@ const loadout = {
         const validatedLoadout = {
             outfit: getGameType("outfit", mergedLoadout.outfit, "outfitBase"),
             melee: getGameType("melee", mergedLoadout.melee, "fists"),
+            gun: getGameType("gun", mergedLoadout.gun, "ots38"),
+            gun2: getGameType("gun", mergedLoadout.gun2, "ots38"),
             heal: getGameType("heal_effect", mergedLoadout.heal, "heal_basic"),
             boost: getGameType("boost_effect", mergedLoadout.boost, "boost_basic"),
             player_icon: getGameType("emote", mergedLoadout.player_icon, ""),
@@ -71,7 +73,7 @@ const loadout = {
             emotes: [],
             ...userLoadout
         };
-        const itemsToCheck = ["outfit", "melee", "heal", "boost", "player_icon"];
+        const itemsToCheck = ["outfit", "melee", "gun", "gun2", "heal", "boost", "player_icon"];
 
         itemsToCheck.forEach(item => {
             loadout[item] = checkTypeExists(loadout[item], userItems);

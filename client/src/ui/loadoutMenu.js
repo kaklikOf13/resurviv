@@ -106,6 +106,8 @@ export class LoadoutMenu {
         this.categories = [
             { loadoutType: "outfit", gameType: "outfit", categoryImage: "img/gui/loadout-outfit.svg" },
             { loadoutType: "melee", gameType: "melee", categoryImage: "img/gui/loadout-melee.svg" },
+            { loadoutType: "gun", gameType: "gun", categoryImage: "img/gui/loadout-melee.svg" },
+            { loadoutType: "gun2", gameType: "gun", categoryImage: "img/gui/loadout-melee.svg" },
             { loadoutType: "emote", gameType: "emote", categoryImage: "img/gui/loadout-emote.svg" },
             { loadoutType: "heal", gameType: "heal_effect", categoryImage: "img/gui/loadout-heal.svg" },
             { loadoutType: "boost", gameType: "boost_effect", categoryImage: "img/gui/loadout-boost.svg" }
