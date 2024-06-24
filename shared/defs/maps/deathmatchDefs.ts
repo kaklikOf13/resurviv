@@ -48,7 +48,7 @@ export const Deathmatch: MapDef = {
         maxPlayers: 40,
         killLeaderEnabled: true,
         selectableGuns:true,
-        joinTime:410,
+        joinTime:400,
         spawnInventory:{
             "2xscope": 1,
             "4xscope": 1,
@@ -75,20 +75,8 @@ export const Deathmatch: MapDef = {
     gameConfig: {
         planes: {
             timings: [
-                {
-                    circleIdx: 1,
-                    wait: 10,
-                    options: { type: GameConfig.Plane.Airdrop }
-                },
-                {
-                    circleIdx: 3,
-                    wait: 2,
-                    options: { type: GameConfig.Plane.Airdrop }
-                }
             ],
             crates: [
-                { name: "airdrop_crate_01", weight: 10 },
-                { name: "airdrop_crate_02", weight: 1 }
             ]
         },
         bagSizes: {},

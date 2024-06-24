@@ -104,7 +104,7 @@ export class Game {
         setTimeout(()=>{
             this.allowJoin=false
             this.logger.log("Closed")
-        },(this.config.joinTime??this.map.mapDef.gameMode.joinTime)*1000)
+        },(this.map.mapDef.gameMode.joinTime??this.config.joinTime)*1000)
     }
 
     update(): void {
