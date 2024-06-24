@@ -1,3 +1,5 @@
+import { GasDef } from "../server/src/objects/gas";
+
 export const GameConfig = {
     protocolVersion: 78,
     Input: {
@@ -98,7 +100,7 @@ export const GameConfig = {
         damage: [
             1.4, 2.2, 3.5, 7.5, 10, 14, 22, 22, 22
         ]
-    },
+    } as GasDef,
     Plane: {
         Airdrop: 0,
         Airstrike: 1
@@ -310,4 +312,4 @@ export const GameConfig = {
         perk: 1.25,
         xp: 1
     } as Record<string, number>
-} as const;
+}as const;

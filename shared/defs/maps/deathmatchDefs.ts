@@ -10,7 +10,7 @@ import { type MapDef } from "../mapDefs";
 // elements if that property is set.
 
 export const Deathmatch: MapDef = {
-    mapId: 0,
+    mapId: 12,
     desc: { name: "Normal", icon: "", buttonCss: "" },
     assets: {
         audio: [
@@ -48,9 +48,10 @@ export const Deathmatch: MapDef = {
         maxPlayers: 80,
         killLeaderEnabled: true,
         selectableGuns:true,
+        joinTime:410,
         spawnInventory:{
             "2xscope": 1,
-            "3xscope": 1,
+            "4xscope": 1,
 
             "9mm":420,
             "762mm": 300,
@@ -92,7 +93,22 @@ export const Deathmatch: MapDef = {
         },
         bagSizes: {},
         bleedDamage: 2,
-        bleedDamageMult: 1
+        bleedDamageMult: 1,
+        gas:{
+            initWaitTime: 400,
+            waitTimeDecay: 400,
+            waitTimeMin: 40,
+            initGasTime: 30,
+            gasTimeDecay: 20,
+            gasTimeMin: 20,
+            initWidth: 0.75,
+            widthDecay: .4,
+            widthMin: 60,
+            damageTickRate: 2,
+            damage: [
+                10, 10, 10, 10
+            ]
+        }
     },
     // NOTE: this loot table is not the original one so its not accurate
     lootTable: {

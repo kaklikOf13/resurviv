@@ -16,7 +16,8 @@ import { Woods } from "./maps/woodsDefs";
 import { WoodsSnow } from "./maps/woodsSnowDefs";
 import { WoodsSpring } from "./maps/woodsSpringDefs";
 import { WoodsSummer } from "./maps/woodsSummerDefs";
-
+import { type GameConfig } from "../gameConfig";
+import { GasDef } from "../../server/src/objects/gas";
 export const MapDefs = {
     main: Main,
     main_spring: MainSpring,
@@ -36,7 +37,6 @@ export const MapDefs = {
     cobalt: Cobalt,
     turkey: Turkey
 };
-
 export interface MapDef {
     mapId: number
     desc: {
@@ -80,6 +80,7 @@ export interface MapDef {
 
     gameMode: {
         maxPlayers: number
+        joinTime?:number
         killLeaderEnabled: boolean
         woodsMode?: boolean
         desertMode?: boolean
@@ -109,6 +110,7 @@ export interface MapDef {
         bagSizes: Record<string, number>
         bleedDamage: number
         bleedDamageMult: number
+        gas?:GasDef
     }
     lootTable: Record<string, Array<{
         name: string

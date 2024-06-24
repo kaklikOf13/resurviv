@@ -26,7 +26,7 @@ export const Config = {
     spawn: { mode: SpawnMode.Random },
 
     maxGames: 3,
-    joinTime:1,
+    joinTime: 60,
 
     tps: 30
 

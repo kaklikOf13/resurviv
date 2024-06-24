@@ -2,7 +2,20 @@ import { type Vec2, v2 } from "./../../../shared/utils/v2";
 import { GameConfig } from "../../../shared/gameConfig";
 import { math } from "../../../shared/utils/math";
 import { util } from "../../../shared/utils/util";
-
+import { Game } from "../game";
+export interface GasDef{
+    readonly initWaitTime: number,
+    readonly waitTimeDecay: number,
+    readonly waitTimeMin: number,
+    readonly initGasTime: number,
+    readonly gasTimeDecay: number,
+    readonly gasTimeMin: number,
+    readonly initWidth: number,
+    readonly widthDecay: number,
+    readonly widthMin: number,
+    readonly damageTickRate: number,
+    readonly damage: number[]
+}
 const GasMode = GameConfig.GasMode;
 export class Gas {
     /**
@@ -40,13 +53,13 @@ export class Gas {
      * Gas wait time
      * This is the time to wait when on waiting mode
      */
-    waitTime: number = GameConfig.gas.initWaitTime;
+    waitTime: number;
     /**
      * Gas Time
      * This is the time for the gas to move between one stage to another
      * When on moving mode
      */
-    gasTime: number = GameConfig.gas.initGasTime;
+    gasTime: number;
 
     /**
      * Old gas radius
@@ -111,13 +124,13 @@ export class Gas {
     private _damageTicker = 0;
 
     doDamage = false;
-
+    gasC:GasDef
     constructor(
-        readonly map: { readonly width: number, height: number }
+        readonly map: { readonly width: number, height: number },readonly game:Game
     ) {
         const mapSize = (map.width + map.height) / 2;
-
-        this.radNew = this.radOld = this.currentRad = GameConfig.gas.initWidth * mapSize;
+        this.gasC=this.game.map.mapDef.gameConfig.gas??GameConfig.gas
+        this.radNew = this.radOld = this.currentRad = this.gasC.initWidth * mapSize;
 
         this.posOld = v2.create(
             map.width / 2,
@@ -126,6 +139,8 @@ export class Gas {
 
         this.posNew = v2.copy(this.posOld);
         this.currentPos = v2.copy(this.posOld);
+        this.waitTime=this.gasC.initWaitTime
+        this.gasTime=this.gasC.initGasTime
     }
 
     update(dt: number) {
@@ -143,7 +158,7 @@ export class Gas {
         this.doDamage = false;
         this._damageTicker += dt;
 
-        if (this._damageTicker >= GameConfig.gas.damageTickRate) {
+        if (this._damageTicker >= this.gasC.damageTickRate) {
             this._damageTicker = 0;
             this.doDamage = true;
         }
@@ -162,9 +177,9 @@ export class Gas {
             this.radOld = this.currentRad;
 
             if (this.radNew > 0) {
-                this.radNew = this.currentRad * GameConfig.gas.widthDecay;
+                this.radNew = this.currentRad * this.gasC.widthDecay;
 
-                if (this.radNew < GameConfig.gas.widthMin) {
+                if (this.radNew < this.gasC.widthMin) {
                     this.radNew = 0;
                 }
 
@@ -190,14 +205,14 @@ export class Gas {
         }
         case GasMode.Waiting: {
             this.mode = GasMode.Moving;
-            this.gasTime = math.max(this.gasTime - GameConfig.gas.gasTimeDecay, GameConfig.gas.gasTimeMin);
+            this.gasTime = math.max(this.gasTime - this.gasC.gasTimeDecay, this.gasC.gasTimeMin);
             if (this.radNew > 0) {
                 this.stage++;
             }
             break;
         }
         case GasMode.Moving: {
-            this.waitTime = math.max(this.waitTime - GameConfig.gas.waitTimeDecay, GameConfig.gas.waitTimeMin);
+            this.waitTime = math.max(this.waitTime - this.gasC.waitTimeDecay, this.gasC.waitTimeMin);
             this.mode = GasMode.Waiting;
             if (this.radNew > 0) {
                 this.stage++;
@@ -206,7 +221,7 @@ export class Gas {
         }
         }
 
-        this.damage = GameConfig.gas.damage[math.clamp(this.stage - 1, 0, GameConfig.gas.damage.length - 1)];
+        this.damage = this.gasC.damage[math.clamp(this.stage - 1, 0, this.gasC.damage.length - 1)];
         this._gasTicker = 0;
         this.dirty = true;
         this.timeDirty = true;

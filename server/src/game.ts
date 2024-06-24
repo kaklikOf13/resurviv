@@ -77,7 +77,7 @@ export class Game {
         this.objectRegister = new ObjectRegister(this.grid);
         this.map = new GameMap(this);
 
-        this.gas = new Gas(this.map);
+        this.gas = new Gas(this.map,this);
 
         this.allowJoin = true;
 
@@ -103,7 +103,7 @@ export class Game {
         this.gas.advanceGasStage();
         setTimeout(()=>{
             this.allowJoin=false
-        },this.config.joinTime*1000)
+        },(this.config.joinTime??this.map.mapDef.gameMode.joinTime)*1000)
     }
 
     update(): void {
