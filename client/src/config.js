@@ -7,6 +7,13 @@ export const regions={
         name:"Local"
     },
 }
+export const youtubers={
+    "NAMERIO":"https://www.youtube.com/@namerio1",
+    "KAKLIK":"https://www.youtube.com/@kaklik123"
+}
+export const streamers={
+    
+}
 export function region_name(reg){
     return `${regions[reg].https?"s":""}://${regions[reg].ip}`
 }

@@ -15,7 +15,7 @@ export interface PlayerContainer {
 export abstract class AbstractServer {
     readonly logger = new Logger("Server");
 
-    readonly games: Array<Game | undefined> = [];
+    readonly games: Record<number,Game | undefined> = [];
 
     init(): void {
         this.logger.log(`Resurviv Server v${version}`);
@@ -34,12 +34,12 @@ export abstract class AbstractServer {
     }
 
     tick(): void {
-        for (const game of this.games) {
+        for (const game of Object.values(this.games)) {
             if (game) game.update();
         }
     }
     execute(cmd:string): void {
-        for (const game of this.games) {
+        for (const game of Object.values(this.games)) {
             if (game) game.console.execute(cmd);
         }
     }
@@ -65,7 +65,7 @@ export abstract class AbstractServer {
         if (createNewGame) {
             this.games[id] = new Game(id, Config);
         } else {
-            this.games[id] = undefined;
+            delete this.games[id];
         }
     }
 
@@ -74,20 +74,17 @@ export abstract class AbstractServer {
     }
 
     getSiteInfo() {
-        const playerCount = this.games.reduce((a, b) => {
-            return a + (b ? b.playerBarn.players.length : 0);
+        let playerCount = 0
+        Object.values(this.games).forEach((a,_) => {
+            playerCount+=(a ? a.playerBarn.players.length : 0);
         }, 0);
 
         const data = {
             modes: [
                 { mapName: Config.map, teamMode: 1 }
             ],
-            pops: {
-                local: `${playerCount} players`
-            },
-            youtube: { name: "", link: "" },
-            twitch: [],
-            country: "US"
+            players: playerCount,
+            country: Config.country
         };
         return data;
     }
@@ -106,10 +103,13 @@ export abstract class AbstractServer {
         };
 
         let foundGame = false;
-        for (let gameID = 0; gameID < Config.maxGames; gameID++) {
+        for (let gameID = Config.maxGames; gameID >=0; gameID--) {
             const game = this.games[gameID];
-            if(this.games[gameID]?.over){
-                this.endGame(gameID,true)
+            if(!this.games[gameID]){
+                continue
+            }
+            if(this.games[gameID]?.stopped){
+                this.endGame(gameID,false)
             }
             if (this.canJoin(game) && game?.allowJoin) {
                 response.gameId = game.id;
@@ -124,7 +124,7 @@ export abstract class AbstractServer {
                 response.gameId = gameID;
             } else {
                 // Join the game that most recently started
-                const game = this.games
+                const game = Object.values(this.games)
                     .filter(g => g && !g.over)
                     .reduce((a, b) => (a!).startedTime > (b!).startedTime ? a : b);
 

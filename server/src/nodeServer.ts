@@ -4,7 +4,8 @@ import {
     type HttpResponse,
     SSLApp,
     type WebSocket,
-    type TemplatedApp
+    type TemplatedApp,
+    HttpRequest
 } from "uWebSockets.js";
 import NanoTimer from "nanotimer";
 import { URLSearchParams } from "node:url";
@@ -19,7 +20,7 @@ function cors(res: HttpResponse): void {
         .writeHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         .writeHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with")
         .writeHeader("Access-Control-Max-Age", "3600");
-}
+} 
 
 function forbidden(res: HttpResponse): void {
     res.writeStatus("403 Forbidden").end("403 Forbidden");
@@ -76,7 +77,35 @@ function readPostedJSON<T>(
     /* Register error cb */
     res.onAborted(err);
 }
+interface IpRecord {
+    count: number;
+    timestamp: number;
+  }
+let ipRequestCounts: Record<string, IpRecord> = {};
 
+function rateLimitMiddleware(res: HttpResponse, req: HttpRequest, next: () => void): void {
+    if(!(Config.security&&Config.security.antiddos)){
+        next()
+        return
+    }
+    const ip = req.getHeader('x-forwarded-for') || Buffer.from(res.getRemoteAddressAsText()).toString();
+    if (!ipRequestCounts[ip]) {
+      ipRequestCounts[ip] = { count: 1, timestamp: Date.now() };
+    } else {
+      const currentTime = Date.now();
+      const timeDifference = currentTime - ipRequestCounts[ip].timestamp;
+      if (timeDifference > Config.security.antiddos.window_limit_window) {
+        ipRequestCounts[ip] = { count: 1, timestamp: currentTime };
+      } else {
+        ipRequestCounts[ip].count++;
+      }
+      if (ipRequestCounts[ip].count >Config.security.antiddos.limit_request) {
+        res.writeStatus('429 Too Many Requests').end('Too Many Requests');
+        return;
+      }
+    }
+    next();
+  }
 class NodeServer extends AbstractServer {
     app: TemplatedApp;
 
@@ -90,36 +119,42 @@ class NodeServer extends AbstractServer {
                 ca_file_name:Config.ssl.caFile
             })
             : App();
-
-        app.get("/api/site_info", (res) => {
-            let aborted = false;
-            res.onAborted(() => { aborted = true; });
-            cors(res);
-            const data = this.getSiteInfo();
-            if (!aborted) {
-                res.cork(() => {
-                    res.writeHeader("Content-Type", "application/json").end(JSON.stringify(data));
+        app.get("/api/site_info", (res,req) => {
+            rateLimitMiddleware(res,req,()=>{
+                let aborted = false;
+                res.onAborted(() => { aborted = true; });
+                cors(res);
+                const data = this.getSiteInfo();
+                if (!aborted) {
+                    res.writeHeader("Content-Type","application/json")
+                    res.end(JSON.stringify(data));
+                }
+            })
+        });
+        app.post("/api/user/profile", (res, req) => {
+            rateLimitMiddleware(res,req,()=>{
+                res.writeHeader("Content-Type", "application/json");
+                res.end(JSON.stringify(this.getUserProfile()));
+            })
+        });
+        app.post("/api/find_game", (res, req) => {
+            rateLimitMiddleware(res,req,()=>{
+                readPostedJSON(res, (_body: {version:number}) => {
+                    const response = this.findGame();
+                    cors(res)
+                    res.writeHeader("Content-Type", "application/json");
+                    res.end(JSON.stringify(response));
+                }, () => {
+                    this.logger.warn("/api/find_game: Error retrieving body");
                 });
-            }
+            })
         });
-        app.post("/api/user/profile", (res, _req) => {
-            res.writeHeader("Content-Type", "application/json");
-            res.end(JSON.stringify(this.getUserProfile()));
-        });
-        app.post("/api/find_game", (res) => {
-            readPostedJSON(res, (_body: {version:number}) => {
+        app.get("/api/find_game",(res,req)=>{
+            rateLimitMiddleware(res,req,()=>{
                 const response = this.findGame();
                 cors(res)
-                res.writeHeader("Content-Type", "application/json");
                 res.end(JSON.stringify(response));
-            }, () => {
-                this.logger.warn("/api/find_game: Error retrieving body");
-            });
-        });
-        app.get("/api/find_game",(res)=>{
-            const response = this.findGame();
-            cors(res)
-            res.end(JSON.stringify(response));
+            })
         })
 
         const This = this;
@@ -130,25 +165,27 @@ class NodeServer extends AbstractServer {
             * Upgrade the connection to WebSocket.
             */
             upgrade(res, req, context) {
-                /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-                res.onAborted((): void => { });
+                rateLimitMiddleware(res,req,()=>{
+                    /* eslint-disable-next-line @typescript-eslint/no-empty-function */
+                    res.onAborted((): void => { });
 
-                const searchParams = new URLSearchParams(req.getQuery());
-                const gameID = This.getGameId(searchParams);
+                    const searchParams = new URLSearchParams(req.getQuery());
+                    const gameID = This.getGameId(searchParams);
 
-                if (gameID !== false) {
-                    res.upgrade(
-                        {
-                            gameID
-                        },
-                        req.getHeader("sec-websocket-key"),
-                        req.getHeader("sec-websocket-protocol"),
-                        req.getHeader("sec-websocket-extensions"),
-                        context
-                    );
-                } else {
-                    forbidden(res);
-                }
+                    if (gameID !== false) {
+                        res.upgrade(
+                            {
+                                gameID
+                            },
+                            req.getHeader("sec-websocket-key"),
+                            req.getHeader("sec-websocket-protocol"),
+                            req.getHeader("sec-websocket-extensions"),
+                            context
+                        );
+                    } else {
+                        forbidden(res);
+                    }
+                })
             },
 
             /**
@@ -183,8 +220,9 @@ class NodeServer extends AbstractServer {
             }
 
         });
-
-        app.listen(Config.host, Config.port, (): void => {
+    }
+    run(){
+        this.app.listen(Config.host, Config.port, (): void => {
             this.init();
 
             const timer = new NanoTimer();
@@ -192,6 +230,24 @@ class NodeServer extends AbstractServer {
             timer.setInterval(() => { this.tick(); }, "", `${1000 / Config.tps}m`);
         });
     }
+    stop(){
+        this.app.close()
+    }
 }
-
-new NodeServer();
+let server:NodeServer
+function run(){
+    server=new NodeServer();
+    try{
+        server.run()
+    }catch(e){
+        console.log(e);
+        server.stop()
+        setTimeout(run,1000)
+    }
+}
+if(Config.security&&Config.security.autoReload){
+    run()
+}else{
+    server=new NodeServer()
+    server.run()
+}

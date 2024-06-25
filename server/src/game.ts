@@ -107,54 +107,57 @@ export class Game {
         },(this.map.mapDef.gameMode.joinTime??this.config.joinTime)*1000)
     }
 
-    update(): void {
-        const now = Date.now();
-        if (!this.now) this.now = now;
-        const dt = (now - this.now) / 1000;
-        this.now = now;
+    update(): Promise<void> {
+        return new Promise<void>((resolve, _reject) => {
+            const now = Date.now();
+            if (!this.now) this.now = now;
+            const dt = (now - this.now) / 1000;
+            this.now = now;
 
-        //
-        // Update modules
-        //
-        this.gas.update(dt);
-        this.bulletBarn.update(dt);
-        this.lootBarn.update(dt);
-        this.projectileBarn.update(dt);
-        this.deadBodyBarn.update(dt);
-        this.playerBarn.update(dt);
-        this.explosionBarn.update();
+            //
+            // Update modules
+            //
+            this.gas.update(dt);
+            this.bulletBarn.update(dt);
+            this.lootBarn.update(dt);
+            this.projectileBarn.update(dt);
+            this.deadBodyBarn.update(dt);
+            this.playerBarn.update(dt);
+            this.explosionBarn.update();
 
-        // second update:
-        // serialize objects and send msgs
-        this.objectRegister.serializeObjs();
-        this.playerBarn.sendMsgs();
+            // second update:
+            // serialize objects and send msgs
+            this.objectRegister.serializeObjs();
+            this.playerBarn.sendMsgs();
 
-        //
-        // reset stuff
-        //
-        this.playerBarn.flush();
-        this.bulletBarn.flush();
-        this.objectRegister.flush();
-        this.explosionBarn.flush();
-        this.gas.flush();
-        this.msgsToSend.length = 0;
+            //
+            // reset stuff
+            //
+            this.playerBarn.flush();
+            this.bulletBarn.flush();
+            this.objectRegister.flush();
+            this.explosionBarn.flush();
+            this.gas.flush();
+            this.msgsToSend.length = 0;
 
-        if (this.started && this.aliveCount <= 1 && !this.over) {
-            this.initGameOver();
-        }
+            if (this.started && this.aliveCount <= 1 && !this.over) {
+                this.initGameOver();
+            }
 
-        // Record performance and start the next tick
-        // THIS TICK COUNTER IS WORKING CORRECTLY!
-        // It measures the time it takes to calculate a tick, not the time between ticks.
-        const tickTime = Date.now() - this.now;
-        this.tickTimes.push(tickTime);
+            // Record performance and start the next tick
+            // THIS TICK COUNTER IS WORKING CORRECTLY!
+            // It measures the time it takes to calculate a tick, not the time between ticks.
+            const tickTime = Date.now() - this.now;
+            this.tickTimes.push(tickTime);
 
-        if (this.tickTimes.length >= 200) {
-            const mspt = this.tickTimes.reduce((a, b) => a + b) / this.tickTimes.length;
+            if (this.tickTimes.length >= 200) {
+                const mspt = this.tickTimes.reduce((a, b) => a + b) / this.tickTimes.length;
 
-            this.logger.log(`Avg ms/tick: ${mspt.toFixed(2)} | Load: ${((mspt / (1000 / this.config.tps)) * 100).toFixed(1)}%`);
-            this.tickTimes = [];
-        }
+                this.logger.log(`Avg ms/tick: ${mspt.toFixed(2)} | Load: ${((mspt / (1000 / this.config.tps)) * 100).toFixed(1)}%`);
+                this.tickTimes = [];
+            }
+            resolve()
+        })
     }
 
     handleMsg(buff: ArrayBuffer | Buffer, socketData: PlayerContainer): void {
@@ -222,7 +225,7 @@ export class Game {
         }
         setTimeout(() => {
             this.stop();
-        }, 750);
+        }, 2000);
     }
 
     stop(): void {

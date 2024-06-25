@@ -2,6 +2,7 @@ import $ from "jquery";
 import { api } from "./api";
 import { device } from "./device";
 import { MapDefs } from "../../shared/defs/mapDefs";
+import { region_name, regions, streamers, youtubers } from "./config";
 
 export class SiteInfo {
     /**
@@ -17,14 +18,16 @@ export class SiteInfo {
     }
 
     load() {
-        const locale = this.localization.getLocale();
-        const siteInfoUrl = api.resolveUrl(`/api/site_info?language=${locale}`);
+        for(const r of Object.keys(regions)){
+            const locale = this.localization.getLocale();
+            const siteInfoUrl = api.resolveUrl("http"+region_name(r)+`/api/site_info?language=${locale}`);
 
-        $.ajax(siteInfoUrl).done((data, status) => {
-            this.info = data || {};
-            this.loaded = true;
-            this.updatePageFromInfo();
-        });
+            $.ajax(siteInfoUrl).done((data, _status) => {
+                this.info[r] = data || {};
+                this.loaded = true;
+                this.updatePageFromInfo();
+            });
+        }
     }
 
     getGameModeStyles() {
@@ -34,7 +37,7 @@ export class SiteInfo {
             4: "squad"
         };
         const availableModes = [];
-        const modes = this.info.modes || [];
+        const modes = this.info[this.config.get("region")].modes || [];
         for (
             let i = 0;
             i < modes.length;
@@ -91,29 +94,25 @@ export class SiteInfo {
             }
 
             // Region pops
-            const pops = this.info.pops;
-            if (pops) {
-                const regions = Object.keys(pops);
-                for (
-                    let i = 0;
-                    i < regions.length;
-                    i++
-                ) {
-                    const region = regions[i];
-                    const count = pops[region];
+            for(const region of Object.keys(this.info)){
+                if (this.info[region]&&this.info[region].players!==undefined) {
+                    const count = this.info[region].players;
                     const sel = $("#server-opts").children(
                         `option[value="${region}"]`
-                    );
-                    sel.text(`${sel.data("label")} [${count}]`);
+                    ).get()[0];
+                    const text=(`${regions[region].name} [${count} players]`)
+                    sel.innerHTML=text;
+                    sel.label=text;
                 }
             }
+            
             let hasTwitchStreamers = false;
             const featuredStreamersElem = $("#featured-streamers");
             const streamerList = $(".streamer-list");
-            if (!device.mobile && this.info.twitch) {
+            if (!device.mobile) {
                 streamerList.empty();
-                for (let i = 0; i < this.info.twitch.length; i++) {
-                    const streamer = this.info.twitch[i];
+                for (let i = 0; i < streamers.length; i++) {
+                    const streamer = streamers[i];
                     const template = $(
                         "#featured-streamer-template"
                     ).clone();
@@ -139,11 +138,11 @@ export class SiteInfo {
             featuredStreamersElem.css("visibility", hasTwitchStreamers ? "visible" : "hidden");
 
             const featuredYoutuberElem = $("#featured-youtuber");
-            const displayYoutuber = this.info.youtube;
+            const displayYoutuber = Object.keys(youtubers)[Math.floor(Math.random()*Object.keys(youtubers).length)];
             if (displayYoutuber) {
                 $(".btn-youtuber")
-                    .attr("href", this.info.youtube.link)
-                    .html(this.info.youtube.name);
+                    .attr("href", youtubers[displayYoutuber])
+                    .html(displayYoutuber);
             }
             featuredYoutuberElem.css("display", displayYoutuber ? "block" : "none");
         }

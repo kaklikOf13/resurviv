@@ -19,8 +19,17 @@ export const Config = {
     maxGames: 3,
     joinTime: 60,
 
-    tps: 30
+    tps: 30,
 
+    country:"US",
+
+    security:{
+        antiddos:{
+            limit_request:25,
+            window_limit_window:50*1000
+        },
+        autoReload:true
+    }
 } satisfies ConfigType as ConfigType;
 
 export interface ConfigType {
@@ -66,4 +75,17 @@ export interface ConfigType {
      * Join Time
      */
     readonly joinTime:number
+    /**
+     * Country Region
+     */
+    readonly country:string,
+    readonly security?:{
+        readonly antiddos?:{
+            readonly window_limit_window:number
+            readonly limit_request:number
+        }
+        //Reload If After Internal Error
+        readonly autoReload?:boolean
+    }
+
 }
