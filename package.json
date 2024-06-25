@@ -3,6 +3,12 @@
   "version": "0.0.1",
   "description": "Open Source Surviv.io Server",
   "scripts": {
+    "build:server":"cd server && pnpm build",
+    "build:client": "cd client && pnpm build",
+    "build":"pnpm -r build",
+    "start:server":"cd server && pnpm start",
+    "start:client": "cd client && pnpm start",
+    "start":"pnpm -r start",
     "dev:server": "cd server && pnpm dev",
     "dev:client": "cd client && pnpm dev",
     "dev":"pnpm -r dev",

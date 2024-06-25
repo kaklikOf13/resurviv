@@ -3,7 +3,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite dev",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "cd dist"
   },
   "dependencies": {
     "@taufik-nurrohman/color-picker": "1.4.2",

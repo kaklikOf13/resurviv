@@ -11,8 +11,10 @@
     "lint:ci": "eslint . --ext .ts,.js"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.14.5",
     "bit-buffer": "^0.2.5",
+    "jsonwebtoken": "^9.0.2",
     "nanotimer": "^0.3.15",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.1.4",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/nanotimer": "^0.3.2"
   }
 }

@@ -9,6 +9,7 @@ import {
 } from "uWebSockets.js";
 import NanoTimer from "nanotimer";
 import { URLSearchParams } from "node:url";
+import jwt from 'jsonwebtoken';
 import { AbstractServer, type PlayerContainer } from "./abstractServer";
 
 /**
@@ -105,7 +106,31 @@ function rateLimitMiddleware(res: HttpResponse, req: HttpRequest, next: () => vo
       }
     }
     next();
-  }
+}
+function authenticate(password: string): string | null {
+    let tpassword="123"
+    if(Config.security&&Config.security.terminalPassword){
+        tpassword=Config.security.terminalPassword
+    }
+    let key="key"
+    if(Config.security&&Config.security.adminCryptKey){
+        key=Config.security.adminCryptKey
+    }
+    if (password==tpassword) {
+      const token = jwt.sign({}, key, { expiresIn: '1h' });
+      return token;
+    }
+    return null;
+}
+function authMiddleware(res: HttpResponse, req: HttpRequest, next: () => void) {
+    // Simulação de autenticação via headers ou cookies (melhorar para produção)
+    const token = req.getHeader('Authorization');
+    if (token === 'valid-token') { // Simplificado, use tokens JWT na prática
+        return token;
+    } else {
+        res.writeStatus('401 Unauthorized').end('Access denied');
+    }
+}
 class NodeServer extends AbstractServer {
     app: TemplatedApp;
 
@@ -154,6 +179,29 @@ class NodeServer extends AbstractServer {
                 const response = this.findGame();
                 cors(res)
                 res.end(JSON.stringify(response));
+            })
+        })
+        app.post('/api/admin/login', (res, req) => {
+            rateLimitMiddleware(res,req,()=>{
+                let buffer = '';
+                res.onData((chunk, isLast) => {
+                    buffer += Buffer.from(chunk).toString();
+                    if (isLast) {
+                        const { password } = JSON.parse(buffer);
+                        if (authenticate(password)) {
+                            res.writeStatus('200 OK').end('Login successful');
+                        } else {
+                            res.writeStatus('401 Unauthorized').end('Invalid credentials');
+                        }
+                    }
+                });
+            })
+        })
+        app.post('api/admin/login',(res,req)=>{
+            authMiddleware(res,req,()=>{
+                readPostedJSON(res,(js)=>{
+                    console.log(js)
+                },()=>{})
             })
         })
 
@@ -218,7 +266,6 @@ class NodeServer extends AbstractServer {
             close(socket: WebSocket<PlayerContainer>) {
                 This.onClose(socket.getUserData());
             }
-
         });
     }
     run(){

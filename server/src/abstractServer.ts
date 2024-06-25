@@ -26,7 +26,6 @@ export abstract class AbstractServer {
 
         setInterval(() => {
             const memoryUsage = process.memoryUsage().rss;
-
             const perfString = `Memory usage: ${Math.round(memoryUsage / 1024 / 1024 * 100) / 100} MB`;
 
             this.logger.log(perfString);
@@ -38,9 +37,9 @@ export abstract class AbstractServer {
             if (game) game.update();
         }
     }
-    execute(cmd:string): void {
-        for (const game of Object.values(this.games)) {
-            if (game) game.console.execute(cmd);
+    execute(cmd:string,gameID:number): void {
+        if(this.games[gameID]){
+            this.games[gameID]!.console.execute(cmd)
         }
     }
 

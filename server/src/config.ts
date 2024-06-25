@@ -12,7 +12,7 @@ export const Config = {
     host: "0.0.0.0",
     port: 8000,
 
-    map: "deathmatch",
+    map: "main",
 
     spawn: { mode: SpawnMode.Random },
 
@@ -28,7 +28,9 @@ export const Config = {
             limit_request:25,
             window_limit_window:50*1000
         },
-        autoReload:true
+        autoReload:true,
+        adminCryptKey:"admin",
+        terminalPassword:"123"
     }
 } satisfies ConfigType as ConfigType;
 
@@ -86,6 +88,10 @@ export interface ConfigType {
         }
         //Reload If After Internal Error
         readonly autoReload?:boolean
+        //Security Key
+        readonly adminCryptKey?:string
+        //Password To Terminal
+        readonly terminalPassword?:string
     }
 
 }
