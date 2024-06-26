@@ -282,15 +282,20 @@ class NodeServer extends AbstractServer {
     }
 }
 let server:NodeServer
-function run(){
-    server=new NodeServer();
-    try{
-        server.run()
-    }catch(e){
-        console.log(e);
-        server.stop()
-        setTimeout(run,1000)
-    }
+function run():Promise<void>{
+    return new Promise<void>((resolve, reject) => {
+        server=new NodeServer();
+        try{
+            server.run()
+        }catch(e){
+            console.log(e);
+            server.stop()
+            setTimeout(()=>{
+                resolve()
+                run()
+            },1000)
+        }  
+    })
 }
 if(Config.security&&Config.security.autoReload){
     run()
