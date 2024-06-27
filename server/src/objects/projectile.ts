@@ -39,7 +39,7 @@ export class ProjectileBarn {
         const proj = new Projectile(this.game, type, pos, layer);
         proj.posZ = posZ;
         proj.playerId = playerId;
-        proj.vel = vel;
+        proj.vel = v2.mul(vel,this.game.config.tps);
         proj.fuseTime = fuseTime;
         proj.damageType = damageType;
         proj.dir = v2.normalize(vel);
@@ -83,7 +83,7 @@ export class Projectile extends BaseGameObject {
         //
         // Velocity
         //
-        this.pos = v2.add(this.pos, v2.mul(this.vel, dt));
+        this.pos = v2.add(this.pos, this.vel);
         this.vel = v2.mul(this.vel, 0.96);
 
         const def = GameObjectDefs[this.type] as ThrowableDef;
@@ -110,52 +110,61 @@ export class Projectile extends BaseGameObject {
         const originalLayer = this.layer;
 
         for (const obj of objs) {
-            if (obj.__type === ObjectType.Structure) {
-                for (const stair of obj.stairs) {
-                    if (Structure.checkStairs(this.pos, stair, this)) {
-                        onStair = true;
-                        break;
-                    }
-                }
-                if (!onStair) {
-                    if (this.layer === 2) this.layer = 0;
-                    if (this.layer === 3) this.layer = 1;
-                }
-                if (this.layer !== originalLayer) {
-                    this.setDirty();
-                }
-            } else if (obj.__type === ObjectType.Obstacle &&
-                util.sameLayer(this.layer, obj.layer) &&
-                !obj.dead &&
-                obj.collidable
-            ) {
-                const intersection = collider.intersectCircle(obj.collider, this.pos, rad);
-                if (intersection) {
-                    // break obstacle if its a window
-                    // resolve the collision otherwise
-                    if (obj.isWindow) {
-                        obj.damage({
-                            amount: 1,
-                            damageType: this.damageType,
-                            gameSourceType: this.type,
-                            mapSourceType: "",
-                            dir: this.vel
-                        });
-                    } else {
-                        if (obj.height >= height && obj.__id !== this.obstacleBellowId) {
-                            this.pos = v2.add(this.pos, v2.mul(intersection.dir, intersection.pen));
-
-                            if (def.explodeOnImpact) {
-                                this.explode();
-                            }
-                        } else {
-                            this.obstacleBellowId = obj.__id;
+            switch(obj.__type){
+                case ObjectType.Structure:{
+                    for (const stair of obj.stairs) {
+                        if (Structure.checkStairs(this.pos, stair, this)) {
+                            onStair = true;
+                            break;
                         }
                     }
+                    if (!onStair) {
+                        if (this.layer === 2) this.layer = 0;
+                        if (this.layer === 3) this.layer = 1;
+                    }
+                    if (this.layer !== originalLayer) {
+                        this.setDirty();
+                    }
+                    break
                 }
-            } else if (obj.__type === ObjectType.Player && def.playerCollision && obj.__id !== this.playerId) {
-                if (coldet.testCircleCircle(this.pos, rad, obj.pos, obj.rad)) {
-                    this.explode();
+                case ObjectType.Obstacle:{
+                    if(util.sameLayer(this.layer, obj.layer) &&
+                    !obj.dead &&
+                    obj.collidable){
+                        const intersection = collider.intersectCircle(obj.collider, this.pos, rad);
+                        if (intersection) {
+                            // break obstacle if its a window
+                            // resolve the collision otherwise
+                            if (obj.isWindow) {
+                                obj.damage({
+                                    amount: 1,
+                                    damageType: this.damageType,
+                                    gameSourceType: this.type,
+                                    mapSourceType: "",
+                                    dir: this.vel
+                                });
+                            } else {
+                                if (obj.height >= height && obj.__id !== this.obstacleBellowId) {
+                                    this.pos = v2.add(this.pos, v2.mul(intersection.dir, intersection.pen));
+
+                                    if (def.explodeOnImpact) {
+                                        this.explode();
+                                    }
+                                } else {
+                                    this.obstacleBellowId = obj.__id;
+                                }
+                            }
+                        }
+                    }
+                    break
+                }
+                case ObjectType.Player:{
+                    if (def.playerCollision && obj.__id !== this.playerId) {
+                        if (coldet.testCircleCircle(this.pos, rad, obj.pos, obj.rad)) {
+                            this.explode();
+                        }
+                    }
+                    break
                 }
             }
         }
