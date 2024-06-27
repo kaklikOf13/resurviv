@@ -40,17 +40,46 @@ export class ExplosionBarn {
                 for (const obj of objects) {
                     if (!util.sameLayer(obj.layer, explosion.layer)) continue;
                     if ((obj as { dead?: boolean }).dead) continue;
-                    if (obj.__type === ObjectType.Obstacle && obj.height <= 0.25) continue;
-                    if (obj.__type === ObjectType.Player || obj.__type === ObjectType.Obstacle || obj.__type === ObjectType.Loot) {
-                        // check if the object hitbox collides with a line from the explosion center to the explosion max distance
-                        const intersection = collider.intersectSegment(obj.collider, explosion.pos, lineEnd);
-                        if (intersection) {
-                            lineCollisions.push({
-                                pos: intersection.point,
-                                obj,
-                                distance: v2.distance(explosion.pos, intersection.point),
-                                dir: v2.neg(v2.normalize(v2.sub(explosion.pos, obj.pos)))
-                            });
+                    switch(obj.__type){
+                        case ObjectType.Player:{
+                            // check if the object hitbox collides with a line from the explosion center to the explosion max distance
+                            const intersection = collider.intersectSegment(obj.collider, explosion.pos, lineEnd);
+                            if (intersection) {
+                                lineCollisions.push({
+                                    pos: intersection.point,
+                                    obj,
+                                    distance: v2.distance(explosion.pos, intersection.point),
+                                    dir: v2.neg(v2.normalize(v2.sub(explosion.pos, obj.pos)))
+                                });
+                            }
+                            break
+                        }
+                        case ObjectType.Obstacle:{
+                            if (obj.height <= 0.25) break;
+                            // check if the object hitbox collides with a line from the explosion center to the explosion max distance
+                            const intersection = collider.intersectSegment(obj.collider, explosion.pos, lineEnd);
+                            if (intersection) {
+                                lineCollisions.push({
+                                    pos: intersection.point,
+                                    obj,
+                                    distance: v2.distance(explosion.pos, intersection.point),
+                                    dir: v2.neg(v2.normalize(v2.sub(explosion.pos, obj.pos)))
+                                });
+                            }
+                            break
+                        }
+                        case ObjectType.Loot:{
+                            // check if the object hitbox collides with a line from the explosion center to the explosion max distance
+                            const intersection = collider.intersectSegment(obj.collider, explosion.pos, lineEnd);
+                            if (intersection) {
+                                lineCollisions.push({
+                                    pos: intersection.point,
+                                    obj,
+                                    distance: v2.distance(explosion.pos, intersection.point),
+                                    dir: v2.neg(v2.normalize(v2.sub(explosion.pos, obj.pos)))
+                                });
+                            }
+                            break
                         }
                     }
                 }
