@@ -106,9 +106,9 @@ export const Deathmatch: MapDef = {
     lootTable:Main.lootTable,
     mapGen: {
         map: {
-            baseWidth: 200,
-            baseHeight: 200,
-            scale: { small: 1.2, large: 1.3 },
+            baseWidth: 230,
+            baseHeight: 230,
+            scale: { small: 1.2, large: 1.4 },
             extension: 112,
             shoreInset: 48,
             grassInset: 18,
@@ -170,22 +170,18 @@ export const Deathmatch: MapDef = {
         },
         densitySpawns: [
             {
-                stone_01: 10,
-                barrel_01: 10,
-                silo_01: 0,
-                crate_01: 10,
-                crate_02: 2,
-                crate_03: 4,
-                bush_01: 15,
-                cache_06: 1,
-                tree_01: 10,
-                hedgehog_01: 1,
-                container_01: 0,
-                container_02: 0,
-                container_03: 0,
-                container_04: 0,
-                shack_01: 0,
-                loot_tier_1: 7,
+                stone_01: {max:30,min:25},
+                barrel_01: {max:20,min:10},
+                silo_01: {max:2,min:1},
+                crate_01: {max:30,min:25},
+                crate_02: 3,
+                crate_03: 6,
+                bush_01: 20,
+                cache_06: 3,
+                tree_01: {max:33,min:25},
+                hedgehog_01: 2,
+                shack_01: 1,
+                loot_tier_1: {max:10,min:5},
                 loot_tier_beach: 2
             }
         ],
@@ -203,7 +199,6 @@ export const Deathmatch: MapDef = {
                 cache_07: 1,
                 bunker_structure_01: 1,
                 bunker_structure_03: 1,
-                warehouse_complex_01: 0,
                 chest_01: 2,
                 mil_crate_02: { odds: 0.25 },
                 tree_02: 3,
@@ -218,9 +213,22 @@ export const Deathmatch: MapDef = {
                     "police_01",
                     "greenhouse_01",
                     "bank_01",
+                    "warehouse_complex_01"
                 ],
                 choose: 3
-            }
+            },
+            {
+                spawns:[
+                    "container_01",
+                    "container_02",
+                    "container_03",
+                    "container_04",
+                    "container_05",
+                    "container_06"
+                ],
+                choose:{min:3,max:5},
+                repeat:true
+            },
         ],
         spawnReplacements: [{}],
         importantSpawns: []
