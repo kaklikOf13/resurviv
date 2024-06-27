@@ -615,12 +615,12 @@ export class Player extends BaseGameObject {
         }
 
         if (this.boost > 0) {
-            this.boost -= 0.375 * dt;
+            this.boost -= GameConfig.player.boostDecay * dt;
         }
-        if (this.boost > 0 && this.boost <= 25) this.health += 1 * dt;
-        else if (this.boost > 25 && this.boost <= 50) this.health += 3.75 * dt;
-        else if (this.boost > 50 && this.boost <= 87.5) this.health += 4.75 * dt;
-        else if (this.boost > 87.5 && this.boost <= 100) this.health += 5 * dt;
+        if (this.boost > 0 && this.boost <= 25) this.health += GameConfig.player.boostBreakpoints[0] * dt;
+        else if (this.boost > 25 && this.boost <= 50) this.health += GameConfig.player.boostBreakpoints[1] * dt;
+        else if (this.boost > 50 && this.boost <= 87.5) this.health += GameConfig.player.boostBreakpoints[2] * dt;
+        else if (this.boost > 87.5 && this.boost <= 100) this.health += GameConfig.player.boostBreakpoints[3] * dt;
 
         if (this.game.gas.doDamage && this.game.gas.isInGas(this.pos)) {
             this.damage({
