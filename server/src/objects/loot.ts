@@ -70,6 +70,11 @@ export class LootBarn {
     private _addLoot(loot: Loot) {
         this.game.objectRegister.register(loot);
         this.loots.push(loot);
+        if(this.game.map&&this.game.map.mapDef.gameConfig&&this.game.map.mapDef.gameConfig.lootDespawn!==undefined){
+            setTimeout(()=>{
+                loot.destroy()
+            },this.game.map.mapDef.gameConfig.lootDespawn*1000)
+        }
     }
 
     getLootTable(tier: string): Array<{ name: string, count: number }> {
@@ -201,12 +206,10 @@ export class Loot extends BaseGameObject {
                 if (res) {
                     this.pos = v2.add(this.pos, v2.mul(res.dir, res.pen));
                 }
-            }
-
-            if (obj instanceof Loot && obj !== this && coldet.test(this.collider, obj.collider)) {
+            } else if (obj instanceof Loot && obj !== this && coldet.test(this.collider, obj.collider)) {
                 const res = coldet.intersectCircleCircle(this.pos, this.collider.rad, obj.pos, obj.collider.rad);
                 if (res) {
-                    this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.2));
+                    this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.35));
                     const norm = res.dir;
                     const vRelativeVelocity = v2.create(this.vel.x - obj.vel.x, this.vel.y - obj.vel.y);
 

@@ -12,7 +12,7 @@ export const Config = {
     host: "0.0.0.0",
     port: 8000,
 
-    map: "main",
+    map: "deathmatch",
 
     spawn: { mode: SpawnMode.Random },
 

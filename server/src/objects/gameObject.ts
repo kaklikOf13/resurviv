@@ -199,7 +199,6 @@ export abstract class BaseGameObject {
     destroyed = false;
     destroy() {
         if (this.destroyed) {
-            console.warn("Tried to destroy object twice");
             return;
         }
         this.game.grid.remove(this as unknown as GameObject);

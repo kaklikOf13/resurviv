@@ -93,6 +93,10 @@ export interface MapDef {
         selectableGuns?:boolean
         spawnInventory?:Record<string,number>
         spawnEquips?:Record<string,string>
+        spawnStatus?:{
+            health?:number,
+            boost?:number
+        }
     }
     gameConfig: {
         planes: {
@@ -110,7 +114,8 @@ export interface MapDef {
         bagSizes: Record<string, number>
         bleedDamage: number
         bleedDamageMult: number
-        gas?:GasDef
+        gas?:GasDef,
+        lootDespawn?:number
     }
     lootTable: Record<string, Array<{
         name: string

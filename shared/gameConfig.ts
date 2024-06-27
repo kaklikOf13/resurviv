@@ -298,17 +298,17 @@ export const GameConfig = {
         "15xscope": [1, 1, 1, 1]
     } as Record<string, number[]>,
     lootRadius: {
-        outfit: 1,
+        outfit: .9,
         melee: 1.25,
         gun: 1.25,
         throwable: 1,
-        ammo: 1.2,
-        heal: 1,
-        boost: 1,
-        backpack: 1,
-        helmet: 1,
-        chest: 1,
-        scope: 1,
+        ammo: .8,
+        heal: .9,
+        boost: .9,
+        backpack: .9,
+        helmet: .9,
+        chest: .9,
+        scope: .9,
         perk: 1.25,
         xp: 1
     } as Record<string, number>

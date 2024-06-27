@@ -49,7 +49,7 @@ export const Deathmatch: MapDef = {
         maxPlayers: 15,
         killLeaderEnabled: true,
         selectableGuns:true,
-        joinTime:400,
+        joinTime:250,
         spawnInventory:{
             "2xscope": 1,
             "4xscope": 1,
@@ -71,6 +71,9 @@ export const Deathmatch: MapDef = {
             "backpack":"backpack03",
             "chest":"chest03",
             "helmet":"helmet03"
+        },
+        spawnStatus:{
+            boost:100,
         }
     },
     gameConfig: {
@@ -84,9 +87,9 @@ export const Deathmatch: MapDef = {
         bleedDamage: 2,
         bleedDamageMult: 1,
         gas:{
-            initWaitTime: 400,
-            waitTimeDecay: 400,
-            waitTimeMin: 40,
+            initWaitTime: 240,
+            waitTimeDecay: 240,
+            waitTimeMin: 30,
             initGasTime: 30,
             gasTimeDecay: 20,
             gasTimeMin: 20,
@@ -95,9 +98,10 @@ export const Deathmatch: MapDef = {
             widthMin: 60,
             damageTickRate: 2,
             damage: [
-                10, 10, 10, 10
+                10, 10, 10, 20,20,20
             ]
-        }
+        },
+        lootDespawn:10
     },
     lootTable:Main.lootTable,
     mapGen: {
@@ -212,8 +216,10 @@ export const Deathmatch: MapDef = {
                     "mansion_structure_01",
                     "club_complex_01",
                     "police_01",
+                    "greenhouse_01",
+                    "bank_01",
                 ],
-                choose: 2
+                choose: 3
             }
         ],
         spawnReplacements: [{}],

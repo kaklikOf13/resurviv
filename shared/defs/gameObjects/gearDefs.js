@@ -8,7 +8,7 @@ const BaseDefs = {
         name: "9mm",
         type: "ammo",
         minStackSize: 15,
-        killSpawnAmmout:100,
+        killSpawnAmmout:60,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -23,7 +23,7 @@ const BaseDefs = {
         name: "7.62mm",
         type: "ammo",
         minStackSize: 10,
-        killSpawnAmmout:90,
+        killSpawnAmmout:60,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -38,7 +38,7 @@ const BaseDefs = {
         name: "5.56mm",
         type: "ammo",
         minStackSize: 10,
-        killSpawnAmmout:90,
+        killSpawnAmmout:60,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -53,7 +53,7 @@ const BaseDefs = {
         name: "12 gauge",
         type: "ammo",
         minStackSize: 5,
-        killSpawnAmmout:60,
+        killSpawnAmmout:30,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -69,7 +69,7 @@ const BaseDefs = {
         type: "ammo",
         special: true,
         minStackSize: 10,
-        killSpawnAmmout:100,
+        killSpawnAmmout:60,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -85,7 +85,7 @@ const BaseDefs = {
         type: "ammo",
         special: true,
         minStackSize: 10,
-        killSpawnAmmout:50,
+        killSpawnAmmout:20,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -116,7 +116,7 @@ const BaseDefs = {
         type: "ammo",
         special: true,
         minStackSize: 10,
-        killSpawnAmmout:100,
+        killSpawnAmmout:60,
         lootImg: {
             sprite: "loot-ammo-box.img",
             scale: 0.2,
@@ -149,6 +149,7 @@ const BaseDefs = {
         useTime: 3,
         heal: 15,
         maxHeal: 100,
+        minStackSize:5,
         lootImg: {
             sprite: "loot-medical-bandage.img",
             tint: 16777215,
@@ -194,6 +195,7 @@ const BaseDefs = {
         type: "boost",
         useTime: 3,
         boost: 25,
+        minStackSize:2,
         lootImg: {
             sprite: "loot-medical-soda.img",
             tint: 16777215,

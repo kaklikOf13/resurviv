@@ -568,10 +568,17 @@ export class Player extends BaseGameObject {
             this.inventory[item] = 0;
         }
         this.inventory["1xscope"] = 1;
-        this.inventory[this.scope] = 1;
         for(const i of Object.keys(inventory_base)){
             this.inventory[i]=inventory_base[i]
+            if(i.includes("scope")){
+                this.scope=i
+            }
         }
+        if(this.game.map.mapDef.gameMode.spawnStatus){
+            this.health=this.game.map.mapDef.gameMode.spawnStatus["health"]??this.health
+            this.boost=this.game.map.mapDef.gameMode.spawnStatus["boost"]??this.boost
+        }
+        this.inventory[this.scope] = 1;
         this.helmet=default_equips["helmet"]??""
         this.chest=default_equips["chest"]??""
         this.backpack=default_equips["backpack"]??"backpack00"
@@ -1077,7 +1084,7 @@ export class Player extends BaseGameObject {
         //
         // drop loot
         //
-        const dropRadius=2.5
+        const dropRadius=1.3
         this.dropAllItens(dropRadius)
         if (this.outfit) {
             const def = GameObjectDefs[this.outfit] as OutfitDef;
