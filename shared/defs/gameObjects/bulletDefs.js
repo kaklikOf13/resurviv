@@ -138,11 +138,11 @@ export const BaseDefs = {
     },
     bullet_awc: {
         type: "bullet",
-        damage: 180,
+        damage: 144,
         obstacleDamage: 1.5,
         falloff: 0.94,
         distance: 300,
-        speed: 136,
+        speed: 163.2,
         variance: 0,
         shrapnel: false,
         suppressed: true,
