@@ -125,7 +125,7 @@ export const GameConfig = {
         minActiveTime: 10,
         boostMoveSpeed: 1.85,
         boostBreakpoints: [1, 2, 2.5, 3],
-        boostDecay:.9,
+        boostDecay:.5,
         scopeDelay: 0.25,
         baseSwitchDelay: 0.25,
         freeSwitchCooldown: 1,
