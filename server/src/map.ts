@@ -456,21 +456,25 @@ export class GameMap {
             }
         }
 
-        const randomSpawns = mapDef.mapGen.randomSpawns[0];
-
-        if (randomSpawns) {
-            const spawns = [...randomSpawns.spawns];
-            for (let i = 0; i < randomSpawns.choose; i++) {
-                const idx = util.randomInt(0, spawns.length - 1);
-                const spawn = spawns.splice(idx, 1)[0];
-                this.genFromMapDef(spawn, 1);
+        for(const randomSpawns of mapDef.mapGen.randomSpawns){
+            if (randomSpawns) {
+                const spawns = [...randomSpawns.spawns];
+                const choose=util.randomValInt(randomSpawns.choose)
+                for (let i = 0; i < choose; i++) {
+                    const idx = util.randomInt(0, spawns.length - 1);
+                    const spawn=spawns[idx]
+                    if(!randomSpawns.repeat){
+                        spawns.splice(idx,1);
+                    }
+                    this.genFromMapDef(spawn, 1);
+                }
             }
         }
 
         const densitySpawns = mapDef.mapGen.densitySpawns[0];
         for (const type in densitySpawns) {
             // TODO: figure out density spawn amount algorithm
-            const count = Math.round(densitySpawns[type] * 1.35);
+            const count = Math.round(util.randomValInt(densitySpawns[type]) * 1.35);
             this.genFromMapDef(type, count);
         }
 

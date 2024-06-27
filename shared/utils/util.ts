@@ -10,7 +10,7 @@ export function assert(condition: boolean | undefined, msg?: string) {
         throw new Error(msg ?? "Assertion failed");
     }
 }
-
+export type RandomVal=number|{max:number,min:number}
 export const util = {
     //
     // Game objects can belong to the following layers:
@@ -50,6 +50,12 @@ export const util = {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    randomVal(val:RandomVal):number{
+        return typeof val === "number" ? val as number : util.random(val.min,val.max)
+    },
+    randomValInt(val:RandomVal):number{
+        return Math.floor(typeof val === "number" ? val as number : util.random(val.min,val.max))
     },
 
     // Uniformly distributed random point within circle

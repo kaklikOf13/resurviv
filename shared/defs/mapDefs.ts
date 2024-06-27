@@ -18,6 +18,7 @@ import { WoodsSpring } from "./maps/woodsSpringDefs";
 import { WoodsSummer } from "./maps/woodsSummerDefs";
 import { type GameConfig } from "../gameConfig";
 import { GasDef } from "../../server/src/objects/gas";
+import { RandomVal } from "../utils/util";
 export const MapDefs = {
     main: Main,
     main_spring: MainSpring,
@@ -163,7 +164,7 @@ export interface MapDef {
             }>
             placeSpawns: string[]
         }
-        densitySpawns: Array<Record<string, number>>
+        densitySpawns: Array<Record<string, RandomVal>>
         fixedSpawns: Array<
         Record<string,
         number | { odds: number } | { small: number, large: number }
@@ -171,7 +172,8 @@ export interface MapDef {
         >
         randomSpawns: Array<{
             spawns: string[]
-            choose: number
+            choose: RandomVal
+            repeat?:boolean
         }>
         spawnReplacements: Array<Record<string, string>>
         importantSpawns: string[]
