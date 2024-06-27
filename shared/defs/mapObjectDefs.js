@@ -844,8 +844,8 @@ function createDepositBox(e) {
         obstacleType: "locker",
         scale: { createMin: 1, createMax: 1, destroy: 1 },
         collision: collider.createAabbExtents(
-            v2.create(0, 0.15),
-            v2.create(2.5, 1)
+            v2.create(0, -0.5),
+            v2.create(2.5, .5)
         ),
         height: 10,
         collidable: true,
