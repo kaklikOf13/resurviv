@@ -1048,7 +1048,7 @@ export class UiManager2 {
             }
         }
         if (patch.boost) {
-            const v = GameConfig.player.boostBreakpoints;
+            const v = [1, 1, 1.5, 0.5];
             let I = 0;
             for (let T = 0; T < v.length; T++) {
                 I += v[T];
