@@ -16,7 +16,7 @@ export const Config = {
 
     spawn: { mode: SpawnMode.Random },
 
-    maxGames: 3,
+    maxGames: 2,
     joinTime: 60,
 
     tps: 30,
@@ -24,11 +24,6 @@ export const Config = {
     country:"US",
 
     security:{
-        antiddos:{
-            limit_request:25,
-            window_limit_window:50*1000
-        },
-        autoReload:true,
         adminCryptKey:"admin",
         terminalPassword:"123"
     }
@@ -82,12 +77,6 @@ export interface ConfigType {
      */
     readonly country:string,
     readonly security?:{
-        readonly antiddos?:{
-            readonly window_limit_window:number
-            readonly limit_request:number
-        }
-        //Reload If After Internal Error
-        readonly autoReload?:boolean
         //Security Key
         readonly adminCryptKey?:string
         //Password To Terminal

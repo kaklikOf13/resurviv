@@ -689,15 +689,18 @@ export class Player extends BaseGameObject {
             objs = this.game.grid.intersectCollider(this.collider);
 
             for (const obj of objs) {
-                if (obj.__type === ObjectType.Obstacle &&
-                    obj.collidable &&
-                    util.sameLayer(obj.layer, this.layer) &&
-                    !obj.dead
-                ) {
-                    const collision = collider.intersectCircle(obj.collider, this.pos, this.rad);
-                    if (collision) {
-                        collided = true;
-                        this.pos = v2.add(this.pos, v2.mul(collision.dir, collision.pen + 0.001));
+                switch(obj.__type){
+                    case ObjectType.Obstacle:{
+                        if (obj.collidable &&
+                            util.sameLayer(obj.layer, this.layer) &&
+                            !obj.dead
+                        ) {
+                            const collision = collider.intersectCircle(obj.collider, this.pos, this.rad);
+                            if (collision) {
+                                collided = true;
+                                this.pos = v2.add(this.pos, v2.mul(collision.dir, collision.pen + 0.001));
+                            }
+                        }
                     }
                 }
             }

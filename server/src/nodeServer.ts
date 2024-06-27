@@ -281,25 +281,5 @@ class NodeServer extends AbstractServer {
         this.app.close()
     }
 }
-let server:NodeServer
-function run():Promise<void>{
-    return new Promise<void>((resolve, reject) => {
-        server=new NodeServer();
-        try{
-            server.run()
-        }catch(e){
-            console.log(e);
-            server.stop()
-            setTimeout(()=>{
-                resolve()
-                run()
-            },1000)
-        }  
-    })
-}
-if(Config.security&&Config.security.autoReload){
-    run()
-}else{
-    server=new NodeServer()
-    server.run()
-}
+const server=new NodeServer()
+server.run()

@@ -3,15 +3,15 @@
   "version": "0.0.1",
   "description": "Open Source Surviv.io Server",
   "scripts": {
-    "build:server":"cd server && pnpm build",
+    "build:server": "cd server && pnpm build",
     "build:client": "cd client && pnpm build",
-    "build":"pnpm -r build",
-    "start:server":"cd server && pnpm start",
+    "build": "pnpm -r build",
+    "start:server": "cd server && pnpm start",
     "start:client": "cd client && pnpm start",
-    "start":"pnpm -r start",
+    "start": "pnpm -r start",
     "dev:server": "cd server && pnpm dev",
     "dev:client": "cd client && pnpm dev",
-    "dev":"pnpm -r dev",
+    "dev": "pnpm -r dev",
     "lint": "eslint . --fix --ext .ts,.js",
     "lint:ci": "eslint . --ext .ts,.js"
   },
@@ -32,5 +32,8 @@
     "eslint-plugin-promise": "^6.2.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "nodemon": "^3.1.4"
   }
 }

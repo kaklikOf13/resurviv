@@ -58,8 +58,6 @@ export class Game {
 
     now!: number;
 
-    tickTimes: number[] = [];
-
     logger: Logger;
 
     typeToPool: Record<ObjectType, GameObject[]>;
@@ -142,19 +140,6 @@ export class Game {
 
             if (this.started && this.aliveCount <= 1 && !this.over) {
                 this.initGameOver();
-            }
-
-            // Record performance and start the next tick
-            // THIS TICK COUNTER IS WORKING CORRECTLY!
-            // It measures the time it takes to calculate a tick, not the time between ticks.
-            const tickTime = Date.now() - this.now;
-            this.tickTimes.push(tickTime);
-
-            if (this.tickTimes.length >= 200) {
-                const mspt = this.tickTimes.reduce((a, b) => a + b) / this.tickTimes.length;
-
-                this.logger.log(`Avg ms/tick: ${mspt.toFixed(2)} | Load: ${((mspt / (1000 / this.config.tps)) * 100).toFixed(1)}%`);
-                this.tickTimes = [];
             }
             resolve()
         })

@@ -194,33 +194,40 @@ export class Loot extends BaseGameObject {
 
         const objects = this.game.grid.intersectCollider(this.collider);
         for (const obj of objects) {
-            if (
-                moving &&
-                obj instanceof Obstacle &&
-                !obj.dead &&
-                util.sameLayer(obj.layer, this.layer) &&
-                obj.collidable &&
-                coldet.test(obj.collider, this.collider)
-            ) {
-                const res = collider.intersectCircle(obj.collider, this.collider.pos, this.collider.rad);
-                if (res) {
-                    this.pos = v2.add(this.pos, v2.mul(res.dir, res.pen));
+            switch(obj.__type){
+                case ObjectType.Obstacle:{
+                    if (
+                        !obj.dead &&
+                        util.sameLayer(obj.layer, this.layer) &&
+                        obj.collidable &&
+                        coldet.test(obj.collider, this.collider)
+                    ) {
+                        const res = collider.intersectCircle(obj.collider, this.collider.pos, this.collider.rad);
+                        if (res) {
+                            this.pos = v2.add(this.pos, v2.mul(res.dir, res.pen));
+                        }
+                    }
+                    break
                 }
-            } else if (obj instanceof Loot && obj !== this && coldet.test(this.collider, obj.collider)) {
-                const res = coldet.intersectCircleCircle(this.pos, this.collider.rad, obj.pos, obj.collider.rad);
-                if (res) {
-                    this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.35));
-                    const norm = res.dir;
-                    const vRelativeVelocity = v2.create(this.vel.x - obj.vel.x, this.vel.y - obj.vel.y);
-
-                    const speed = (vRelativeVelocity.x * norm.x + vRelativeVelocity.y * norm.y);
-
-                    if (speed < 0) continue;
-
-                    this.vel.x -= speed * norm.x;
-                    this.vel.y -= speed * norm.y;
-                    obj.vel.x += speed * norm.x;
-                    obj.vel.y += speed * norm.y;
+                case ObjectType.Loot:{
+                    if (obj !== this && coldet.test(this.collider, obj.collider)) {
+                        const res = coldet.intersectCircleCircle(this.pos, this.collider.rad, obj.pos, obj.collider.rad);
+                        if (res) {
+                            this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.35));
+                            const norm = res.dir;
+                            const vRelativeVelocity = v2.create(this.vel.x - obj.vel.x, this.vel.y - obj.vel.y);
+        
+                            const speed = (vRelativeVelocity.x * norm.x + vRelativeVelocity.y * norm.y);
+        
+                            if (speed < 0) continue;
+        
+                            this.vel.x -= speed * norm.x;
+                            this.vel.y -= speed * norm.y;
+                            obj.vel.x += speed * norm.x;
+                            obj.vel.y += speed * norm.y;
+                        }
+                    }
+                    break
                 }
             }
         }
