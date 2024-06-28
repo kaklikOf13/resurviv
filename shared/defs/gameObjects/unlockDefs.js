@@ -16,7 +16,7 @@ const allowedGuns = [
    "mp5", "mac10", "ump9", "vector", "vector45", "scorpion",
 
    //Shotguns:
-    "m870", "m1100", "m1014", "mp220", "usas", "saiga", "spas12",
+    "m870", "m1100", "m1014", "mp220", "saiga", "spas12",
 
     //Sniper Rifles:
     "sv98", "mosin", "m39", "garand", "svd", "vss", "scout_elite", "model94",
