@@ -22,18 +22,8 @@ import { SmokeBarn } from "./objects/smoke";
 import { AirdropBarn } from "./objects/airdrop";
 import { DecalBarn } from "./objects/decal";
 import { GameTerminal } from "./utils/commands";
-import { EventType,EventMap, EventsManager } from "./utils/plugins";
+import { EventType, type EventMap, EventsManager, type GamePlugin } from "./utils/plugins";
 import { Clock } from "../../shared/utils/util";
-export abstract class GamePlugin{
-    game:Game
-    constructor(game:Game){
-        this.game=game
-    }
-    abstract initSignals():void
-    on<Ev extends EventType>(signal: Ev, cb?: (data: EventMap[Ev]) => void){
-        this.game.events.on(signal,cb)
-    }
-}
 export class Game {
     started = false;
     stopped = false;
@@ -110,6 +100,8 @@ export class Game {
             [ObjectType.Airdrop]: this.airdropBarn.airdrops
         };
 
+        this.map.genPlugins()
+
         this.logger.log(`Created in ${Date.now() - start} ms`);
     }
 
@@ -121,6 +113,11 @@ export class Game {
             this.logger.log("Closed")
             this.events.emit(EventType.GameClose,this)
         },(this.map.mapDef.gameMode.joinTime??this.config.joinTime)*1000)
+    }
+
+    addPlugin(plugin:GamePlugin){
+        plugin.game=this
+        plugin.initSignals()
     }
 
     update() {

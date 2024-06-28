@@ -16,9 +16,9 @@ import { Woods } from "./maps/woodsDefs";
 import { WoodsSnow } from "./maps/woodsSnowDefs";
 import { WoodsSpring } from "./maps/woodsSpringDefs";
 import { WoodsSummer } from "./maps/woodsSummerDefs";
-import { type GameConfig } from "../gameConfig";
 import { GasDef } from "../../server/src/objects/gas";
 import { RandomVal } from "../utils/util";
+import { type GamePlugin } from "../../server/src/game";
 export const MapDefs = {
     main: Main,
     main_spring: MainSpring,
@@ -97,7 +97,8 @@ export interface MapDef {
         spawnStatus?:{
             health?:number,
             boost?:number
-        }
+        },
+        plugins?:GamePlugin[]
     }
     gameConfig: {
         planes: {

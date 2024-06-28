@@ -1,7 +1,15 @@
 import { type Game } from "../game"
 import { type DamageParams } from "../objects/gameObject"
 import { type Player } from "../objects/player"
-
+export abstract class GamePlugin{
+    game!:Game
+    constructor(){
+    }
+    abstract initSignals():void
+    on<Ev extends EventType>(signal: Ev, cb?: (data: EventMap[Ev]) => void){
+        this.game.events.on(signal,cb)
+    }
+}
 export enum EventType{
     GameStart,
     GameTick,

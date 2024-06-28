@@ -249,6 +249,13 @@ export class GameMap {
         this.mapStream.serializeMsg(MsgType.Map, this.msg);
     }
 
+    genPlugins(){
+        this.game.events.clearAll()
+        for(const p of this.mapDef.gameMode.plugins??[]){
+            this.game.addPlugin(p)
+        }
+    }
+
     generateTerrain(): void {
         const mapConfig = this.mapDef.mapGen.map;
         const riverWeights: number[] = [];
