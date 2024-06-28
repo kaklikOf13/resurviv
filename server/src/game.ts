@@ -22,7 +22,17 @@ import { SmokeBarn } from "./objects/smoke";
 import { AirdropBarn } from "./objects/airdrop";
 import { DecalBarn } from "./objects/decal";
 import { GameTerminal } from "./utils/commands";
-
+import { EventType,EventMap, EventsManager } from "./utils/plugins";
+export abstract class GamePlugin{
+    game:Game
+    constructor(game:Game){
+        this.game=game
+    }
+    abstract initSignals():void
+    on<Ev extends EventType>(signal: Ev, cb?: (data: EventMap[Ev]) => void){
+        this.game.events.on(signal,cb)
+    }
+}
 export class Game {
     started = false;
     stopped = false;
@@ -61,6 +71,7 @@ export class Game {
     logger: Logger;
 
     typeToPool: Record<ObjectType, GameObject[]>;
+    readonly events:EventsManager<EventType,EventMap>
 
     constructor(id: number, config: ConfigType) {
         this.id = id;
@@ -78,6 +89,7 @@ export class Game {
         this.gas = new Gas(this.map,this);
 
         this.allowJoin = true;
+        this.events=new EventsManager()
 
         this.typeToPool = {
             [ObjectType.Invalid]: [],
@@ -99,9 +111,11 @@ export class Game {
 
     start():void{
         this.gas.advanceGasStage();
+        this.events.emit(EventType.GameStart,this)
         setTimeout(()=>{
             this.allowJoin=false
             this.logger.log("Closed")
+            this.events.emit(EventType.GameClose,this)
         },(this.map.mapDef.gameMode.joinTime??this.config.joinTime)*1000)
     }
 
@@ -141,6 +155,7 @@ export class Game {
             if (this.started && this.aliveCount <= 1 && !this.over) {
                 this.initGameOver();
             }
+            this.events.emit(EventType.GameTick,this)
             resolve()
         })
     }
@@ -208,6 +223,7 @@ export class Game {
                 spectator.addGameOverMsg(winningPlayer.teamId);
             }
         }
+        this.events.emit(EventType.GameEnd,{game:this,winners:this.playerBarn.livingPlayers})
         setTimeout(() => {
             this.stop();
         }, 2000);

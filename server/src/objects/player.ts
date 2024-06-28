@@ -32,6 +32,7 @@ import { DisconnectMsg } from "../../../shared/msgs/disconnectMsg";
 import { UnlockDefs } from "../../../shared/defs/gameObjects/unlockDefs";
 import { IDAllocator } from "../IDAllocator";
 import { GunDefs } from "../../../shared/defs/gameObjects/gunDefs";
+import { EventType } from "../utils/plugins";
 
 export class Emote {
     playerId: number;
@@ -202,6 +203,8 @@ export class PlayerBarn {
         this.players.push(player);
         this.livingPlayers.push(player);
         this.aliveCountDirty = true;
+
+        this.game.events.emit(EventType.PlayerJoin,player)
 
         if (this.game.aliveCount > 1 && !this.game.started) {
             this.game.started = true;
@@ -1105,6 +1108,7 @@ export class Player extends BaseGameObject {
                     false)
             );
         }
+        this.game.events.emit(EventType.PlayerDie,{player:this,killer:params})
     }
 
     dropAllItens(dropRadius:number){
