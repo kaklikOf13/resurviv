@@ -98,7 +98,7 @@ export class UiManager {
 
         setInterval(() => {
             this.fpsDisplay.text(`${Math.round(this.game.pixi.ticker.FPS)} FPS`);
-        }, 500);
+        }, 1000);
 
         this.escMenuElem = $("#ui-game-menu");
         this.escMenuDisplayed = false;

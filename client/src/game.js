@@ -628,12 +628,12 @@ export class Game {
                     channel: "ui"
                 });
             }
-            if (this.uiManager.roleSelected) {
+            /*if (this.uiManager.roleSelected) {
                 const roleSelectMessage = new PerkModeRoleSelectMsg();
                 roleSelectMessage.role = this.uiManager.roleSelected;
                 this.sendMessage(net.MsgType.PerkModeRoleSelect, roleSelectMessage, 128);
                 this.config.set("perkModeRole", roleSelectMessage.role);
-            }
+            }*/
         }
         const specBegin = this.uiManager.specBegin;
         const specNext =
