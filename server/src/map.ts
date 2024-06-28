@@ -464,16 +464,21 @@ export class GameMap {
         }
 
         for(const randomSpawns of mapDef.mapGen.randomSpawns){
-            if (randomSpawns) {
+            if (randomSpawns&&randomSpawns.spawns) {
                 const spawns = [...randomSpawns.spawns];
                 const choose=util.randomValInt(randomSpawns.choose)
                 for (let i = 0; i < choose; i++) {
                     const idx = util.randomInt(0, spawns.length - 1);
                     const spawn=spawns[idx]
+                    if(typeof spawn==="object" && (spawn.chance<=Math.random())){
+                        i--
+                        continue
+                    }
+                    const spawnObj=typeof spawn==="string" ? spawn : (spawn as {value:string,chance:number})["value"] as string
                     if(!randomSpawns.repeat){
                         spawns.splice(idx,1);
                     }
-                    this.genFromMapDef(spawn, 1);
+                    this.genFromMapDef(spawnObj, 1);
                 }
             }
         }

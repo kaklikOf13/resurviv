@@ -7,6 +7,7 @@ import { Main } from "./maps/baseDefs";
 import { MainSpring } from "./maps/mainSpringDefs";
 import { MainSummer } from "./maps/mainSummerDefs";
 import { Deathmatch } from "./maps/deathmatchDefs";
+import { TinyMain } from "./maps/tinyMainDefs";
 import { Potato } from "./maps/potatoDefs";
 import { PotatoSpring } from "./maps/potatoSpringDefs";
 import { Savannah } from "./maps/savannahDefs";
@@ -23,6 +24,7 @@ export const MapDefs = {
     main: Main,
     main_spring: MainSpring,
     main_summer: MainSummer,
+    tinymain: TinyMain,
     deathmatch:Deathmatch,
     desert: Desert,
     faction: Faction,
@@ -172,7 +174,7 @@ export interface MapDef {
         >
         >
         randomSpawns: Array<{
-            spawns: string[]
+            spawns: (string|{value:string,chance:number})[]
             choose: RandomVal
             repeat?:boolean
         }>
