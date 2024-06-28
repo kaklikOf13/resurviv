@@ -18,7 +18,7 @@ import { WoodsSpring } from "./maps/woodsSpringDefs";
 import { WoodsSummer } from "./maps/woodsSummerDefs";
 import { GasDef } from "../../server/src/objects/gas";
 import { RandomVal } from "../utils/util";
-import { type GamePlugin } from "../../server/src/game";
+import { type GamePlugin } from "../../server/src/utils/plugins";
 export const MapDefs = {
     main: Main,
     main_spring: MainSpring,
