@@ -32,11 +32,6 @@ export abstract class AbstractServer {
         }, 60000);
     }
 
-    tick(): void {
-        for (const game of Object.values(this.games)) {
-            if (game) game.update();
-        }
-    }
     execute(cmd:string,gameID:number): void {
         if(this.games[gameID]){
             this.games[gameID]!.console.execute(cmd)
@@ -47,6 +42,7 @@ export abstract class AbstractServer {
         if (id !== undefined) {
             if (!this.games[id] || this.games[id]?.stopped) {
                 this.games[id] = new Game(id, Config);
+                this.games[id]?.run()
                 return id;
             }
         } else {

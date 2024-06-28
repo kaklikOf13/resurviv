@@ -11,6 +11,31 @@ export function assert(condition: boolean | undefined, msg?: string) {
     }
 }
 export type RandomVal=number|{max:number,min:number}
+export class Clock {
+    private frameDuration: number
+    private lastFrameTime: number
+    public timeScale: number
+    public deltaTime:number
+
+    constructor(targetFPS: number, timeScale: number) {
+        this.frameDuration = 1000 / targetFPS
+        this.lastFrameTime = Date.now()
+        this.timeScale = timeScale
+        this.deltaTime=0
+    }
+
+    public tick(callback:Function){
+        const currentTime = Date.now()
+        const elapsedTime=(currentTime-this.lastFrameTime)
+        const next_frame=(this.frameDuration-elapsedTime)
+        setTimeout(()=>{
+            this.lastFrameTime=currentTime
+            this.deltaTime=(Date.now()-this.lastFrameTime)/1000
+            callback()
+            return 0
+        },next_frame)
+    }
+}
 export const util = {
     //
     // Game objects can belong to the following layers:

@@ -23,6 +23,7 @@ import { AirdropBarn } from "./objects/airdrop";
 import { DecalBarn } from "./objects/decal";
 import { GameTerminal } from "./utils/commands";
 import { EventType,EventMap, EventsManager } from "./utils/plugins";
+import { Clock } from "../../shared/utils/util";
 export abstract class GamePlugin{
     game:Game
     constructor(game:Game){
@@ -72,7 +73,8 @@ export class Game {
 
     typeToPool: Record<ObjectType, GameObject[]>;
     readonly events:EventsManager<EventType,EventMap>
-
+    readonly clock:Clock
+    running:boolean
     constructor(id: number, config: ConfigType) {
         this.id = id;
         this.logger = new Logger(`Game #${this.id}`);
@@ -82,6 +84,8 @@ export class Game {
         this.console=new GameTerminal(this)
         this.config = config;
 
+        this.clock=new Clock(this.config.tps,1)
+
         this.grid = new Grid(1024, 1024);
         this.objectRegister = new ObjectRegister(this.grid);
         this.map = new GameMap(this);
@@ -90,7 +94,7 @@ export class Game {
 
         this.allowJoin = true;
         this.events=new EventsManager()
-
+        this.running=false
         this.typeToPool = {
             [ObjectType.Invalid]: [],
             [ObjectType.LootSpawner]: [],
@@ -119,45 +123,48 @@ export class Game {
         },(this.map.mapDef.gameMode.joinTime??this.config.joinTime)*1000)
     }
 
-    update(): Promise<void> {
-        return new Promise<void>((resolve, _reject) => {
-            const now = Date.now();
-            if (!this.now) this.now = now;
-            const dt = (now - this.now) / 1000;
-            this.now = now;
+    update() {
+        const now = Date.now();
+        if (!this.now) this.now = now;
+        const dt = this.clock.deltaTime;
+        this.now = now;
+        //
+        // Update modules
+        //
+        this.gas.update(dt);
+        this.bulletBarn.update(dt);
+        this.lootBarn.update(dt);
+        this.projectileBarn.update(dt);
+        this.deadBodyBarn.update(dt);
+        this.playerBarn.update(dt);
+        this.explosionBarn.update();
 
-            //
-            // Update modules
-            //
-            this.gas.update(dt);
-            this.bulletBarn.update(dt);
-            this.lootBarn.update(dt);
-            this.projectileBarn.update(dt);
-            this.deadBodyBarn.update(dt);
-            this.playerBarn.update(dt);
-            this.explosionBarn.update();
+        // second update:
+        // serialize objects and send msgs
+        this.objectRegister.serializeObjs();
+        this.playerBarn.sendMsgs();
 
-            // second update:
-            // serialize objects and send msgs
-            this.objectRegister.serializeObjs();
-            this.playerBarn.sendMsgs();
+        //
+        // reset stuff
+        //
+        this.playerBarn.flush();
+        this.bulletBarn.flush();
+        this.objectRegister.flush();
+        this.explosionBarn.flush();
+        this.gas.flush();
+        this.msgsToSend.length = 0;
 
-            //
-            // reset stuff
-            //
-            this.playerBarn.flush();
-            this.bulletBarn.flush();
-            this.objectRegister.flush();
-            this.explosionBarn.flush();
-            this.gas.flush();
-            this.msgsToSend.length = 0;
-
-            if (this.started && this.aliveCount <= 1 && !this.over) {
-                this.initGameOver();
-            }
-            this.events.emit(EventType.GameTick,this)
-            resolve()
-        })
+        if (this.started && this.aliveCount <= 1 && !this.over) {
+            this.initGameOver();
+        }
+        this.events.emit(EventType.GameTick,this)
+        if(this.running){
+            this.clock.tick(this.update.bind(this))
+        }
+    }
+    run(){
+        this.running=true
+        this.update()
     }
 
     handleMsg(buff: ArrayBuffer | Buffer, socketData: PlayerContainer): void {
@@ -232,6 +239,7 @@ export class Game {
     stop(): void {
         if (this.stopped) return;
         this.stopped = true;
+        this.running=false
         this.allowJoin = false;
         for (const player of this.playerBarn.players) {
             if (!player.disconnected) {

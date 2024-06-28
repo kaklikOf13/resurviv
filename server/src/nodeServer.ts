@@ -273,8 +273,6 @@ class NodeServer extends AbstractServer {
             this.init();
 
             const timer = new NanoTimer();
-
-            timer.setInterval(() => { this.tick(); }, "", `${1000 / Config.tps}m`);
         });
     }
     stop(){
