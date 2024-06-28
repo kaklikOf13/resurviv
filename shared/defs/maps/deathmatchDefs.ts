@@ -1,4 +1,4 @@
-import { GameConfig } from "../../gameConfig";
+import { HealingAfterKillPlugin } from "../../../server/src/plugins/healingAfterKill";
 import { v2 } from "../../utils/v2";
 import { type MapDef } from "../mapDefs";
 import { Main } from "./baseDefs";
@@ -50,6 +50,9 @@ export const Deathmatch: MapDef = {
         killLeaderEnabled: true,
         selectableGuns:true,
         joinTime:250,
+        plugins:[
+            new HealingAfterKillPlugin(30)
+        ],
         spawnInventory:{
             "2xscope": 1,
             "4xscope": 1,
