@@ -1194,7 +1194,7 @@ export const GunDefs = {
         shotSpread: 1.5,
         bulletCount: 1,
         bulletType: "bullet_model94",
-        headshotMult: 1.5,
+        headshotMult: 1.4,
         speed: { equip: 0, attack: 0 },
         lootImg: {
             sprite: "loot-weapon-model94.img",
@@ -1291,7 +1291,7 @@ export const GunDefs = {
         shotSpread: 1.5,
         bulletCount: 1,
         bulletType: "bullet_blr",
-        headshotMult: 1.5,
+        headshotMult: 1.4,
         speed: { equip: 0, attack: 0 },
         lootImg: {
             sprite: "loot-weapon-blr.img",
@@ -1345,7 +1345,7 @@ export const GunDefs = {
         shotSpread: 1,
         bulletCount: 1,
         bulletType: "bullet_mosin",
-        headshotMult: 1.5,
+        headshotMult: 1.4,
         speed: { equip: 0, attack: 0 },
         lootImg: {
             sprite: "loot-weapon-mosin.img",
@@ -1397,7 +1397,7 @@ export const GunDefs = {
         shotSpread: 1,
         bulletCount: 1,
         bulletType: "bullet_sv98",
-        headshotMult: 1.5,
+        headshotMult: 1.4,
         speed: { equip: 0, attack: 0 },
         lootImg: {
             sprite: "loot-weapon-sv98.img",
@@ -1889,7 +1889,7 @@ export const GunDefs = {
         bulletCount: 1,
         jitter: 0.2,
         bulletType: "bullet_slug",
-        headshotMult: 1.5,
+        headshotMult: 1.4,
         speed: { equip: 0, attack: 0 },
         lootImg: {
             sprite: "loot-weapon-m1014.img",

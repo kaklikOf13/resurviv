@@ -86,7 +86,7 @@ export const BaseDefs = {
     },
     bullet_model94: {
         type: "bullet",
-        damage: 44,
+        damage: 41.36,
         obstacleDamage: 1,
         falloff: 0.75,
         distance: 175,
@@ -99,7 +99,7 @@ export const BaseDefs = {
     },
     bullet_blr: {
         type: "bullet",
-        damage: 56,
+        damage: 52.64,
         obstacleDamage: 1,
         falloff: 0.9,
         distance: 400,
@@ -112,7 +112,7 @@ export const BaseDefs = {
     },
     bullet_mosin: {
         type: "bullet",
-        damage: 72,
+        damage: 68.4,
         obstacleDamage: 1.5,
         falloff: 0.95,
         distance: 500,
@@ -125,7 +125,7 @@ export const BaseDefs = {
     },
     bullet_sv98: {
         type: "bullet",
-        damage: 80,
+        damage: 75.2,
         obstacleDamage: 1.5,
         falloff: 0.96,
         distance: 520,
@@ -138,7 +138,7 @@ export const BaseDefs = {
     },
     bullet_awc: {
         type: "bullet",
-        damage: 144,
+        damage: 135.36,
         obstacleDamage: 1.5,
         falloff: 0.94,
         distance: 300,
@@ -245,7 +245,7 @@ export const BaseDefs = {
     },
     bullet_slug: {
         type: "bullet",
-        damage: 77,
+        damage: 67.76,
         obstacleDamage: 1,
         falloff: 0.85,
         speed: 118,
@@ -639,7 +639,7 @@ export const BaseDefs = {
     },
     bullet_scout: {
         type: "bullet",
-        damage: 56,
+        damage: 52.64,
         obstacleDamage: 1,
         falloff: 0.92,
         distance: 450,
