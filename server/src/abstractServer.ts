@@ -71,7 +71,7 @@ export abstract class AbstractServer {
     getSiteInfo() {
         let playerCount = 0
         Object.values(this.games).forEach((a,_) => {
-            playerCount+=(a ? a.playerBarn.players.length : 0);
+            playerCount+=(a ? a.playerBarn.livingPlayers.length : 0);
         }, 0);
 
         const data = {
