@@ -32,9 +32,10 @@ export const TinyMain: MapDef = {
             rivers: {
                 lakes: [],
                 weights: [
+                    { weight: 0.3, widths: [4, 2.5] },
                     { weight: 0.25, widths: [4] },
-                    { weight: 0.3, widths: [4, 2] },
-                    { weight: 0.1, widths: [5,2] },
+                    { weight: 0.1, widths: [5,2.5] },
+                    { weight: 0.05, widths: [] },
                 ],
                 smoothness: 0.55,
                 masks: []
@@ -70,8 +71,9 @@ export const TinyMain: MapDef = {
                 loot_tier_1: {max:10,min:5},
                 loot_tier_beach: 5,
                 chest_01:1,
-                chest_02:1,
-                stone_04:1
+                chest_03:1,
+                stone_04:1,
+                tree_02: {max:5,min:2},
             },
         ],
         fixedSpawns: [
@@ -81,7 +83,6 @@ export const TinyMain: MapDef = {
             {
                 spawns: [
                     "mansion_structure_01",
-                    "club_complex_01",
                     "police_01",
                     "greenhouse_01",
                     "bank_01",
@@ -107,7 +108,7 @@ export const TinyMain: MapDef = {
                     "container_03",
                     "container_04",
                     "container_05",
-                    {value:"container_06",chance:.15}
+                    {value:"container_06",chance:.1}
                 ],
                 choose:{min:6,max:10},
                 repeat:true

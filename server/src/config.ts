@@ -19,7 +19,7 @@ export const Config = {
     maxGames: 3,
     joinTime: 80,
 
-    tps: 30,
+    tps: 40,
 
     country:"US",
 

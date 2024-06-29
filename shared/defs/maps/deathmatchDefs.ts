@@ -51,7 +51,7 @@ export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
         bleedDamage: 1,
         bleedDamageMult: 1,
         gas:{
-            initWaitTime: 10,
+            initWaitTime: 210,
             waitTimeDecay: 210,
             waitTimeMin: 10,
             initGasTime: 20,
