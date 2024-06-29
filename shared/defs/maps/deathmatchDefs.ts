@@ -3,45 +3,11 @@ import { util } from "../../utils/util";
 import { type MapDef } from "../mapDefs";
 import { TinyMain } from "./tinyMainDefs";
 
-export const Deathmatch: MapDef = util.mergeDeep({
+export const Deathmatch: MapDef = util.mergeDeep(TinyMain,{
     mapId: 16,
     desc: { name: "Deathmatch", icon: "", buttonCss: "" },
     gameMode: {
-        map: {
-            baseWidth: 260,
-            baseHeight: 260,
-            scale: { small: 1, large: 1.2 },
-            extension: 130,
-            shoreInset: 48,
-            grassInset: 12,
-            rivers: {
-                lakes: [],
-                weights: [
-                    { weight: 0.25, widths: [4] },
-                    { weight: 0.3, widths: [4, 2] },
-                    { weight: 0.1, widths: [5,2] },
-                ],
-                smoothness: 0.55,
-                masks: []
-            }
-        },
-        densitySpawns: [
-            {
-                stone_01: {max:40,min:20},
-                barrel_01: {max:20,min:10},
-                silo_01: {max:2,min:1},
-                crate_01: {max:30,min:25},
-                crate_02: 3,
-                crate_03: {max:10,min:5},
-                bush_01: 20,
-                cache_06: 6,
-                tree_01: {max:40,min:30},
-                hedgehog_01: 2,
-                shack_01: 1,
-                loot_tier_1: {max:10,min:5},
-                loot_tier_beach: 5
-            },
-        ],
+        
         maxPlayers: 15,
         killLeaderEnabled: true,
         selectableGuns:true,
@@ -97,9 +63,37 @@ export const Deathmatch: MapDef = util.mergeDeep({
             widthMin: 60,
             damageTickRate: 2,
             damage: [
-                10, 10, 10, 20,20,20
+                10, 10, 20, 25,20,20
             ]
         },
-        lootDespawn:10
+        lootDespawn:20
     },
-},TinyMain);
+    mapGen: {
+        map: {
+            baseWidth: 180,
+            baseHeight: 180,
+            scale: { small: 1, large: 1.2 },
+            extension: 100,
+            shoreInset: 48,
+            grassInset: 12,
+            rivers:null,
+        },
+        densitySpawns: [
+            {
+                stone_01: {max:20,min:15},
+                barrel_01: {max:20,min:10},
+                silo_01: {max:2,min:1},
+                crate_01: {max:11,min:6},
+                crate_02: 3,
+                crate_03: {max:5,min:2},
+                bush_01: 5,
+                cache_06: 6,
+                tree_01: {max:25,min:15},
+                hedgehog_01: 2,
+                shack_01: 1,
+                loot_tier_1: {max:10,min:5},
+                loot_tier_beach: 5,
+            },
+        ],
+    }
+});
