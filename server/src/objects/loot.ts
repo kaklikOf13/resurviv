@@ -213,7 +213,7 @@ export class Loot extends BaseGameObject {
                     if (obj !== this && coldet.test(this.collider, obj.collider)) {
                         const res = coldet.intersectCircleCircle(this.pos, this.collider.rad, obj.pos, obj.collider.rad);
                         if (res) {
-                            this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.35));
+                            this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.25));
                             const norm = res.dir;
                             const vRelativeVelocity = v2.create(this.vel.x - obj.vel.x, this.vel.y - obj.vel.y);
         
