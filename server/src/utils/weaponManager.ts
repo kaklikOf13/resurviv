@@ -106,6 +106,7 @@ export class WeaponManager {
                 }, effectiveSwitchDelay * 1000)
             );
         }
+        this.weapons[idx].cooldown-=(this.weapons[idx].cooldown-this.player.game.now)*.8
 
         this.player.setDirty();
         this.player.weapsDirty = true;
