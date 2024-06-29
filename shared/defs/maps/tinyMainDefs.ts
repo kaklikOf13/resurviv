@@ -23,8 +23,8 @@ export const TinyMain: MapDef = {
     lootTable:Main.lootTable,
     mapGen: {
         map: {
-            baseWidth: 260,
-            baseHeight: 260,
+            baseWidth: 300,
+            baseHeight: 300,
             scale: { small: 1, large: 1.2 },
             extension: 130,
             shoreInset: 48,
@@ -56,19 +56,22 @@ export const TinyMain: MapDef = {
         },
         densitySpawns: [
             {
-                stone_01: {max:40,min:20},
-                barrel_01: {max:20,min:10},
-                silo_01: {max:2,min:1},
-                crate_01: {max:30,min:25},
-                crate_02: 3,
+                stone_01: {max:60,min:35},
+                barrel_01: {max:30,min:20},
+                silo_01: {max:3,min:1},
+                crate_01: {max:40,min:30},
+                crate_02: 5,
                 crate_03: {max:10,min:5},
-                bush_01: 20,
-                cache_06: 6,
-                tree_01: {max:40,min:30},
+                bush_01: 30,
+                cache_06: 10,
+                tree_01: {max:75,min:60},
                 hedgehog_01: 2,
                 shack_01: 1,
                 loot_tier_1: {max:10,min:5},
-                loot_tier_beach: 5
+                loot_tier_beach: 5,
+                chest_01:1,
+                chest_02:1,
+                stone_04:1
             },
         ],
         fixedSpawns: [
@@ -91,7 +94,8 @@ export const TinyMain: MapDef = {
                     "warehouse_01",
                     "house_red_01",
                     "house_red_02",
-                    "barn_01"
+                    "barn_01",
+                    "barn_02"
                 ],
                 choose:{min:2,max:5},
                 repeat:true
@@ -103,7 +107,7 @@ export const TinyMain: MapDef = {
                     "container_03",
                     "container_04",
                     "container_05",
-                    {value:"container_06",chance:.6}
+                    {value:"container_06",chance:.3}
                 ],
                 choose:{min:6,max:10},
                 repeat:true
