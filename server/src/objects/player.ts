@@ -907,7 +907,7 @@ export class Player extends BaseGameObject {
 
         for (const emote of playerBarn.emotes) {
             const emotePlayer = game.objectRegister.getById(emote.playerId);
-            if (emotePlayer && player.visibleObjects.has(emotePlayer)) {
+            if (emotePlayer && player.visibleObjects.has(emotePlayer) && !player.dead) {
                 updateMsg.emotes.push(emote);
             }
         }
@@ -1090,12 +1090,11 @@ export class Player extends BaseGameObject {
         //
         // drop loot
         //
-        const dropRadius=1.3
-        this.dropAllItens(dropRadius)
+        this.dropAllItens(this.rad)
         if (this.outfit) {
             const def = GameObjectDefs[this.outfit] as OutfitDef;
             if (!def.noDropOnDeath) {
-                this.game.lootBarn.addLoot(this.outfit, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, 1);
+                this.game.lootBarn.addLoot(this.outfit, v2.add(this.pos,v2.mul(v2.randomUnit(),this.rad+.2)), this.layer, 1);
             }
         }
 
@@ -1118,7 +1117,7 @@ export class Player extends BaseGameObject {
             const def = GameObjectDefs[weap.type];
             switch (def.type) {
             case "gun":
-                this.weaponManager.dropGun(i);
+                this.weaponManager.dropGun(i,undefined,dropRadius);
                 break;
             case "melee":
                 if (def.noDrop || def.noDropOnDeath || weap.type === "fists") break;
@@ -1132,17 +1131,19 @@ export class Player extends BaseGameObject {
             if (item == "1xscope") {
                 continue;
             }
+            const lootp=v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius))
+            const vel=v2.mul(v2.sub(this.pos,lootp),Math.random()*3)
             switch(def.type){
                 case "ammo":
                     while (this.inventory[item] > 0) {
                         const rc=Math.min(this.inventory[item],def.killSpawnAmmout??60)
-                        this.game.lootBarn.addLoot(item, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, rc);
+                        this.game.lootBarn.addLoot(item, lootp, this.layer, rc,undefined,undefined,vel);
                         this.inventory[item]-=rc
                     }
                     break
                 default:
                     if(this.inventory[item] > 0) {
-                        this.game.lootBarn.addLoot(item, v2.add(this.pos,v2.mul(v2.randomUnit(),dropRadius)), this.layer, this.inventory[item]);
+                        this.game.lootBarn.addLoot(item, lootp, this.layer, this.inventory[item],undefined,undefined,vel);
                     }
                     break
             }

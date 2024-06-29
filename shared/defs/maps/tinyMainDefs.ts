@@ -23,10 +23,10 @@ export const TinyMain: MapDef = {
     lootTable:Main.lootTable,
     mapGen: {
         map: {
-            baseWidth: 300,
-            baseHeight: 300,
+            baseWidth: 350,
+            baseHeight: 350,
             scale: { small: 1, large: 1.2 },
-            extension: 130,
+            extension: 30,
             shoreInset: 48,
             grassInset: 12,
             rivers: {
@@ -107,7 +107,7 @@ export const TinyMain: MapDef = {
                     "container_03",
                     "container_04",
                     "container_05",
-                    {value:"container_06",chance:.3}
+                    {value:"container_06",chance:.15}
                 ],
                 choose:{min:6,max:10},
                 repeat:true

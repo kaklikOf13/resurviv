@@ -106,6 +106,7 @@ export class WeaponManager {
                 }, effectiveSwitchDelay * 1000)
             );
         }
+        this.weapons[idx].cooldown-=(this.weapons[idx].cooldown-this.player.game.now)*.8
 
         this.player.setDirty();
         this.player.weapsDirty = true;
@@ -242,7 +243,7 @@ export class WeaponManager {
         this.burstCount = 0;
     }
 
-    dropGun(weapIdx: number, switchToMelee = true): void {
+    dropGun(weapIdx: number, switchToMelee = true,dropRadius?:number): void {
         const weaponDef = GameObjectDefs[this.weapons[weapIdx].type] as GunDef;
         const weaponAmmoType = weaponDef.ammo;
         const weaponAmmoCount = this.weapons[weapIdx].ammo;
@@ -270,17 +271,18 @@ export class WeaponManager {
             this.player.inventoryDirty = true;
             amountToDrop = weaponAmmoCount - amountToAdd;
         }
-
+        const lootp=dropRadius?v2.add(this.player.pos,v2.mul(v2.randomUnit(),dropRadius)):this.player.pos
+        const vel=v2.mul(v2.sub(this.player.pos,lootp),5)
         if (weaponDef.isDual) {
             item = item.replace("_dual", "");
             this.player.game.lootBarn.addLoot(
                 item,
-                this.player.pos,
+                lootp,
                 this.player.layer,
                 0,
                 true,
-                -4,
-                this.player.dir
+                4,
+                dropRadius?vel:this.player.dir
             );
         }
         this.player.game.lootBarn.addLoot(
