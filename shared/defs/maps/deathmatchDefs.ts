@@ -3,11 +3,10 @@ import { util } from "../../utils/util";
 import { type MapDef } from "../mapDefs";
 import { TinyMain } from "./tinyMainDefs";
 
-export const Deathmatch: MapDef = util.mergeDeep(TinyMain,{
+export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
     mapId: 16,
     desc: { name: "Deathmatch", icon: "", buttonCss: "" },
     gameMode: {
-        
         maxPlayers: 15,
         killLeaderEnabled: true,
         selectableGuns:true,
@@ -24,7 +23,7 @@ export const Deathmatch: MapDef = util.mergeDeep(TinyMain,{
             "556mm": 300,
             "12gauge": 90,
             "50AE": 196,
-            "308sub": 45,
+            "308sub": 80,
             "45acp": 300,
 
             "bandage": 30,
@@ -39,7 +38,7 @@ export const Deathmatch: MapDef = util.mergeDeep(TinyMain,{
         },
         spawnStatus:{
             boost:100,
-        }
+        },
     },
     gameConfig: {
         planes: {
@@ -49,31 +48,31 @@ export const Deathmatch: MapDef = util.mergeDeep(TinyMain,{
             ]
         },
         bagSizes: {},
-        bleedDamage: 2,
+        bleedDamage: 1,
         bleedDamageMult: 1,
         gas:{
-            initWaitTime: 240,
-            waitTimeDecay: 240,
-            waitTimeMin: 30,
-            initGasTime: 30,
-            gasTimeDecay: 20,
-            gasTimeMin: 20,
+            initWaitTime: 10,
+            waitTimeDecay: 210,
+            waitTimeMin: 10,
+            initGasTime: 20,
+            gasTimeDecay: 10,
+            gasTimeMin: 5,
             initWidth: 0.75,
             widthDecay: .4,
             widthMin: 60,
             damageTickRate: 2,
             damage: [
-                10, 10, 20, 25,20,20
+                15, 25
             ]
         },
         lootDespawn:20
     },
     mapGen: {
         map: {
-            baseWidth: 180,
-            baseHeight: 180,
+            baseWidth: 250,
+            baseHeight: 250,
             scale: { small: 1, large: 1.2 },
-            extension: 100,
+            extension: 30,
             shoreInset: 48,
             grassInset: 12,
             rivers:null,
@@ -83,15 +82,15 @@ export const Deathmatch: MapDef = util.mergeDeep(TinyMain,{
                 stone_01: {max:20,min:15},
                 barrel_01: {max:20,min:10},
                 silo_01: {max:2,min:1},
-                crate_01: {max:11,min:6},
+                crate_01: {max:6,min:4},
                 crate_02: 3,
                 crate_03: {max:5,min:2},
                 bush_01: 5,
-                cache_06: 6,
-                tree_01: {max:25,min:15},
+                cache_06: 3,
+                tree_01: {max:20,min:15},
                 hedgehog_01: 2,
                 shack_01: 1,
-                loot_tier_1: {max:10,min:5},
+                loot_tier_1: {max:7,min:5},
                 loot_tier_beach: 5,
             },
         ],
