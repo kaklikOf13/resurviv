@@ -907,7 +907,7 @@ export class Player extends BaseGameObject {
 
         for (const emote of playerBarn.emotes) {
             const emotePlayer = game.objectRegister.getById(emote.playerId);
-            if (emotePlayer && player.visibleObjects.has(emotePlayer)) {
+            if (emotePlayer && player.visibleObjects.has(emotePlayer) && !player.dead) {
                 updateMsg.emotes.push(emote);
             }
         }
