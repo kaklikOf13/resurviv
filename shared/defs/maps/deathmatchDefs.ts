@@ -65,7 +65,7 @@ export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
                 15, 25
             ]
         },
-        lootDespawn:20
+        lootDespawn:15
     },
     mapGen: {
         map: {
