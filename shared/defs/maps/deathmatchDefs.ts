@@ -7,7 +7,7 @@ export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
     mapId: 16,
     desc: { name: "Deathmatch", icon: "", buttonCss: "" },
     gameMode: {
-        maxPlayers: 15,
+        maxPlayers: 10,
         killLeaderEnabled: true,
         selectableGuns:true,
         joinTime:250,
