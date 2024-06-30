@@ -172,7 +172,7 @@ export class GameMap {
     grassInset: number;
     shoreInset: number;
 
-    terrain: ReturnType<typeof generateTerrain>;
+    terrain!: ReturnType<typeof generateTerrain>;
 
     mapDef: MapDef;
 
@@ -212,7 +212,9 @@ export class GameMap {
         this.center = v2.create(this.width / 2, this.height / 2);
         this.grassInset = this.msg.grassInset = mapConfig.grassInset;
         this.shoreInset = this.msg.shoreInset = mapConfig.shoreInset;
+    }
 
+    generate(){
         /* const lootPos = v2.create(this.width / 2, this.height / 2);
         for (const loot in GameObjectDefs) {
             const def = GameObjectDefs[loot];
@@ -228,25 +230,25 @@ export class GameMap {
             }
         } */
 
-        this.generateTerrain();
+            this.generateTerrain();
 
-        this.terrain = generateTerrain(
-            this.width,
-            this.height,
-            this.shoreInset,
-            this.grassInset,
-            this.riverDescs,
-            this.seed
-        );
-
-        this.generateObjects();
-
-        // const data =  require("../../reference/mapMsgData.json")
-        // this.msg.objects = data.objects;
-        // this.msg.groundPatches = data.groundPatches;
-        // this.msg.rivers = data.rivers
-
-        this.mapStream.serializeMsg(MsgType.Map, this.msg);
+            this.terrain = generateTerrain(
+                this.width,
+                this.height,
+                this.shoreInset,
+                this.grassInset,
+                this.riverDescs,
+                this.seed
+            );
+    
+            this.generateObjects();
+    
+            // const data =  require("../../reference/mapMsgData.json")
+            // this.msg.objects = data.objects;
+            // this.msg.groundPatches = data.groundPatches;
+            // this.msg.rivers = data.rivers
+    
+            this.mapStream.serializeMsg(MsgType.Map, this.msg);
     }
 
     genPlugins(){
