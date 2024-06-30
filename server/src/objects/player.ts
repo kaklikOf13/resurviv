@@ -33,6 +33,7 @@ import { UnlockDefs } from "../../../shared/defs/gameObjects/unlockDefs";
 import { IDAllocator } from "../IDAllocator";
 import { GunDefs } from "../../../shared/defs/gameObjects/gunDefs";
 import { EventType } from "../utils/plugins";
+import { ThrowableDefs } from "../../../shared/defs/gameObjects/throwableDefs";
 
 export class Emote {
     playerId: number;
@@ -576,6 +577,17 @@ export class Player extends BaseGameObject {
             this.inventory[i]=inventory_base[i]
             if(i.includes("scope")){
                 this.scope=i
+            }else if(Object.hasOwn(ThrowableDefs,i)){
+                //@ts-expect-error
+                const def=ThrowableDefs[i]
+                if (def.type === "throwable" &&
+                    inventory_base[i] != 0 && !this.weapons[GameConfig.WeaponSlot.Throwable].type
+                ) {
+                    this.weapons[GameConfig.WeaponSlot.Throwable].type = i;
+                    this.weapsDirty = true;
+                    this.setDirty();
+                }
+                this.inventoryDirty = true
             }
         }
         if(this.game.map.mapDef.gameMode.spawnStatus){

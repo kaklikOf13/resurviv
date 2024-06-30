@@ -30,6 +30,10 @@ export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
             "healthkit": 4,
             "soda": 15,
             "painkiller": 4,
+
+            "frag":3,
+            "mirv":1,
+            "smoke":2
         },
         spawnEquips:{
             "backpack":"backpack03",
