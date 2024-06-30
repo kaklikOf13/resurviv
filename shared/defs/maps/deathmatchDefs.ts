@@ -51,18 +51,18 @@ export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
         bleedDamage: 1,
         bleedDamageMult: 1,
         gas:{
-            initWaitTime: 210,
-            waitTimeDecay: 210,
-            waitTimeMin: 10,
-            initGasTime: 20,
-            gasTimeDecay: 10,
+            initWaitTime: 220,
+            waitTimeDecay: 220,
+            waitTimeMin: 30,
+            initGasTime: 25,
+            gasTimeDecay: 5,
             gasTimeMin: 5,
             initWidth: 0.75,
-            widthDecay: .4,
-            widthMin: 60,
+            widthDecay: .6,
+            widthMin: 25,
             damageTickRate: 2,
             damage: [
-                15, 25
+                25,25,30,40,45,50
             ]
         },
         lootDespawn:15
@@ -92,6 +92,7 @@ export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
                 shack_01: 1,
                 loot_tier_1: {max:7,min:5},
                 loot_tier_beach: 5,
+                tree_02:{max:4,min:1},
             },
         ],
     }
