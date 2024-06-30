@@ -1678,7 +1678,7 @@ export const GunDefs = {
         caseTiming: "shoot",
         ammo: "12gauge",
         ammoSpawnCount: 12,
-        maxClip: 4,
+        maxClip: 5,
         maxReload: 1,
         extendedClip: 8,
         extendedReload: 1,
