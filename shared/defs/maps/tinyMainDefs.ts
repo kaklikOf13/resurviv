@@ -16,7 +16,7 @@ export const TinyMain: MapDef = {
     assets: Main.assets,
     biome: Main.biome,
     gameMode: {
-        maxPlayers: 20,
+        maxPlayers: 10,
         killLeaderEnabled: true,
     },
     gameConfig: Main.gameConfig,
@@ -70,10 +70,9 @@ export const TinyMain: MapDef = {
                 shack_01: 1,
                 loot_tier_1: {max:10,min:5},
                 loot_tier_beach: 5,
-                chest_01:1,
-                chest_03:1,
+                chest_01:{max:3,min:1},
                 stone_04:1,
-                tree_02: {max:5,min:2},
+                tree_03: {max:2,min:1},
             },
         ],
         fixedSpawns: [
