@@ -110,10 +110,10 @@ export interface MapDef {
                 wait: number
                 options: { type: number }
             }>
-            crates: Array<{
-                name: string
-                weight: number
-            }>
+        }
+        airdrop?:{
+            common:string,
+            rare:string
         }
         bagSizes: Record<string, number>
         bleedDamage: number

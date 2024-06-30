@@ -133,6 +133,7 @@ export class Game {
         this.lootBarn.update(dt);
         this.projectileBarn.update(dt);
         this.deadBodyBarn.update(dt);
+        this.airdropBarn.update(dt)
         this.playerBarn.update(dt);
         this.explosionBarn.update();
 

@@ -593,14 +593,14 @@ export const ObjectSerializeFns: {
     [ObjectType.Airdrop]: {
         serializedFullSize: 0,
         serializePart: (s, data) => {
-            s.writeFloat(data.fallT, 0, 1, 7);
+            s.writeFloat(data.fallT, 0, 8, 7);
             s.writeBoolean(data.landed);
         },
         serializeFull: (s, data) => {
             s.writeVec(data.pos, 0, 0, 1024, 1024, 16);
         },
         deserializePart: (s, data) => {
-            data.fallT = s.readFloat(0, 1, 7);
+            data.fallT = s.readFloat(0, 8, 7);
             data.landed = s.readBoolean();
         },
         deserializeFull: (s, data) => {

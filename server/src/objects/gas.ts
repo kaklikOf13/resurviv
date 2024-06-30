@@ -32,6 +32,8 @@ export class Gas {
      */
     stage = 0;
 
+    idx=0;
+
     /**
      * Current gas stage damage
      */
@@ -173,6 +175,7 @@ export class Gas {
         if (this.currentRad <= 0) {
             return;
         }
+        this.idx++
         if (this.mode !== GasMode.Waiting) {
             this.radOld = this.currentRad;
 
@@ -219,6 +222,11 @@ export class Gas {
             }
             break;
         }
+        }
+        for(const p of this.game.map.mapDef.gameConfig.planes.timings){
+            if(p.circleIdx! as number==this.idx){
+                this.game.airdropBarn.addPlane()
+            }
         }
 
         this.damage = this.gasC.damage[math.clamp(this.stage - 1, 0, this.gasC.damage.length - 1)];

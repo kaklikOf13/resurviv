@@ -9399,7 +9399,7 @@ export const MapObjectDefs = {
             tierLoot("tier_airdrop_outfits", 1, 1),
             tierLoot("tier_airdrop_melee", 1, 1),
             tierLoot("tier_airdrop_ammo", 3, 3),
-            tierLoot("tier_airdrop_throwables", 1, 1)
+            tierLoot("tier_airdrop_throwables", 1, 2)
         ],
         map: { display: false },
         img: {
@@ -10758,7 +10758,7 @@ export const MapObjectDefs = {
         },
         hitParticle: "rockEyeChip",
         explodeParticle: "rockEyeBreak",
-        loot: [tierLoot("tier_eye_block", 1, 1)],
+        loot: [tierLoot("tier_airdrop_rare", 1, 1)],
         terrain: { grass: true, beach: true, riverShore: true },
         map: { display: true, color: 1512466, scale: 1 },
         collision: collider.createAabbExtents(

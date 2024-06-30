@@ -54,15 +54,21 @@ export const Main: MapDef = {
                     options: { type: GameConfig.Plane.Airdrop }
                 },
                 {
+                    circleIdx: 2,
+                    wait: 8,
+                    options: { type: GameConfig.Plane.Airdrop }
+                },
+                {
                     circleIdx: 3,
+                    wait: 5,
+                    options: { type: GameConfig.Plane.Airdrop }
+                },
+                {
+                    circleIdx: 5,
                     wait: 2,
                     options: { type: GameConfig.Plane.Airdrop }
                 }
             ],
-            crates: [
-                { name: "airdrop_crate_01", weight: 5 },
-                { name: "airdrop_crate_02", weight: 1 }
-            ]
         },
         bagSizes: {},
         bleedDamage: 2,
@@ -187,17 +193,49 @@ export const Main: MapDef = {
             { name: "15xscope", count: 1, weight: 0.001 }
         ],
         tier_airdrop_uncommon: [
-            { name: "mirv", count: 8, weight: 1 },
             { name: "strobe", count: 2, weight: 0.5 },
+            { name: "sv98", count: 1, weight: .9 },
+            { name: "mosin", count: 1, weight: 1 },
             { name: "saiga", count: 1, weight: 1 },
             { name: "qbb97", count: 1, weight: 2 }
         ],
         tier_airdrop_rare: [
-            { name: "usas", count: 1, weight: 2 },
-            { name: "pkp", count: 1, weight: 0.08 },
-            { name: "m249", count: 1, weight: 1 },
-            { name: "awc", count: 1, weight: 2 },
-            { name: "m9", count: 1, weight: 0.05 },
+            { name: "m4a1", count: 1, weight: 0.5 },
+            { name: "m249", count: 1, weight: 0.4 },
+            { name: "usas", count: 1, weight: 0.4 },
+            { name: "garand", count: 1, weight: 0.4 },
+            { name: "awc", count: 1, weight: 0.3 },
+            { name: "pkp", count: 1, weight: 0.3 }
+        ],
+        tier_airdrop_ammo:[
+            { name: "9mm", count: 70, weight: 3 },
+            { name: "762mm", count: 70, weight: 3 },
+            { name: "556mm", count: 70, weight: 3 },
+            { name: "12gauge", count: 15, weight: 3 },
+            { name: "50AE", count: 25, weight: 1 },
+            { name: "308sub", count: 10, weight: 1 },
+            { name: "flare", count: 1, weight: 1 }
+        ],
+        tier_airdrop_armor:[
+            { name: "helmet03", count: 1, weight: 1 },
+            { name: "chest03", count: 1, weight: 1 },
+            { name: "backpack03", count: 1, weight: 1 }
+        ],
+        tier_airdrop_scopes:[
+            { name: "tier_scopes_sniper", count: 1, weight: 1 },
+        ],
+        tier_airdrop_melee:[
+            { name: "woodaxe", count: 1, weight: .7 },
+            { name: "machete_taiga", count: 1, weight: .6 },
+            { name: "stonehammer", count: 1, weight: .5 },
+        ],
+        tier_airdrop_throwables: [
+            { name: "frag", count: 1, weight: .9 },
+            { name: "smoke", count: 1, weight: .6 },
+            { name: "mirv", count: 1, weight: .8 }
+        ],
+        tier_airdrop_outfits:[
+            { name: "outfitParma", count: 1, weight: 1 }
         ],
         tier_chrys_case: [
             { name: "", count: 1, weight: 1 }
@@ -210,14 +248,6 @@ export const Main: MapDef = {
         ],
         tier_eye_02: [
             { name: "stonehammer", count: 1, weight: 1 }
-        ],
-        tier_eye_block: [
-            { name: "m4a1", count: 1, weight: 0.5 },
-            { name: "m249", count: 1, weight: 0.4 },
-            { name: "usas", count: 1, weight: 0.4 },
-            { name: "garand", count: 1, weight: 0.4 },
-            { name: "awc", count: 1, weight: 0.3 },
-            { name: "pkp", count: 1, weight: 0.3 }
         ],
         tier_sledgehammer: [{ name: "sledgehammer", count: 1, weight: 1 }],
         tier_chest_04: [

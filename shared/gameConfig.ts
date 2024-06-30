@@ -157,7 +157,7 @@ export const GameConfig = {
     airdrop: {
         actionOffset: 0,
         fallTime: 8,
-        crushDamage: 100,
+        crushDamage: 400,
         planeVel: 48,
         planeRad: 150,
         soundRangeMult: 2.5,

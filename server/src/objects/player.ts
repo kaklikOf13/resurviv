@@ -200,6 +200,7 @@ export class PlayerBarn {
         socketData.player = player;
         this.newPlayers.push(player);
         this.game.objectRegister.register(player);
+        this.game.grid.addObject(player)
         this.players.push(player);
         this.livingPlayers.push(player);
         this.aliveCountDirty = true;
@@ -909,6 +910,8 @@ export class Player extends BaseGameObject {
             const emotePlayer = game.objectRegister.getById(emote.playerId);
             if (emotePlayer && player.visibleObjects.has(emotePlayer) && !player.dead) {
                 updateMsg.emotes.push(emote);
+            }else if(emote.isPing){
+                updateMsg.emotes.push(emote)
             }
         }
 

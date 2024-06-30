@@ -33,7 +33,7 @@ class AirDrop {
     updateData(data, fullUpdate, isNew, ctx) {
         if (isNew) {
             this.isNew = true;
-            this.fallTicker = data.fallT * GameConfig.airdrop.fallTime;
+            this.fallTicker = data.fallT;
             const img = ctx.map.getMapDef().biome.airdrop.airdropImg;
             this.sprite.texture = PIXI.Texture.from(img);
         }
@@ -159,7 +159,7 @@ export class AirdropBarn {
                     airdrop.soundUpdateThrottle -= dt;
                 }
 
-                airdrop.rad = math.lerp(Math.pow(1 - fallT, 1.1), 5, 12);
+                airdrop.rad = math.lerp(1-fallT, 5, 12);
                 renderer.addPIXIObj(airdrop.sprite, layer, 1500, airdrop.__id);
 
                 const screenPos = camera.pointToScreen(airdrop.pos);
