@@ -39,12 +39,13 @@ export class ProjectileBarn {
         const proj = new Projectile(this.game, type, pos, layer);
         proj.posZ = posZ;
         proj.playerId = playerId;
-        proj.vel = v2.mul(vel,this.game.config.tps);
+        proj.vel = vel;
         proj.fuseTime = fuseTime;
         proj.damageType = damageType;
         proj.dir = v2.normalize(vel);
 
         this.game.objectRegister.register(proj);
+        this.projectiles.push(proj)
         return proj;
     }
 }
@@ -61,7 +62,7 @@ export class Projectile extends BaseGameObject {
     type: string;
 
     playerId = 0;
-    fuseTime = Infinity;
+    fuseTime = 4;
     damageType = 0;
 
     vel = v2.create(0, 0);
@@ -76,6 +77,8 @@ export class Projectile extends BaseGameObject {
 
         const def = GameObjectDefs[type] as ThrowableDef;
 
+        this.posZ=def.throwPhysics.initialZ??this.posZ
+
         this.bounds = collider.createCircle(v2.create(0, 0), def.rad);
     }
 
@@ -83,8 +86,9 @@ export class Projectile extends BaseGameObject {
         //
         // Velocity
         //
-        this.pos = v2.add(this.pos, this.vel);
-        this.vel = v2.mul(this.vel, 0.96);
+        this.pos = v2.add(this.pos, v2.mul(this.vel,dt));
+        this.vel = v2.mul(this.vel, 0.97);
+
 
         const def = GameObjectDefs[this.type] as ThrowableDef;
 
@@ -96,8 +100,11 @@ export class Projectile extends BaseGameObject {
         if (def.throwPhysics.fixedCollisionHeight) {
             height = def.throwPhysics.fixedCollisionHeight;
         } else {
-            this.posZ -= def.throwPhysics.velZ * dt / 10;
+            this.posZ -= (def.throwPhysics.velZ) * dt / 5;
             this.posZ = height = math.clamp(this.posZ, 0, GameConfig.projectile.maxHeight);
+            if(this.posZ<=0){
+                this.vel=v2.mul(this.vel,0.8)
+            }
         }
 
         //
@@ -108,7 +115,6 @@ export class Projectile extends BaseGameObject {
         const objs = this.game.grid.intersectCollider(coll);
         let onStair = false;
         const originalLayer = this.layer;
-
         for (const obj of objs) {
             switch(obj.__type){
                 case ObjectType.Structure:{
@@ -168,9 +174,7 @@ export class Projectile extends BaseGameObject {
                 }
             }
         }
-
         this.pos = this.game.map.clampToMapBounds(this.pos);
-
         if (!this.dead) {
             if (this.layer !== originalLayer) {
                 this.setDirty();
@@ -196,6 +200,12 @@ export class Projectile extends BaseGameObject {
         this.dead = true;
         const def = GameObjectDefs[this.type] as ThrowableDef;
         const explosionType = def.explosionType;
+        if(def.splitType){
+            for(let i=0;i<def.numSplit!??1;i++){
+                const sd=GameObjectDefs[def.splitType] as ThrowableDef
+                this.game.projectileBarn.addProjectile(this.playerId,def.splitType,this.pos,1.5,this.layer,v2.add(this.vel,v2.mul(v2.randomUnit(),4)),sd.fuseTime,GameConfig.DamageType.Player)
+            }
+        }
         if (explosionType) {
             const source = this.game.objectRegister.getById(this.playerId);
             this.game.explosionBarn.addExplosion(

@@ -13,7 +13,7 @@ export const ThrowableDefs = {
         rad: 1,
         throwPhysics: {
             playerVelMult: 0.6,
-            velZ: 5,
+            velZ: 3,
             speed: 20,
             spinVel: 10 * Math.PI,
             spinDrag: 1
@@ -79,7 +79,7 @@ export const ThrowableDefs = {
         rad: 1,
         throwPhysics: {
             playerVelMult: 0.6,
-            velZ: 5,
+            velZ: 3,
             speed: 20,
             spinVel: 10 * Math.PI,
             spinDrag: 1
@@ -150,6 +150,7 @@ export const ThrowableDefs = {
         throwPhysics: {
             playerVelMult: 0.6,
             velZ: 5,
+            initialZ:2,
             speed: 20,
             spinVel: 10 * Math.PI,
             spinDrag: 1

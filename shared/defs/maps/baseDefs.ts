@@ -140,7 +140,7 @@ export const Main: MapDef = {
         tier_throwables: [
             { name: "frag", count: 1, weight: 1 },
             { name: "smoke", count: 1, weight: 1 },
-            { name: "mirv", count: 1, weight: 0.05 }
+            { name: "mirv", count: 1, weight: .7 }
         ],
         tier_ammo: [
             { name: "9mm", count: 60, weight: 3 },

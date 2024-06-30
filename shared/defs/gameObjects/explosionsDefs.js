@@ -81,7 +81,7 @@ export const ExplosionDefs = {
     },
     explosion_mirv: {
         type: "explosion",
-        damage: 125,
+        damage: 100,
         obstacleDamage: 1.1,
         rad: { min: 5, max: 12 },
         shrapnelCount: 12,
@@ -91,9 +91,9 @@ export const ExplosionDefs = {
     },
     explosion_mirv_mini: {
         type: "explosion",
-        damage: 75,
+        damage: 60,
         obstacleDamage: 1.1,
-        rad: { min: 4, max: 8 },
+        rad: { min: 3, max: 6 },
         shrapnelCount: 7,
         shrapnelType: "shrapnel_mirv_mini",
         explosionEffectType: "mirv_mini",

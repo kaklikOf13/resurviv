@@ -168,10 +168,10 @@ export class WeaponManager {
                 this.fireWeapon();
                 break;
             }
-            // case "throwable": {
-            //     this.cookThrowable();
-            //     break;
-            // }
+             case "throwable": {
+                this.cookThrowable();
+                break;
+            }
             }
         }
     }

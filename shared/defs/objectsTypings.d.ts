@@ -232,15 +232,17 @@ interface ThrowableDef extends BaseLootDef {
     rad: number
     noPotatoSwap?: boolean
     noDropOnDeath?: boolean
+    splitType?:string
+    numSplit?:number
     throwPhysics: {
         playerVelMult: number
         velZ: number
+        initialZ?:number
         speed: number
         spinVel: number
         spinDrag: number
         randomizeSpinDir?: boolean
         fixedCollisionHeight?: number
-
     }
     speed: {
         equip: number
