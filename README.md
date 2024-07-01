@@ -19,3 +19,7 @@ Build client and server with `pnpm -r build`
 Start the server with `pnpm start` on the server directory
 
 you can use `pnpm preview` on the client to use vite preview server, but [nginx](https://nginx.org) is more recommended for that
+
+you can use `pnpm dev` on main folder to run client and server
+
+provably this version never recev more updates or patchs
