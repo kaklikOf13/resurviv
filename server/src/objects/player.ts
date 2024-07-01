@@ -1182,10 +1182,8 @@ export class Player extends BaseGameObject {
         if (itemDef.type !== "heal") {
             throw new Error(`Invalid heal item ${item}`);
         }
-        if (this.health == itemDef.maxHeal || this.actionType == GameConfig.Action.UseItem) {
-            return;
-        }
-        if (!this.inventory[item]) {
+        //@ts-expect-error
+        if (this.health == itemDef.maxHeal || this.actionType == GameConfig.Action.UseItem || [GameConfig.Anim.Cook,GameConfig.Anim.Throw].indexOf(this.animType)!==-1 || !this.inventory[item]) {
             return;
         }
 
@@ -1199,10 +1197,8 @@ export class Player extends BaseGameObject {
             throw new Error(`Invalid boost item ${item}`);
         }
 
-        if (this.actionType == GameConfig.Action.UseItem) {
-            return;
-        }
-        if (!this.inventory[item]) {
+        //@ts-expect-error
+        if (this.health == itemDef.maxHeal || this.actionType == GameConfig.Action.UseItem || [GameConfig.Anim.Cook,GameConfig.Anim.Throw].indexOf(this.animType)!==-1 || !this.inventory[item]) {
             return;
         }
 

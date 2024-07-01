@@ -735,14 +735,13 @@ export class WeaponManager {
 
     cookThrowable(): void {
         if (this.player.animType === GameConfig.Anim.Cook ||
-            this.player.animType === GameConfig.Anim.Throw) return;
+            this.player.animType === GameConfig.Anim.Throw || this.player.actionType !== GameConfig.Action.None) return;
         const itemDef = GameObjectDefs[this.activeWeapon];
         if (itemDef.type !== "throwable") {
             throw new Error(`Invalid throwable item: ${this.activeWeapon}`);
         }
         this.cookingThrowable = true;
         this.cookTicker = 0;
-
         this.player.playAnim(GameConfig.Anim.Cook, itemDef.cookable ? itemDef.fuseTime : Infinity, () => {
             this.throwThrowable();
         });
@@ -756,7 +755,7 @@ export class WeaponManager {
         const throwStr = this.player.toMouseLen / 15;
 
         if (throwableDef.type !== "throwable") {
-            throw new Error();
+            return
         }
 
         const weapSlotId = GameConfig.WeaponSlot.Throwable;
