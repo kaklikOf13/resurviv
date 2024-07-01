@@ -151,7 +151,7 @@ export const GameConfig = {
         medicHealRange: 8,
         medicReviveRange: 6,
         spectateDeadTimeout: 2,
-        quickswitch:0.73
+        quickswitch:0.70
     },
     defaultEmoteLoadout: ["emote_happyface", "emote_thumbsup", "emote_surviv", "emote_sadface", "", ""],
     airdrop: {
