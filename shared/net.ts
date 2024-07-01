@@ -262,7 +262,8 @@ export enum MsgType {
     Stats,
     UpdatePass,
     AliveCounts,
-    PerkModeRoleSelect
+    PerkModeRoleSelect,
+    Report
 }
 
 export enum PickupMsgType {

@@ -82,7 +82,7 @@ interface IpRecord {
     count: number;
     timestamp: number;
   }
-/*let ipRequestCounts: Record<string, IpRecord> = {};
+let ipRequestCounts: Record<string, IpRecord> = {};
 
 function rateLimitMiddleware(res: HttpResponse, req: HttpRequest, next: () => void): void {
     if(!(Config.security&&Config.security.antiddos)){
@@ -95,7 +95,7 @@ function rateLimitMiddleware(res: HttpResponse, req: HttpRequest, next: () => vo
     } else {
       const currentTime = Date.now();
       const timeDifference = currentTime - ipRequestCounts[ip].timestamp;
-      if (timeDifference > Config.security.antiddos.window_limit_window) {
+      if (timeDifference > Config.security.antiddos.window_limit) {
         ipRequestCounts[ip] = { count: 1, timestamp: currentTime };
       } else {
         ipRequestCounts[ip].count++;
@@ -106,7 +106,7 @@ function rateLimitMiddleware(res: HttpResponse, req: HttpRequest, next: () => vo
       }
     }
     next();
-}*/
+}
 function authenticate(password: string): string | null {
     let tpassword="123"
     if(Config.security&&Config.security.terminalPassword){
@@ -145,7 +145,7 @@ class NodeServer extends AbstractServer {
             })
             : App();
         app.get("/api/site_info", (res,req) => {
-            //rateLimitMiddleware(res,req,()=>{
+            rateLimitMiddleware(res,req,()=>{
                 let aborted = false;
                 res.onAborted(() => { aborted = true; });
                 cors(res);
@@ -154,16 +154,16 @@ class NodeServer extends AbstractServer {
                     res.writeHeader("Content-Type","application/json")
                     res.end(JSON.stringify(data));
                 }
-            //})
+            })
         });
         app.post("/api/user/profile", (res, req) => {
-            //rateLimitMiddleware(res,req,()=>{
+            rateLimitMiddleware(res,req,()=>{
                 res.writeHeader("Content-Type", "application/json");
                 res.end(JSON.stringify(this.getUserProfile()));
-            //})
+            })
         });
         app.post("/api/find_game", (res, req) => {
-            //rateLimitMiddleware(res,req,()=>{
+            rateLimitMiddleware(res,req,()=>{
                 readPostedJSON(res, (_body: {version:number}) => {
                     const response = this.findGame();
                     cors(res)
@@ -172,17 +172,17 @@ class NodeServer extends AbstractServer {
                 }, () => {
                     this.logger.warn("/api/find_game: Error retrieving body");
                 });
-            //})
+            })
         });
         app.get("/api/find_game",(res,req)=>{
-            //rateLimitMiddleware(res,req,()=>{
+            rateLimitMiddleware(res,req,()=>{
                 const response = this.findGame();
                 cors(res)
                 res.end(JSON.stringify(response));
-            //})
+            })
         })
         app.post('/api/admin/login', (res, req) => {
-            //rateLimitMiddleware(res,req,()=>{
+            rateLimitMiddleware(res,req,()=>{
                 let buffer = '';
                 res.onData((chunk, isLast) => {
                     buffer += Buffer.from(chunk).toString();
@@ -195,7 +195,7 @@ class NodeServer extends AbstractServer {
                         }
                     }
                 });
-            //})
+            })
         })
         app.post('api/admin/execute',(res,req)=>{
             authMiddleware(res,req,()=>{
@@ -213,17 +213,18 @@ class NodeServer extends AbstractServer {
             * Upgrade the connection to WebSocket.
             */
             upgrade(res, req, context) {
-                //rateLimitMiddleware(res,req,()=>{
+                rateLimitMiddleware(res,req,async()=>{
                     /* eslint-disable-next-line @typescript-eslint/no-empty-function */
                     res.onAborted((): void => { });
-
+                    const enc = new TextDecoder();
                     const searchParams = new URLSearchParams(req.getQuery());
-                    const gameID = This.getGameId(searchParams);
-
+                    const ip=enc.decode(res.getRemoteAddressAsText())
+                    const gameID = await This.getGameId(searchParams,ip);
                     if (gameID !== false) {
                         res.upgrade(
                             {
-                                gameID
+                                gameID,
+                                ip
                             },
                             req.getHeader("sec-websocket-key"),
                             req.getHeader("sec-websocket-protocol"),
@@ -233,7 +234,7 @@ class NodeServer extends AbstractServer {
                     } else {
                         forbidden(res);
                     }
-                //})
+                })
             },
 
             /**

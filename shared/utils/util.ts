@@ -70,6 +70,13 @@ export const util = {
     random(min: number, max: number) {
         return math.lerp(Math.random(), min, max);
     },
+    randomString(size:number,chars="0123456789abcdefghijklmnopqrstuvwxyz"):string{
+        let ret=""
+        for(let i=0;i<size;i++){
+            ret+=chars[this.randomInt(0,chars.length)]
+        }
+        return ret
+    },
 
     randomInt(min: number, max: number) {
         min = Math.ceil(min);

@@ -25,8 +25,14 @@ export const Config = {
 
     security:{
         adminCryptKey:"admin",
-        terminalPassword:"123"
-    }
+        terminalPassword:"123",
+        antiddos:{
+            limit_request:30,
+            window_limit:50
+        }
+    },
+
+    punishmentsDatabase:""
 } satisfies ConfigType as ConfigType;
 
 export interface ConfigType {
@@ -77,10 +83,15 @@ export interface ConfigType {
      */
     readonly country:string,
     readonly security?:{
+        readonly antiddos?:{
+            window_limit:number,
+            limit_request:number
+        }
         //Security Key
         readonly adminCryptKey?:string
         //Password To Terminal
         readonly terminalPassword?:string
     }
 
+    readonly punishmentsDatabase:string
 }

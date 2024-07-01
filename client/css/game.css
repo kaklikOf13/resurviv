@@ -1431,6 +1431,18 @@ img {
     width: 75px;
     color: white;
 }
+#ui-spectate-report{
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 20px;
+}
+#ui-spectate-report-header {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px;
+}
 #ui-leaderboard-wrapper {
     position: absolute;
     color: #fff;

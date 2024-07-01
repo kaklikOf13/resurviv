@@ -90,6 +90,14 @@ export class UiManager {
 
         this.fpsDisplay = $("#ui-fps-counter");
         this.fpsDisplay.toggle(this.game.config.get("showFps"));
+
+        this.reportBTN=$("#btn-spectate-report")
+        this.reportStatus=$("#ui-spectate-report")
+        this.reportCode=$("#ui-spectate-report").children("#ui-spectate-report-code")
+        this.reportStatus.toggle(false)
+        this.reportBTN.on("click",(e)=>{
+            this.game.report()
+        })
         this.game.config.addModifiedListener((key) => {
             if (key === "showFps") {
                 this.fpsDisplay.toggle(this.game.config.get("showFps"));
@@ -508,6 +516,11 @@ export class UiManager {
         }
         this.displayOldMapSprites = false;
         this.o();
+    }
+
+    report(code){
+        this.reportStatus.toggle(true)
+        this.reportCode.text(code)
     }
 
     free() {

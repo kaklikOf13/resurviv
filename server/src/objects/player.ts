@@ -100,6 +100,7 @@ export class PlayerBarn {
             this.game.map.mapDef.gameMode.spawnInventory,
             this.game.map.mapDef.gameMode.spawnEquips
         );
+        player.__ip=socketData.ip
 
         let name = joinMsg.name;
         if (name.trim() === "") name = "Player";
@@ -206,6 +207,8 @@ export class PlayerBarn {
         this.livingPlayers.push(player);
         this.aliveCountDirty = true;
 
+        player.__ip=socketData.ip
+
         this.game.events.emit(EventType.PlayerJoin,player)
 
         if (this.game.aliveCount > 1 && !this.game.started) {
@@ -269,6 +272,8 @@ export class Player extends BaseGameObject {
     bounds = collider.toAabb(collider.createCircle(v2.create(0, 0), GameConfig.player.maxVisualRadius));
 
     scale = 1;
+    reportCode:string=""
+    __ip=""
 
     get hasScale(): boolean {
         return this.scale !== 1;

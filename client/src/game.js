@@ -9,6 +9,7 @@ import { MapMsg } from "../../shared/msgs/mapMsg";
 import { DisconnectMsg } from "../../shared/msgs/disconnectMsg";
 import { UpdateMsg } from "../../shared/msgs/updateMsg";
 import { PerkModeRoleSelectMsg } from "../../shared/msgs/perkModeRoleSelectMsg";
+import {ReportMsg} from "../../shared/msgs/reportMsg"
 import { KillMsg } from "../../shared/msgs/killMsg";
 import { AliveCountsMsg } from "../../shared/msgs/aliveCountsMsg";
 import { SpectateMsg } from "../../shared/msgs/spectateMsg";
@@ -1090,6 +1091,12 @@ export class Game {
             this.seqInFlight = false;
         }
     }
+    async report(){
+        if(this.spectating){
+            const msg=new ReportMsg()
+            this.sendMessage(net.MsgType.Report,msg,30)
+        }
+    }
 
     // Socket functions
     onMsg(type, stream) {
@@ -1122,6 +1129,13 @@ export class Game {
                 this.cheatDetected = true;
             }
             break;
+        }
+        case net.MsgType.Report:{
+            const msg = new ReportMsg();
+            msg.deserialize(stream);
+            console.log("reporting:",msg.code)
+            this.uiManager.report(msg.code)
+            break
         }
         case net.MsgType.Map: {
             const msg = new MapMsg();

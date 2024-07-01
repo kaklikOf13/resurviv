@@ -23,7 +23,9 @@ import { AirdropBarn } from "./objects/airdrop";
 import { DecalBarn } from "./objects/decal";
 import { GameTerminal } from "./utils/commands";
 import { EventType, type EventMap, EventsManager, type GamePlugin } from "./utils/plugins";
-import { Clock } from "../../shared/utils/util";
+import { Clock, util } from "../../shared/utils/util";
+import { ReportMsg } from "../../shared/msgs/reportMsg";
+import { existsSync } from "fs";
 export class Game {
     started = false;
     stopped = false;
@@ -65,6 +67,7 @@ export class Game {
     readonly events:EventsManager<EventType,EventMap>
     readonly clock:Clock
     running:boolean
+    onreport:((container:PlayerContainer)=>void)|undefined=undefined
     constructor(id: number, config: ConfigType) {
         this.id = id;
         this.logger = new Logger(`Game #${this.id}`);
@@ -185,6 +188,12 @@ export class Game {
         }
 
         switch (type) {
+        case net.MsgType.Report:{
+            if(player.spectating&&this.onreport){
+                this.onreport!(socketData)
+            }
+            break
+        }
         case net.MsgType.Input: {
             const inputMsg = new InputMsg();
             inputMsg.deserialize(stream);

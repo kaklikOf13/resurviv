@@ -146,6 +146,15 @@ a:active {
     text-align: center;
     text-decoration: none;
 }
+.base-code{
+    border: 0;
+    border-radius: 3px;
+    box-sizing: border-box;
+    text-align: center;
+    size: 10px;
+    text-decoration: none;
+    background-color: #1125;
+}
 #background {
     background-image: url(/img/main_splash.png);
     background-repeat: no-repeat;
