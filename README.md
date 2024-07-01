@@ -23,3 +23,7 @@ you can use `pnpm preview` on the client to use vite preview server, but [nginx]
 you can use `pnpm dev` on main folder to run client and server
 
 provably this version never recev more updates or patchs
+
+## story
+This was supposed to be just a server, which ended up taking on larger proportions.  I will no longer release updates for a few reasons.  the only reason I'm still working on this project, it doesn't work for me (I'm a good programmer and dev)
+I think this is the end of resurviv.biz, and of my career as a programmer;  I'm still very inexperienced in programming, even though I've been studying it for 4 years straight.  resurviv.biz was a way for me to prove to myself that I can finish something, look where I am now.
