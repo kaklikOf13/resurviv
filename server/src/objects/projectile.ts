@@ -79,6 +79,7 @@ export class Projectile extends BaseGameObject {
 
         this.posZ=def.throwPhysics.initialZ??this.posZ
 
+
         this.bounds = collider.createCircle(v2.create(0, 0), def.rad);
     }
 
@@ -150,9 +151,12 @@ export class Projectile extends BaseGameObject {
                                     dir: this.vel
                                 });
                             } else {
+                                this.vel=v2.mul(this.vel,.65)
+                                const dot = v2.dot(this.dir, intersection.dir);
+                                const dir=v2.normalize(v2.add(v2.mul(intersection.dir, dot * -2), this.dir))
+                                this.vel=v2.create(dir.x*this.vel.x,dir.y*this.vel.y)
                                 if (obj.height >= height && obj.__id !== this.obstacleBellowId) {
                                     this.pos = v2.add(this.pos, v2.mul(intersection.dir, intersection.pen));
-
                                     if (def.explodeOnImpact) {
                                         this.explode();
                                     }

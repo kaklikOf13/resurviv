@@ -209,6 +209,9 @@ export class ProjectileBarn {
                     p.inWater = surface.type == "water";
                     p.rotVel*=.7
                 }
+                if(speed<=1){
+                    p.rotVel*=.9
+                }
                 const velZOld = p.velZ;
                 p.velZ = (p.posZ - p.posZOld) / dt;
 
