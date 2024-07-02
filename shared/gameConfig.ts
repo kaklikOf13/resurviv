@@ -156,7 +156,7 @@ export const GameConfig = {
     defaultEmoteLoadout: ["emote_happyface", "emote_thumbsup", "emote_surviv", "emote_sadface", "", ""],
     airdrop: {
         actionOffset: 0,
-        fallTime: 8,
+        fallTime: 10,
         crushDamage: 400,
         planeVel: 48,
         planeRad: 150,

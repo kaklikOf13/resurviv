@@ -38,25 +38,32 @@ export class Airdrop extends BaseGameObject {
 
     layer = 0;
 
-    fallT = 0;
+    fallT = 1;
     landed = false;
+    fallD:number
 
     // eslint-disable-next-line @typescript-eslint/no-useless-constructor
     constructor(game: Game, pos: Vec2) {
         super(game, pos);
-        this.fallT=0
+        this.fallT=1
         this.game.playerBarn.emotes.push(new Emote(
             0,
             this.pos,
             "ping_airdrop",
             true
         ))
+        this.fallD=(1/game.config.tps)/GameConfig.airdrop.fallTime
     }
-    update(dt:number){
-        if(this.fallT>=GameConfig.airdrop.fallTime){
-            this.fall()
+    update(_dt:number){
+        if(this.landed){
+            this.destroy()
         }else{
-            this.fallT+=dt
+            if(this.fallT<=0){
+                this.fallT=0
+                this.fall()
+            }else{
+                this.fallT-=this.fallD
+            }
         }
     }
     fall(){
@@ -80,6 +87,6 @@ export class Airdrop extends BaseGameObject {
             }
         }
         this.landed=true
-        this.destroy()
+        this.setPartDirty()
     }
 }

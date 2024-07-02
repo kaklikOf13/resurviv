@@ -21,7 +21,7 @@ class AirDrop {
         this.soundUpdateThrottle = 0;
         this.pos = v2.create(0, 0);
         this.isNew = false;
-        this.fallTicker = 0;
+        this.fallTicker = 1;
     }
 
     free() {
@@ -33,13 +33,13 @@ class AirDrop {
     updateData(data, fullUpdate, isNew, ctx) {
         if (isNew) {
             this.isNew = true;
-            this.fallTicker = data.fallT;
             const img = ctx.map.getMapDef().biome.airdrop.airdropImg;
             this.sprite.texture = PIXI.Texture.from(img);
         }
         if (fullUpdate) {
             this.pos = v2.copy(data.pos);
         }
+        this.fallTicker = data.fallT*GameConfig.airdrop.fallTime;
         this.landed = data.landed;
     }
 }
@@ -60,9 +60,9 @@ export class AirdropBarn {
         for (let i = 0; i < airdrops.length; i++) {
             const airdrop = airdrops[i];
             if (airdrop.active) {
-                airdrop.fallTicker += dt;
+                airdrop.fallTicker -= dt;
                 const fallT = math.clamp(
-                    airdrop.fallTicker / GameConfig.airdrop.fallTime,
+                    airdrop.fallTicker/GameConfig.airdrop.fallTime,
                     0,
                     1
                 );
@@ -125,7 +125,7 @@ export class AirdropBarn {
                 }
 
                 // Play airdrop chute and falling sounds once
-                if (!airdrop.chuteDeployed && fallT <= 0.1) {
+                if (!airdrop.chuteDeployed && fallT >=.99) {
                     audioManager.playSound("airdrop_chute_01", {
                         channel: "sfx",
                         soundPos: airdrop.pos,
@@ -143,7 +143,7 @@ export class AirdropBarn {
                             layer,
                             rangeMult: 1.75,
                             ignoreMinAllowable: true,
-                            offset: airdrop.fallTicker
+                            offset: airdrop.fallTicker/GameConfig.airdrop.fallTime
                         }
                     );
                 }
@@ -159,7 +159,7 @@ export class AirdropBarn {
                     airdrop.soundUpdateThrottle -= dt;
                 }
 
-                airdrop.rad = math.lerp(1-fallT, 5, 12);
+                airdrop.rad = math.lerp(Math.pow(fallT, 1.1), 4, 12);
                 renderer.addPIXIObj(airdrop.sprite, layer, 1500, airdrop.__id);
 
                 const screenPos = camera.pointToScreen(airdrop.pos);
