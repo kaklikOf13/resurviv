@@ -225,7 +225,7 @@ export class Gas {
         }
         for(const p of this.game.map.mapDef.gameConfig.planes.timings){
             if(p.circleIdx! as number==this.idx){
-                this.game.airdropBarn.addPlane()
+                this.game.airdropBarn.addPlane(undefined,p.wait)
             }
         }
 

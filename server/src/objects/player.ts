@@ -1012,7 +1012,8 @@ export class Player extends BaseGameObject {
         let finalDamage = params.amount;
 
         // ignore armor for gas and bleeding damage
-        if (params.damageType !== GameConfig.DamageType.Gas && params.damageType !== GameConfig.DamageType.Bleeding) {
+        //@ts-expect-error
+        if (!([GameConfig.DamageType.Gas,GameConfig.DamageType.Bleeding,GameConfig.DamageType.Airdrop].includes(params.damageType))) {
             let isHeadShot = false;
 
             const gameSourceDef = GameObjectDefs[params.gameSourceType ?? ""];
