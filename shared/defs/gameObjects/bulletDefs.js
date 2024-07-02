@@ -258,7 +258,7 @@ export const BaseDefs = {
     },
     bullet_birdshot: {
         type: "bullet",
-        damage: 4,
+        damage: 5,
         obstacleDamage: 1,
         falloff: 0.25,
         speed: 66,
