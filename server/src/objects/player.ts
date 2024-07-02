@@ -700,32 +700,7 @@ export class Player extends BaseGameObject {
         this.moveVel = v2.mul(movement, this.speed * dt);
         this.pos = v2.add(this.pos, this.moveVel);
 
-        let collided = true;
-        let step = 0;
-
-        let objs: GameObject[];
-        while (step < 20 && collided) {
-            step++;
-            collided = false;
-            objs = this.game.grid.intersectCollider(this.collider);
-
-            for (const obj of objs) {
-                switch(obj.__type){
-                    case ObjectType.Obstacle:{
-                        if (obj.collidable &&
-                            util.sameLayer(obj.layer, this.layer) &&
-                            !obj.dead
-                        ) {
-                            const collision = collider.intersectCircle(obj.collider, this.pos, this.rad);
-                            if (collision) {
-                                collided = true;
-                                this.pos = v2.add(this.pos, v2.mul(collision.dir, collision.pen + 0.001));
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        let objs: GameObject[]=this.game.grid.intersectCollider(this.collider);;
 
         let onStair = false;
         const originalLayer = this.layer;
@@ -738,57 +713,67 @@ export class Player extends BaseGameObject {
 
         let collidesWithZoomOut = false;
         for (const obj of objs!) {
-            if (obj.__type === ObjectType.Structure) {
-                for (const stair of obj.stairs) {
-                    if (stair.lootOnly) continue;
-                    if (Structure.checkStairs(this.pos, stair, this)) {
-                        onStair = true;
-
-                        if (ori === stair.downOri) this.aimLayer = 3;
-                        else if (ori === stair.upOri) this.aimLayer = 2;
-                        else this.aimLayer = this.layer;
-                        break;
-                    }
-                }
-                if (!onStair) {
-                    if (this.layer === 2) this.layer = 0;
-                    if (this.layer === 3) this.layer = 1;
-
-                    this.aimLayer = this.layer;
-                }
-                if (this.layer !== originalLayer) {
-                    this.setDirty();
-                }
-            } else if (obj.__type === ObjectType.Building) {
-                let layer = this.layer;
-                if (this.layer > 2) layer = 0;
-                if (!util.sameLayer(util.toGroundLayer(layer), obj.layer) || obj.ceilingDead) continue;
-
-                for (let i = 0; i < obj.zoomRegions.length; i++) {
-                    const zoomRegion = obj.zoomRegions[i];
-
-                    if (zoomRegion.zoomIn) {
-                        if (coldet.testCircleAabb(this.pos, this.rad, zoomRegion.zoomIn.min, zoomRegion.zoomIn.max)) {
-                            this.indoors = true;
+            switch(obj.__type){
+                case ObjectType.Structure:
+                    for (const stair of obj.stairs) {
+                        if (stair.lootOnly) continue;
+                        if (Structure.checkStairs(this.pos, stair, this)) {
+                            onStair = true;
+    
+                            if (ori === stair.downOri) this.aimLayer = 3;
+                            else if (ori === stair.upOri) this.aimLayer = 2;
+                            else this.aimLayer = this.layer;
+                            break;
                         }
                     }
+                    if (!onStair) {
+                        if (this.layer === 2) this.layer = 0;
+                        if (this.layer === 3) this.layer = 1;
+    
+                        this.aimLayer = this.layer;
+                    }
+                    if (this.layer !== originalLayer) {
+                        this.setDirty();
+                    }
+                    break
+                case ObjectType.Building:
+                    let layer = this.layer;
+                    if (this.layer > 2) layer = 0;
+                    if (!util.sameLayer(util.toGroundLayer(layer), obj.layer) || obj.ceilingDead) continue;
 
-                    if (zoomRegion.zoomOut && this.indoors) {
-                        if (coldet.testCircleAabb(this.pos, this.rad, zoomRegion.zoomOut.min, zoomRegion.zoomOut.max)) {
-                            collidesWithZoomOut = true;
+                    for (let i = 0; i < obj.zoomRegions.length; i++) {
+                        const zoomRegion = obj.zoomRegions[i];
+
+                        if (zoomRegion.zoomIn) {
+                            if (coldet.testCircleAabb(this.pos, this.rad, zoomRegion.zoomIn.min, zoomRegion.zoomIn.max)) {
+                                this.indoors = true;
+                            }
+                        }
+
+                        if (zoomRegion.zoomOut && this.indoors) {
+                            if (coldet.testCircleAabb(this.pos, this.rad, zoomRegion.zoomOut.min, zoomRegion.zoomOut.max)) {
+                                collidesWithZoomOut = true;
+                            }
+                        }
+
+                        if (this.indoors) zoom = zoomRegion.zoom ?? zoom;
+                    }
+                    break
+                case ObjectType.Obstacle:
+                    if (!util.sameLayer(this.layer, obj.layer)) continue;
+                    if (obj.collidable && !obj.dead) {
+                        const collision = collider.intersectCircle(obj.collider, this.pos, this.rad);
+                        if (collision) {
+                            this.pos = v2.add(this.pos, v2.mul(collision.dir, collision.pen + 0.001));
                         }
                     }
+                    if (!(obj.isDoor && obj.door.autoOpen)) continue;
 
-                    if (this.indoors) zoom = zoomRegion.zoom ?? zoom;
-                }
-            } else if (obj.__type === ObjectType.Obstacle) {
-                if (!util.sameLayer(this.layer, obj.layer)) continue;
-                if (!(obj.isDoor && obj.door.autoOpen)) continue;
-
-                const res = collider.intersectCircle(obj.collider, this.pos, this.rad + obj.interactionRad);
-                if (res) {
-                    obj.interact(this, true);
-                }
+                    const res = collider.intersectCircle(obj.collider, this.pos, this.rad + obj.interactionRad);
+                    if (res) {
+                        obj.interact(this, true);
+                    }
+                    break
             }
         }
 
