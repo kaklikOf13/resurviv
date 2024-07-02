@@ -88,6 +88,12 @@ export class WeaponManager {
             }
 
             nextWeapon.cooldown = this.player.game.now + (effectiveSwitchDelay * 1000);
+
+            switch(curWeaponDef.type){
+                case "gun":
+                    if(((curWeapon.cooldown-this.player.game.now)/1000)/curWeaponDef.fireDelay>=GameConfig.player.quickswitchMin){this.weapons[idx].cooldown-=(this.weapons[idx].cooldown-this.player.game.now)*GameConfig.player.quickswitchVal}
+                    break
+            }
         }
 
         this.player.shotSlowdownTimer = -1;
@@ -106,7 +112,6 @@ export class WeaponManager {
                 }, effectiveSwitchDelay * 1000)
             );
         }
-        this.weapons[idx].cooldown-=(this.weapons[idx].cooldown-this.player.game.now)*GameConfig.player.quickswitch
 
         this.player.setDirty();
         this.player.weapsDirty = true;
@@ -593,90 +598,93 @@ export class WeaponManager {
         const obstacles = objs.filter(obj => obj.__type === ObjectType.Obstacle) as Obstacle[];
 
         for (const obj of objs) {
-            if (obj.__type === ObjectType.Obstacle) {
-                const obstacle = obj;
-                if (!(obstacle.dead ||
-                    obstacle.isSkin ||
-                    obstacle.height < GameConfig.player.meleeHeight) &&
-                    util.sameLayer(obstacle.layer, 1 & this.player.layer)) {
-                    let collision = collider.intersectCircle(
-                        obstacle.collider,
-                        coll.pos,
-                        coll.rad
-                    );
-
-                    if (meleeDef.cleave) {
-                        const normalized = v2.normalizeSafe(
-                            v2.sub(obstacle.pos, this.player.pos),
-                            v2.create(1, 0)
-                        );
-                        const intersectedObstacle = collisionHelpers.intersectSegment(
-                            obstacles,
-                            this.player.pos,
-                            normalized,
-                            lineEnd,
-                            1,
-                            this.player.layer,
-                            false
-                        );
-                        intersectedObstacle && intersectedObstacle.id !== obstacle.__id && (collision = null);
-                    }
-                    if (collision) {
-                        const pos = v2.add(
+            switch(obj.__type){
+                case ObjectType.Obstacle:
+                    const obstacle = obj;
+                    if (!(obstacle.dead ||
+                        obstacle.isSkin ||
+                        obstacle.height < GameConfig.player.meleeHeight) &&
+                        util.sameLayer(obstacle.layer, 1 & this.player.layer)) {
+                        let collision = collider.intersectCircle(
+                            obstacle.collider,
                             coll.pos,
-                            v2.mul(
-                                v2.neg(collision.dir),
-                                coll.rad - collision.pen
-                            )
+                            coll.rad
                         );
-                        hits.push({
-                            obj: obstacle,
-                            pen: collision.pen,
-                            prio: 1,
-                            pos,
-                            dir: collision.dir
-                        });
-                    }
-                }
-            } else if (obj.__type === ObjectType.Player) {
-                const player = obj;
-                if (player.__id !== this.player.__id &&
-                    !player.dead &&
-                    util.sameLayer(player.layer, this.player.layer)
-                ) {
-                    const normalized = v2.normalizeSafe(
-                        v2.sub(player.pos, this.player.pos),
-                        v2.create(1, 0)
-                    );
-                    const collision = coldet.intersectCircleCircle(
-                        coll.pos,
-                        coll.rad,
-                        player.pos,
-                        player.rad
-                    );
-                    if (collision &&
-                        math.eqAbs(
-                            lineEnd,
-                            collisionHelpers.intersectSegmentDist(
+
+                        if (meleeDef.cleave) {
+                            const normalized = v2.normalizeSafe(
+                                v2.sub(obstacle.pos, this.player.pos),
+                                v2.create(1, 0)
+                            );
+                            const intersectedObstacle = collisionHelpers.intersectSegment(
                                 obstacles,
                                 this.player.pos,
                                 normalized,
                                 lineEnd,
-                                GameConfig.player.meleeHeight,
+                                1,
                                 this.player.layer,
                                 false
-                            )
-                        )
-                    ) {
-                        hits.push({
-                            obj: player,
-                            pen: collision.pen,
-                            prio: player.teamId === this.player.teamId ? 2 : 0,
-                            pos: v2.copy(player.pos),
-                            dir: collision.dir
-                        });
+                            );
+                            intersectedObstacle && intersectedObstacle.id !== obstacle.__id && (collision = null);
+                        }
+                        if (collision) {
+                            const pos = v2.add(
+                                coll.pos,
+                                v2.mul(
+                                    v2.neg(collision.dir),
+                                    coll.rad - collision.pen
+                                )
+                            );
+                            hits.push({
+                                obj: obstacle,
+                                pen: collision.pen,
+                                prio: 1,
+                                pos,
+                                dir: collision.dir
+                            });
+                        }
                     }
+                break
+                case ObjectType.Player:
+                    const player = obj;
+                    if (player.__id !== this.player.__id &&
+                        !player.dead &&
+                        util.sameLayer(player.layer, this.player.layer)
+                    ) {
+                        const normalized = v2.normalizeSafe(
+                            v2.sub(player.pos, this.player.pos),
+                            v2.create(1, 0)
+                        );
+                        const collision = coldet.intersectCircleCircle(
+                            coll.pos,
+                            coll.rad,
+                            player.pos,
+                            player.rad
+                        );
+                        if (collision &&
+                            math.eqAbs(
+                                lineEnd,
+                                collisionHelpers.intersectSegmentDist(
+                                    obstacles,
+                                    this.player.pos,
+                                    normalized,
+                                    lineEnd,
+                                    GameConfig.player.meleeHeight,
+                                    this.player.layer,
+                                    false
+                                )
+                            )
+                        ) {
+                            hits.push({
+                                obj: player,
+                                pen: collision.pen,
+                                prio: player.teamId === this.player.teamId ? 2 : 0,
+                                pos: v2.copy(player.pos),
+                                dir: collision.dir
+                            });
+                        }
                 }
+                break
             }
         }
 
@@ -693,23 +701,27 @@ export class WeaponManager {
             const hit = hits[i];
             const obj = hit.obj;
 
-            if (obj.__type === ObjectType.Obstacle) {
-                obj.damage({
-                    amount: meleeDef.damage * meleeDef.obstacleDamage,
-                    gameSourceType: this.activeWeapon,
-                    damageType: GameConfig.DamageType.Player,
-                    source: this.player,
-                    dir: hit.dir
-                });
-                if (obj.interactable) obj.interact(this.player);
-            } else if (obj.__type === ObjectType.Player) {
-                obj.damage({
-                    amount: meleeDef.damage,
-                    gameSourceType: this.activeWeapon,
-                    damageType: GameConfig.DamageType.Player,
-                    source: this.player,
-                    dir: hit.dir
-                });
+            switch(obj.__type){
+                case ObjectType.Obstacle:{
+                    obj.damage({
+                        amount: meleeDef.damage * meleeDef.obstacleDamage,
+                        gameSourceType: this.activeWeapon,
+                        damageType: GameConfig.DamageType.Player,
+                        source: this.player,
+                        dir: hit.dir
+                    });
+                    if (obj.interactable) obj.interact(this.player);
+                    break
+                } case ObjectType.Player:{
+                    obj.damage({
+                        amount: meleeDef.damage,
+                        gameSourceType: this.activeWeapon,
+                        damageType: GameConfig.DamageType.Player,
+                        source: this.player,
+                        dir: hit.dir
+                    });
+                    break
+                }
             }
         }
     }
