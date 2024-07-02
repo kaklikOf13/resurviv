@@ -18,6 +18,7 @@ import { util } from "../../shared/utils/util";
 import { type Vec2, v2 } from "../../shared/utils/v2";
 import { MsgStream, MsgType } from "../../shared/net";
 import { MapMsg } from "../../shared/msgs/mapMsg";
+import { InstantiatePlugin } from "./data/pluginsDefs";
 
 //
 // Helpers
@@ -230,8 +231,6 @@ export class GameMap {
             }
         } */
 
-            this.generateTerrain();
-
             this.terrain = generateTerrain(
                 this.width,
                 this.height,
@@ -254,7 +253,7 @@ export class GameMap {
     genPlugins(){
         this.game.events.clearAll()
         for(const p of this.mapDef.gameMode.plugins??[]){
-            this.game.addPlugin(p)
+            this.game.addPlugin(InstantiatePlugin(p.id,p.params,p.values))
         }
     }
 

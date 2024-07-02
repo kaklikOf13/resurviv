@@ -20,6 +20,7 @@ import { WoodsSummer } from "./maps/woodsSummerDefs";
 import { GasDef } from "../../server/src/objects/gas";
 import { RandomVal } from "../utils/util";
 import { type GamePlugin } from "../../server/src/utils/plugins";
+import { PluginInstance } from "../../server/src/data/pluginsDefs";
 export const MapDefs = {
     main: Main,
     main_spring: MainSpring,
@@ -100,7 +101,7 @@ export interface MapDef {
             health?:number,
             boost?:number
         },
-        plugins?:GamePlugin[]
+        plugins?:PluginInstance[]
     }
     gameConfig: {
         planes: {

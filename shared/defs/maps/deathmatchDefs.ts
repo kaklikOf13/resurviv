@@ -1,4 +1,3 @@
-import { HealingAfterKillPlugin } from "../../../server/src/plugins/healingAfterKill";
 import { util } from "../../utils/util";
 import { type MapDef } from "../mapDefs";
 import { TinyMain } from "./tinyMainDefs";
@@ -12,7 +11,10 @@ export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
         selectableGuns:true,
         joinTime:250,
         plugins:[
-            new HealingAfterKillPlugin(30)
+            {
+                "id":"healing_after_kill",
+                params:[30]
+            }
         ],
         spawnInventory:{
             "2xscope": 1,
