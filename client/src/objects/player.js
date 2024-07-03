@@ -673,9 +673,8 @@ export class Player {
         this.noCeilingRevealTicker -= dt;
 
         // Update nameTex
-        const activeGroupId = playerBarn.getPlayerInfo(activeId).groupId;
         const playerInfo = playerBarn.getPlayerInfo(this.__id);
-        const inSameGroup = playerInfo.groupId == activeGroupId;
+        const inSameGroup = playerInfo.teamId==playerBarn.getPlayerInfo(activePlayer.__id).teamId;
         this.nameText.text = playerInfo.name;
         this.nameText.visible = !isActivePlayer && inSameGroup;
 
