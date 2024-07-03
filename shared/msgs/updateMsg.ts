@@ -6,7 +6,10 @@ import { v2, type Vec2 } from "./../utils/v2";
 
 function serializeActivePlayer(s: BitStream, data: LocalDataWithDirty) {
     s.writeBoolean(data.healthDirty);
-    if (data.healthDirty) s.writeFloat(data.health, 0, 100, 8);
+    if (data.healthDirty) {
+        s.writeUint16(data.health)
+        s.writeUint16(data.maxHealth)
+    };
 
     s.writeBoolean(data.boostDirty);
     if (data.boostDirty) s.writeFloat(data.boost, 0, 100, 8);
@@ -51,7 +54,8 @@ function serializeActivePlayer(s: BitStream, data: LocalDataWithDirty) {
 function deserializeActivePlayer(s: BitStream, data: LocalDataWithDirty) {
     data.healthDirty = s.readBoolean();
     if (data.healthDirty) {
-        data.health = s.readFloat(0, 100, 8);
+        data.health = s.readUint16();
+        data.maxHealth=s.readUint16()
     }
     data.boostDirty = s.readBoolean();
     if (data.boostDirty) {

@@ -369,6 +369,7 @@ export class Player extends BaseGameObject {
     activeIdDirty = true;
 
     private _health: number = GameConfig.player.health;
+    private _maxHealth:number=GameConfig.player.health;
 
     get health(): number {
         return this._health;
@@ -377,7 +378,16 @@ export class Player extends BaseGameObject {
     set health(health: number) {
         if (this._health === health) return;
         this._health = health;
-        this._health = math.clamp(this._health, 0, GameConfig.player.health);
+        this._health = math.clamp(this._health, 0, this._maxHealth);
+        this.healthDirty = true;
+    }
+    get maxHealth():number{
+        return this._maxHealth
+    }
+    set maxHealth(maxHealth: number) {
+        if (this._maxHealth === maxHealth) return;
+        this._maxHealth = maxHealth;
+        this._health = math.clamp(this._health, 0, this._maxHealth);
         this.healthDirty = true;
     }
 
@@ -939,6 +949,7 @@ export class Player extends BaseGameObject {
             updateMsg.activePlayerData = {
                 healthDirty: true,
                 health: player.health,
+                maxHealth:this._maxHealth,
                 boostDirty: true,
                 boost: player.boost,
                 zoomDirty: true,
@@ -1049,7 +1060,7 @@ export class Player extends BaseGameObject {
     damage(params: DamageParams) {
         if (this._health < 0) this._health = 0;
         if (this.dead) return;
-        if(this.teamId!==undefined&&params.source instanceof Player&&params.source.teamId===this.teamId) return;
+        if(this.teamId!==undefined&&params.source instanceof Player&&params.source!==this&&params.source.teamId===this.teamId) return;
 
         let finalDamage = params.amount;
 

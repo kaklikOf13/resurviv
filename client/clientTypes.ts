@@ -82,6 +82,7 @@ export interface NetData {
 
 export interface LocalData {
     health: number
+    maxHealth: number
     zoom: number
     boost: number
     scope: string

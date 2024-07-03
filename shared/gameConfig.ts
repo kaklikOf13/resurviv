@@ -152,7 +152,7 @@ export const GameConfig = {
         medicReviveRange: 6,
         spectateDeadTimeout: 2,
         quickswitchVal:0.73,
-        quickswitchMin:0.4
+        quickswitchMin:0.2
     },
     defaultEmoteLoadout: ["emote_happyface", "emote_thumbsup", "emote_surviv", "emote_sadface", "", ""],
     airdrop: {
@@ -299,17 +299,17 @@ export const GameConfig = {
         "15xscope": [1, 1, 1, 1]
     } as Record<string, number[]>,
     lootRadius: {
-        outfit: .95,
+        outfit: 1,
         melee: 1.25,
         gun: 1.4,
         throwable: 1,
-        ammo: .95,
-        heal: .95,
-        boost: .95,
-        backpack: .95,
-        helmet: .95,
-        chest: .95,
-        scope: .95,
+        ammo: 1,
+        heal: 1,
+        boost: 1,
+        backpack: 1,
+        helmet: 1,
+        chest: 1,
+        scope: 1,
         perk: 1.25,
         xp: 1
     } as Record<string, number>

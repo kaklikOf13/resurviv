@@ -190,6 +190,7 @@ class UiState {
             });
         }
         this.health = 100;
+        this.maxHealth=100
         this.boost = 0;
         this.downed = false;
     }
@@ -592,6 +593,7 @@ export class UiManager2 {
 
         // Player status
         state.health = activePlayer.netData.dead ? 0 : math.max(activePlayer.localData.health, 1);
+        state.maxHealth = activePlayer.localData.maxHealth;
         state.boost = activePlayer.localData.boost;
         state.downed = activePlayer.netData.downed;
 
@@ -987,27 +989,27 @@ export class UiManager2 {
         if (patch.health || patch.downed) {
             const steps = [
                 {
-                    health: 100,
+                    health: 1,
                     color: [179, 179, 179]
                 },
                 {
-                    health: 100,
+                    health: 1,
                     color: [255, 255, 255]
                 },
                 {
-                    health: 75,
+                    health: .75,
                     color: [255, 255, 255]
                 },
                 {
-                    health: 75,
+                    health: .75,
                     color: [255, 158, 158]
                 },
                 {
-                    health: 25,
+                    health: .25,
                     color: [255, 82, 82]
                 },
                 {
-                    health: 25,
+                    health: .25,
                     color: [255, 0, 0]
                 },
                 {
@@ -1017,7 +1019,7 @@ export class UiManager2 {
             ];
 
             let endIdx = 0;
-            const health = Math.ceil(state.health);
+            const health = state.health/state.maxHealth;
 
             while (steps[endIdx].health > health && endIdx < steps.length - 1) {
                 endIdx++;
@@ -1037,11 +1039,11 @@ export class UiManager2 {
             }
 
             dom.health.inner.style.backgroundColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1.0)`;
-            dom.health.inner.style.width = `${state.health}%`;
-            dom.health.depleted.style.width = `${state.health}%`;
+            dom.health.inner.style.width = `${Math.ceil(health*100)}%`;
+            dom.health.depleted.style.width = `${Math.ceil(health*100)}%`;
             dom.health.depleted.style.display =
-                state.health > 0 ? "block" : "none";
-            if (state.health > 25) {
+                health > 0 ? "block" : "none";
+            if (health > .25) {
                 dom.health.inner.classList.remove("ui-bar-danger");
             } else {
                 dom.health.inner.classList.add("ui-bar-danger");

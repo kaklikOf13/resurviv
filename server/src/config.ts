@@ -13,8 +13,8 @@ export const Config = {
     port: 8000,
 
     mode:{
-        maxTeamSize:2,
-        map:"tinymain"
+        maxTeamSize:1,
+        map:"deathmatch"
     },
 
     spawn: { mode: SpawnMode.Random },

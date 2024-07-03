@@ -444,6 +444,7 @@ export class Player {
 
         if (data.healthDirty) {
             this.localData.health = data.health;
+            this.localData.maxHealth=data.maxHealth
         }
 
         if (data.boostDirty) {
@@ -2380,6 +2381,7 @@ export class PlayerBarn {
         this.setPlayerStatus(activeId, {
             pos: v2.copy(activePlayer.netData.pos),
             health: activePlayer.localData.health,
+
             disconnected: false,
             dead: activePlayer.netData.dead,
             downed: activePlayer.netData.downed,
