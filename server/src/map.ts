@@ -231,6 +231,8 @@ export class GameMap {
             }
         } */
 
+            this.generateTerrain()
+
             this.terrain = generateTerrain(
                 this.width,
                 this.height,
@@ -261,20 +263,16 @@ export class GameMap {
         const mapConfig = this.mapDef.mapGen.map;
         const riverWeights: number[] = [];
         const weightedWidths: number[][] = [];
-
-        if(mapConfig.rivers){
+        const randomGenerator = util.seededRand(this.seed);
+        //
+        // Generate rivers
+        //
+        if(!(mapConfig.rivers===undefined||mapConfig.rivers===null)){
             for (const weightedRiver of mapConfig.rivers.weights) {
                 riverWeights.push(weightedRiver.weight);
                 weightedWidths.push(weightedRiver.widths);
             }
-        }
-        const randomGenerator = util.seededRand(this.seed);
-
-        //
-        // Generate rivers
-        //
-        if(this.mapDef.mapGen.map.rivers){
-
+    
             //
             // Generate lakes
             //
@@ -343,7 +341,7 @@ export class GameMap {
                     start = v2.create(reverse ? rightHalf : leftHalf, 1);
                 }
 
-                const smoothness = this.mapDef.mapGen.map.rivers.smoothness;
+                const smoothness = this.mapDef.mapGen.map.rivers!.smoothness;
 
                 const startAngle = Math.atan2(center.y - start.y, center.x - start.x) + (reverse ? 0 : Math.PI) + randomGenerator(-smoothness, smoothness);
 
