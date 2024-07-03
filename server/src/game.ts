@@ -23,9 +23,12 @@ import { AirdropBarn } from "./objects/airdrop";
 import { DecalBarn } from "./objects/decal";
 import { GameTerminal } from "./utils/commands";
 import { EventType, type EventMap, EventsManager, type GamePlugin } from "./utils/plugins";
-import { Clock, util } from "../../shared/utils/util";
-import { ReportMsg } from "../../shared/msgs/reportMsg";
-import { existsSync } from "fs";
+import { Clock} from "../../shared/utils/util";
+import { MapDefs } from "../../shared/defs/mapDefs";
+export interface GameMode{
+    maxTeamSize:number,
+    map:keyof typeof MapDefs
+}
 export class Game {
     started = false;
     stopped = false;
@@ -35,6 +38,8 @@ export class Game {
     id: number;
     config: ConfigType;
     console:GameTerminal
+
+    mode:GameMode
 
     grid: Grid;
     objectRegister: ObjectRegister;
@@ -68,7 +73,7 @@ export class Game {
     readonly clock:Clock
     running:boolean
     onreport:((container:PlayerContainer)=>void)|undefined=undefined
-    constructor(id: number, config: ConfigType) {
+    constructor(id: number,mode:GameMode, config: ConfigType) {
         this.id = id;
         this.logger = new Logger(`Game #${this.id}`);
         this.logger.log("Creating");
@@ -76,6 +81,7 @@ export class Game {
 
         this.console=new GameTerminal(this)
         this.config = config;
+        this.mode=mode;
 
         this.clock=new Clock(this.config.tps,1)
         this.map = new GameMap(this);
@@ -155,7 +161,7 @@ export class Game {
         this.gas.flush();
         this.msgsToSend.length = 0;
 
-        if (this.started && this.aliveCount <= 1 && !this.over) {
+        if (this.started && ((this.mode.maxTeamSize>1&&this.playerBarn.livingTeams.length<=1)||(this.playerBarn.livingPlayers.length<=1)) && !this.over) {
             this.initGameOver();
         }
         this.events.emit(EventType.GameTick,this)
@@ -230,11 +236,13 @@ export class Game {
     initGameOver(): void {
         if (this.over) return;
         this.over = true;
-        const winningPlayer = this.playerBarn.livingPlayers[0];
-        if (winningPlayer) {
-            winningPlayer.addGameOverMsg(winningPlayer.teamId);
-            for (const spectator of winningPlayer.spectators) {
-                spectator.addGameOverMsg(winningPlayer.teamId);
+        const winningPlayers = this.mode.maxTeamSize==1?this.playerBarn.livingPlayers:this.playerBarn.teams[this.playerBarn.livingTeams[0]]!.players;
+        if (winningPlayers.length>0) {
+            for(const p of winningPlayers){
+                p.addGameOverMsg(p.teamId);
+                for (const spectator of p.spectators) {
+                    spectator.addGameOverMsg(p.teamId);
+                }
             }
         }
         this.events.emit(EventType.GameEnd,{game:this,winners:this.playerBarn.livingPlayers})

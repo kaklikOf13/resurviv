@@ -192,9 +192,9 @@ export class GameMap {
     constructor(game: Game) {
         this.game = game;
 
-        const mapDef = this.mapDef = MapDefs[game.config.map];
+        const mapDef = MapDefs[game.mode.map];
         if (mapDef === undefined) {
-            throw new Error(`Invalid map name: ${game.config.map}`);
+            throw new Error(`Invalid map name: ${game.mode.map}`);
         }
 
         this.mapDef = mapDef;
@@ -205,7 +205,7 @@ export class GameMap {
 
         this.bounds = collider.createAabb(v2.create(0, 0), v2.create(this.width, this.height));
 
-        this.msg.mapName = game.config.map;
+        this.msg.mapName = game.mode.map;
         this.msg.seed = this.seed;
         this.msg.width = this.width;
         this.msg.height = this.height;
@@ -964,14 +964,12 @@ export class GameMap {
         return structure;
     }
 
-    getRandomSpawnPos(): Vec2 {
-        const getPos = () => {
-            return {
-                x: util.random(this.shoreInset, this.width - this.shoreInset),
-                y: util.random(this.shoreInset, this.height - this.shoreInset)
-            };
+    getRandomSpawnPos(getPos:()=>Vec2 = () => {
+        return {
+            x: util.random(this.shoreInset, this.width - this.shoreInset),
+            y: util.random(this.shoreInset, this.height - this.shoreInset)
         };
-
+    }): Vec2 {
         let attempts = 0;
         let collided = true;
 

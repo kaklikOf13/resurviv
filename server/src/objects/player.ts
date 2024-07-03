@@ -49,7 +49,34 @@ export class Emote {
         this.isPing = isPing;
     }
 }
-
+export class Team{
+    readonly id:number
+    players:Player[]
+    livingPlayers:Player[]
+    constructor(id:number){
+        this.id=id
+        this.players=[]
+        this.livingPlayers=[]
+    }
+    addPlayer(player:Player){
+        if(!player.dead&&player.teamId!==undefined){
+            player.teamId=this.id
+            player.team=this
+            this.livingPlayers.push(player)
+            this.players.push(player)
+        }
+    }
+    removePlayer(player:Player){
+        this.players.splice(this.players.findIndex((p)=>{player.__id===p.__id}),1)
+        this.livingPlayers.splice(this.livingPlayers.findIndex((p)=>{player.__id===p.__id}),1)
+        if(this.livingPlayers.length===0){
+            player.game.playerBarn.livingTeams.splice(player.game.playerBarn.livingTeams.indexOf(this.id!),1)
+        }
+    }
+    teleportProxy(player:Player,size=1.5):void{
+        player.pos=player.game.map.getRandomSpawnPos(()=>{return v2.add(this.livingPlayers[util.randomInt(0,this.livingPlayers.length-1)].pos,v2.mul(v2.sub(v2.randomUnit(),v2.create(size,size)),size*2))})
+    }
+}
 export class PlayerBarn {
     players: Player[] = [];
     livingPlayers: Player[] = [];
@@ -59,6 +86,11 @@ export class PlayerBarn {
     aliveCountDirty = false;
 
     emotes: Emote[] = [];
+    teams:Partial<Record<number,Team>>={}
+    livingTeams:number[]=[]
+    get lastTeam(){
+        return Object.keys(this.teams).length
+    }
 
     constructor(readonly game: Game) { }
 
@@ -81,15 +113,15 @@ export class PlayerBarn {
         }
 
         switch (this.game.config.spawn.mode) {
-        case SpawnMode.Center:
-            pos = v2.copy(this.game.map.center);
-            break;
-        case SpawnMode.Fixed:
-            pos = v2.copy(this.game.config.spawn.pos);
-            break;
-        case SpawnMode.Random:
-            pos = this.game.map.getRandomSpawnPos();
-            break;
+            case SpawnMode.Random:
+                pos = this.game.map.getRandomSpawnPos();
+                break;
+            case SpawnMode.Center:
+                pos = v2.copy(this.game.map.center);
+                break;
+            case SpawnMode.Fixed:
+                pos = v2.copy(this.game.config.spawn.pos);
+                break;
         }
 
         const player = new Player(
@@ -211,25 +243,45 @@ export class PlayerBarn {
 
         this.game.events.emit(EventType.PlayerJoin,player)
 
-        if (this.game.aliveCount > 1 && !this.game.started) {
+        this.addToAutoTeam(player)
+
+        if (this.livingTeams.length>1 && !this.game.started) {
             this.game.started = true;
             this.game.start()
         }
 
         return player;
     }
+    newTeam():Team{
+        const team=new Team(this.lastTeam+1)
+        this.teams[team.id]=team
+        this.livingTeams.push(team.id)
+        return team
+    }
+    addToAutoTeam(player:Player){
+        if(this.game.mode.maxTeamSize>1){
+            if(this.teams[this.lastTeam]&&this.teams[this.lastTeam]!.players.length<this.game.mode.maxTeamSize){
+                this.teams[this.lastTeam]!.addPlayer(player)
+                this.teams[this.lastTeam]?.teleportProxy(player)
+            }else{
+                const team=this.newTeam()
+                team.addPlayer(player)
+            }
+        }
+    }
 
     update(dt: number) {
         for (let i = 0; i < this.players.length; i++) {
             const player = this.players[i];
             // completely remove player if alive for less than 5 seconds
-            if (player.disconnected && player.timeAlive < 5) {
+            if (player.disconnected && player.canDespawn) {
                 this.players.splice(i, 1);
                 this.deletedPlayers.push(player.__id);
                 const livingIdx = this.livingPlayers.indexOf(player);
                 if (livingIdx !== -1) {
                     this.livingPlayers.splice(livingIdx, 1);
                 }
+                player.team?.removePlayer(player)
                 player.destroy();
                 continue;
             }
@@ -537,8 +589,9 @@ export class Player extends BaseGameObject {
     name = "Player";
     isMobile: boolean = false;
 
-    teamId = 1;
-    groupId = 0;
+    teamId:number|undefined = undefined;
+    team:Team|undefined=undefined
+    groupId:number|undefined=undefined
 
     loadout = {
         heal: "heal_basic",
@@ -570,7 +623,7 @@ export class Player extends BaseGameObject {
 
         this.collider = collider.createCircle(pos, this.rad);
 
-        if (game.config.map !== "faction") {
+        if (game.mode.map !== "faction") {
             this.groupId = this.teamId = this.game.playerBarn.groupIdAllocator.getNextId();
         }
 
@@ -800,6 +853,8 @@ export class Player extends BaseGameObject {
 
     private _firstUpdate = true;
 
+    canDespawn=true
+
     msgStream = new MsgStream(new ArrayBuffer(65536));
     sendMsgs(): void {
         const msgStream = this.msgStream;
@@ -905,6 +960,7 @@ export class Player extends BaseGameObject {
             updateMsg.activePlayerData = player;
         }
 
+        //@ts-expect-error
         updateMsg.playerInfos = player._firstUpdate ? playerBarn.players : playerBarn.newPlayers;
         updateMsg.deletedPlayerIds = playerBarn.deletedPlayers;
 
@@ -993,6 +1049,7 @@ export class Player extends BaseGameObject {
     damage(params: DamageParams) {
         if (this._health < 0) this._health = 0;
         if (this.dead) return;
+        if(this.teamId!==undefined&&params.source instanceof Player&&params.source.teamId===this.teamId) return;
 
         let finalDamage = params.amount;
 
@@ -1041,10 +1098,10 @@ export class Player extends BaseGameObject {
         gameOverMsg.playerStats.push(this);
         if (this.spectating) {
             gameOverMsg.teamRank = winningTeamId == this.spectating.teamId ? 1 : this.game.aliveCount + 1;
-            gameOverMsg.teamId = this.spectating.teamId;
+            gameOverMsg.teamId = this.spectating.teamId??0;
         } else {
             gameOverMsg.teamRank = winningTeamId == this.teamId ? 1 : this.game.aliveCount + 1;
-            gameOverMsg.teamId = this.teamId;
+            gameOverMsg.teamId = this.teamId??0;
         }
         gameOverMsg.winningTeamId = winningTeamId;
         gameOverMsg.gameOver = winningTeamId != -1;
@@ -1054,6 +1111,12 @@ export class Player extends BaseGameObject {
     killedBy: Player | undefined;
 
     kill(params: DamageParams): void {
+        if(this.team){
+            this.team.livingPlayers.splice(this.team.livingPlayers.findIndex((p)=>{p.__id===this.__id}),1)
+            if(this.team.livingPlayers.length===0){
+                this.game.playerBarn.livingTeams.splice(this.game.playerBarn.livingTeams.indexOf(this.teamId!),1)
+            }
+        }
         this.dead = true;
         this.boost = 0;
         this.actionType = this.actionSeq = 0;

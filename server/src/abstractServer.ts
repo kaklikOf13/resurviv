@@ -75,7 +75,7 @@ export abstract class AbstractServer {
     newGame(id?: number): number {
         if (id !== undefined) {
             if (!this.games[id] || this.games[id]?.stopped) {
-                this.games[id] = new Game(id, Config);
+                this.games[id] = new Game(id,Config.mode, Config);
                 //@ts-expect-error
                 this.games[id].onreport=(this.onreport.bind(this))
                 this.games[id]?.run()
@@ -94,7 +94,7 @@ export abstract class AbstractServer {
         if (game === undefined) return;
         game.stop();
         if (createNewGame) {
-            this.games[id] = new Game(id, Config);
+            this.newGame(id)
         } else {
             delete this.games[id];
         }
@@ -112,7 +112,7 @@ export abstract class AbstractServer {
 
         const data = {
             modes: [
-                { mapName: Config.map, teamMode: 1 }
+                { mapName: Config.mode.map, teamMode: 1 }
             ],
             players: playerCount,
             country: Config.country

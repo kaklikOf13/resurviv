@@ -78,7 +78,7 @@ export class LootBarn {
     }
 
     getLootTable(tier: string): Array<{ name: string, count: number }> {
-        const lootTable = MapDefs[this.game.config.map].lootTable[tier];
+        const lootTable = this.game.map.mapDef.lootTable[tier];
         const items: Array<{ name: string, count: number }> = [];
 
         if (!lootTable) {

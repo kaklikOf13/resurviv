@@ -17,8 +17,8 @@ interface Loadout {
 
 export interface PlayerInfo {
     playerId: number
-    groupId: number
-    teamId: number
+    groupId: number|undefined
+    teamId: number|undefined
     name: string
     nameTruncated: string
     anonName: string

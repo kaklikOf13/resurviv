@@ -2,7 +2,7 @@ import { AbstractMsg, type BitStream } from "../net";
 import { PlayerStatsMsg } from "./playerStatsMsg";
 
 export class GameOverMsg extends AbstractMsg {
-    teamId = 0;
+    teamId:number = 0;
     teamRank = 0;
     gameOver = false;
     winningTeamId = 0;

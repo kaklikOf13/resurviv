@@ -1,5 +1,5 @@
-import { type MapDefs } from "../../shared/defs/mapDefs";
 import { type Vec2 } from "../../shared/utils/v2";
+import { type GameMode } from "./game";
 
 export enum SpawnMode {
     Random,
@@ -12,7 +12,10 @@ export const Config = {
     host: "0.0.0.0",
     port: 8000,
 
-    map: "deathmatch",
+    mode:{
+        maxTeamSize:2,
+        map:"tinymain"
+    },
 
     spawn: { mode: SpawnMode.Random },
 
@@ -48,7 +51,7 @@ export interface ConfigType {
         readonly caFile: string
     }
 
-    readonly map: keyof typeof MapDefs
+    readonly mode: GameMode
 
     /**
      * There are 5 spawn modes: Random, Radius, Fixed, and Center.
