@@ -245,7 +245,7 @@ export class PlayerBarn {
 
         this.addToAutoTeam(player)
 
-        if (this.livingTeams.length>1 && !this.game.started) {
+        if ((this.game.teamMode?this.livingTeams.length:this.livingPlayers.length)>1 && !this.game.started) {
             this.game.started = true;
             this.game.start()
         }

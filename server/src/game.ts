@@ -39,6 +39,7 @@ export class Game {
     config: ConfigType;
     console:GameTerminal
 
+    teamMode:boolean
     mode:GameMode
 
     grid: Grid;
@@ -88,6 +89,8 @@ export class Game {
         this.grid = new Grid(this.map.width, this.map.height);
         this.objectRegister = new ObjectRegister(this.grid);
         this.map.generate()
+
+        this.teamMode=this.map.mapDef.gameMode.teamsMode||this.mode.maxTeamSize>1
 
         this.gas = new Gas(this.map,this);
 
@@ -161,7 +164,7 @@ export class Game {
         this.gas.flush();
         this.msgsToSend.length = 0;
 
-        if (this.started && ((this.mode.maxTeamSize>1&&this.playerBarn.livingTeams.length<=1)||(this.playerBarn.livingPlayers.length<=1)) && !this.over) {
+        if (this.started && ((this.teamMode&&this.playerBarn.livingTeams.length<=1)||(this.playerBarn.livingPlayers.length<=1)) && !this.over) {
             this.initGameOver();
         }
         this.events.emit(EventType.GameTick,this)
@@ -236,7 +239,7 @@ export class Game {
     initGameOver(): void {
         if (this.over) return;
         this.over = true;
-        const winningPlayers = this.mode.maxTeamSize==1?this.playerBarn.livingPlayers:this.playerBarn.teams[this.playerBarn.livingTeams[0]]!.players;
+        const winningPlayers = this.teamMode?this.playerBarn.teams[this.playerBarn.livingTeams[0]]!.players:this.playerBarn.livingPlayers;
         if (winningPlayers.length>0) {
             for(const p of winningPlayers){
                 p.addGameOverMsg(p.teamId);

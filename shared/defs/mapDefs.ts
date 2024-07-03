@@ -102,6 +102,7 @@ export interface MapDef {
             boost?:number
         },
         plugins?:PluginInstance[]
+        teamsMode?:boolean
     }
     gameConfig: {
         planes: {
