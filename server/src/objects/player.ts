@@ -979,7 +979,7 @@ export class Player extends BaseGameObject {
             const emotePlayer = game.objectRegister.getById(emote.playerId);
             if (emotePlayer && player.visibleObjects.has(emotePlayer) && !player.dead) {
                 updateMsg.emotes.push(emote);
-            }else if(emote.isPing){
+            }else if(emote.isPing&&(["ping_airdrop"].includes(emote.itemType))||emote.playerId===0){
                 updateMsg.emotes.push(emote)
             }
         }
