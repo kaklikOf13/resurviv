@@ -11,6 +11,7 @@ export enum SpawnMode {
 export const Config = {
     host: "0.0.0.0",
     port: 8000,
+    childPorts:[8001],
 
     modes:[
         {
@@ -25,7 +26,7 @@ export const Config = {
 
     spawn: { mode: SpawnMode.Random },
 
-    maxGames: 3,
+    maxGames: 2,
     joinTime: 80,
 
     tps: 40,
@@ -47,6 +48,8 @@ export const Config = {
 export interface ConfigType {
     readonly host: string
     readonly port: number
+
+    readonly childPorts:number[]
 
     /**
      * HTTPS/SSL options. Not used if running locally or with nginx.

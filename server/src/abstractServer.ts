@@ -55,7 +55,7 @@ export abstract class AbstractServer {
             mkdirSync("./reports")
         }
 
-        this.newGame(0);
+        //this.newGame(0);
 
         setInterval(() => {
             const memoryUsage = process.memoryUsage().rss;
@@ -75,7 +75,7 @@ export abstract class AbstractServer {
         if (id !== undefined) {
             if (!this.games[id] || this.games[id]?.stopped) {
                 this.games[id] = new Game(id,Config.modes[mode], Config);
-                this.games[id].onreport=(this.onreport.bind(this))
+                this.games[id]!.onreport=(this.onreport.bind(this))
                 this.games[id]?.run()
                 return id;
             }
@@ -111,7 +111,8 @@ export abstract class AbstractServer {
         const data = {
             modes: new Array<any>(),
             players: playerCount,
-            country: Config.country
+            country: Config.country,
+            childPorts:Config.childPorts
         };
         for(const m of Config.modes){
             data.modes.push({teamMode:m.maxTeamSize,mapName:m.map})
@@ -237,7 +238,7 @@ export abstract class AbstractServer {
     findGame(mode:number) {
         let response: {
             gameId: number,
-            data: string
+            data:string
         } | { err: string } = {
             gameId: 0,
             data:""
@@ -264,13 +265,7 @@ export abstract class AbstractServer {
             if (gameID !== -1) {
                 response.gameId = gameID;
             } else {
-                // Join the game that most recently started
-                const game = Object.values(this.games)
-                    .filter(g => g && !g.over)
-                    .reduce((a, b) => (a!).startedTime > (b!).startedTime ? a : b);
-
-                if (game) response.gameId = game.id;
-                else response = { err: "failed finding game" };
+                response = { err: "failed finding game" };
             }
         }
         return response

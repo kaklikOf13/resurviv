@@ -24,6 +24,7 @@ import { ProfileUi } from "./ui/profileUi";
 import { ResourceManager } from "./resources";
 import { SiteInfo } from "./siteInfo";
 import { TeamMenu } from "./ui/teamMenu";
+import { api } from "./api";
 class Application {
     constructor() {
         this.nameInput = $("#player-name-input-solo");
@@ -619,13 +620,13 @@ class Application {
 
             const tryQuickStartGameImpl = () => {
                 this.waitOnAccount(() => {
-                    this.findGame(matchArgs, (err, matchData) => {
+                    this.findGame(matchArgs, (err, matchData,sp=0) => {
                         if (err) {
                             this.onJoinGameError(err);
                             return;
                         }
-                        this.joinGame(matchData);
-                    });
+                        this.joinGame(matchData,sp);
+                    } );
                 });
             };
 
@@ -641,34 +642,39 @@ class Application {
         }
     }
 
-    findGame(matchArgs, _cb) {
+    findGame(matchArgs, _cb,sp=0) {
         const This=this;
-        (async function findGameImpl(iter, maxAttempts) {
+        (async function findGameImpl(iter,sp, maxAttempts) {
             if (iter >= maxAttempts) {
                 _cb("full");
                 return;
             }
-            const retry = function() {
-                setTimeout(() => {
-                    findGameImpl(iter + 1, maxAttempts);
-                }, 500);
-            };
             if(!regions[This.config.get("region")]){
                 This.config.region=defaultConfig.region
             }
             const headers=new Headers()
             headers.set("Access-Control-Allow-Origin","*")
-            fetch(`http${region_name(This.config.get("region"))}/api/find_game?gameMode=${matchArgs.gameMode}`).then((res=>res.json())).then((data)=>{
-                if (data?.err && data.err != "full") {
-                    _cb(data.err);
-                    return;
+            let url=""
+            if(sp==0){
+                url=`http${region_name(This.config.get("region"))}/api/find_game?gameMode=${matchArgs.gameMode}`
+            }else{
+                url=`http${api.changePort(region_name(this.config.get("region")),this.siteInfo.info[this.config.get("region")].childPorts[sp-1])}/api/find_game?gameMode=${matchArgs.gameMode}`
+            }
+            fetch(url).then((res=>res.json())).then(function(data){
+                if(data.err){
+                    if(sp>this.siteInfo.info[this.config.get("region")].childPorts.length){
+                        return
+                    }
+                    findGameImpl.call(this,iter+1,sp+1,maxAttempts)
+                    return
+                }else{
+                    _cb(null, data,sp);
                 }
-                _cb(null, data);
-            })
-        }).call(this,0, 2);
+            }.bind(this))
+        }).call(this,0,sp, 5);
     }
 
-    joinGame(matchData) {
+    joinGame(matchData,sp=0) {
         if (!this.game) {
             setTimeout(() => {
                 this.joinGame(matchData);
@@ -676,9 +682,13 @@ class Application {
             return;
         }
         const urls=[]
-        urls.push(
-            `ws${region_name(this.config.get("region"))}/play?gameID=${matchData.gameId}`
-        );
+        if(sp==0){
+            urls.push(
+                `ws${region_name(this.config.get("region"))}/play?gameID=${matchData.gameId}`
+            );
+        }else{
+            urls.push(`ws${api.changePort(region_name(this.config.get("region")),this.siteInfo.info[this.config.get("region")].childPorts[sp-1])}/play?gameID=${matchData.gameId}`)
+        }
         const joinGameImpl = (urls, matchData) => {
             const url = urls.shift();
             if (!url) {

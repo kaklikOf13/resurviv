@@ -2,8 +2,8 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "nodemon --exitcrash --enable-source-maps dist/server/src/nodeServer.js",
-    "dev": "ts-node-dev --respawn --rs --transpile-only src/nodeServer.ts",
+    "start": "nodemon --exitcrash --enable-source-maps dist/server/main.ts --childPorts",
+    "dev": "node -r ts-node/register main.ts --childPorts",
     "client": "cd client; pnpm dev",
     "lint": "eslint . --fix --ext .ts,.js",
     "lint:ci": "eslint . --ext .ts,.js"

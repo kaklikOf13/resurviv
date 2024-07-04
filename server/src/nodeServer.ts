@@ -131,7 +131,7 @@ function authMiddleware(res: HttpResponse, req: HttpRequest, next: () => void) {
         res.writeStatus('401 Unauthorized').end('Access denied');
     }
 }
-class NodeServer extends AbstractServer {
+export class NodeServer extends AbstractServer {
     app: TemplatedApp;
 
     constructor() {
@@ -271,16 +271,12 @@ class NodeServer extends AbstractServer {
             }
         });
     }
-    run(){
-        this.app.listen(Config.host, Config.port, (): void => {
+    run(port=Config.port){
+        this.app.listen(Config.host, port, (): void => {
             this.init();
-
-            const timer = new NanoTimer();
         });
     }
     stop(){
         this.app.close()
     }
 }
-const server=new NodeServer()
-server.run()
