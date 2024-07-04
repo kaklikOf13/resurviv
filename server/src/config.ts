@@ -12,10 +12,16 @@ export const Config = {
     host: "0.0.0.0",
     port: 8000,
 
-    mode:{
-        maxTeamSize:1,
-        map:"deathmatch"
-    },
+    modes:[
+        {
+            maxTeamSize:1,
+            map:"tinymain"
+        },
+        {
+            maxTeamSize:1,
+            map:"deathmatch"
+        }
+    ],
 
     spawn: { mode: SpawnMode.Random },
 
@@ -51,7 +57,7 @@ export interface ConfigType {
         readonly caFile: string
     }
 
-    readonly mode: GameMode
+    readonly modes: GameMode[]
 
     /**
      * There are 5 spawn modes: Random, Radius, Fixed, and Center.

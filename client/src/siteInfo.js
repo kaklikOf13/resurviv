@@ -17,15 +17,15 @@ export class SiteInfo {
         this.loaded = false;
     }
 
-    load() {
+    load(app) {
         for(const r of Object.keys(regions)){
             const locale = this.localization.getLocale();
-            const siteInfoUrl = api.resolveUrl("http"+region_name(r)+`/api/site_info?language=${locale}`);
+            const siteInfoUrl = api.resolveUrl("http"+region_name(r)+`/api/info?language=${locale}`);
 
             $.ajax(siteInfoUrl).done((data, _status) => {
                 this.info[r] = data || {};
                 this.loaded = true;
-                this.updatePageFromInfo();
+                this.updatePageFromInfo(app);
             });
         }
     }
@@ -55,42 +55,42 @@ export class SiteInfo {
         return availableModes;
     }
 
-    updatePageFromInfo() {
+    updatePageFromInfo(app) {
         if (this.loaded) {
             const e = this.getGameModeStyles();
+            const btns=document.querySelector("#btns-quick-start")
+            btns.innerHTML=""
+            function qs(t){
+                return ()=>{
+                    app.tryQuickStartGame(t)
+                }
+            }
             for (
                 let t = 0;
                 t < e.length;
                 t++
             ) {
                 const r = e[t];
-                const a = `index-play-${r.buttonText}`;
-                const o = $(`#btn-start-mode-${t}`);
-                o.data("l10n", a);
-                o.html(this.localization.translate(a));
+                const a=`index-play-${e[t].buttonText}`
+                const o = document.createElement("a");
+                o.classList.add("btn-green","btn-darken","menu-option")
+                o.id=`btn-start-mode-${t}`
+                o.innerText=this.localization.translate(a)
+                o.setAttribute("value",t)
+                o.setAttribute("l10n", a);
+                o.addEventListener("click",qs(t))
                 if (r.icon || r.buttonCss) {
-                    if (t == 0) {
-                        o.addClass("btn-custom-mode-no-indent");
-                    } else {
-                        o.addClass("btn-custom-mode-main");
-                    }
-                    o.addClass(r.buttonCss);
-                    o.css({
-                        "background-image": `url(${r.icon})`
-                    });
-                }
-                const l = $(`#btn-team-queue-mode-${t}`);
-                if (l.length) {
-                    const c = `index-${r.buttonText}`;
-                    l.data("l10n", c);
-                    l.html(this.localization.translate(c));
                     if (r.icon) {
-                        l.addClass("btn-custom-mode-select");
-                        l.css({
-                            "background-image": `url(${r.icon})`
-                        });
+                        o.classList.add("btn-custom-mode-no-indent");
+                    } else {
+                        o.classList.add("btn-custom-mode-main");
                     }
+                    if(r.buttonCss){
+                        o.classList.add(r.buttonCss);
+                    }
+                    o.style.backgroundImage=`url(${r.icon})`
                 }
+                btns.appendChild(o)
             }
 
             // Region pops

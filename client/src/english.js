@@ -44,6 +44,7 @@ export default {
     "index-play-solo": "Play Solo",
     "index-play-duo": "Play Duo",
     "index-play-squad": "Play Squad",
+    "index-play-deathmatch":"Play Deathmatch",
     "index-join-team": "Join Team",
     "index-create-team": "Create Team",
     "index-leave-team": "Leave Team",

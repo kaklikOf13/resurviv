@@ -947,6 +947,7 @@ a:active {
     background-repeat: no-repeat;
     background-size: 35px;
     height: 41px;
+    width: 100%;
 }
 @media (max-width: 850px),
     (max-width: 900px) and (-webkit-min-device-pixel-ratio: 3),
@@ -965,6 +966,7 @@ a:active {
     background-repeat: no-repeat;
     background-size: 35px;
     height: 41px;
+    width: 100%;
 }
 @media (max-width: 850px),
     (max-width: 900px) and (-webkit-min-device-pixel-ratio: 3),
@@ -3238,9 +3240,6 @@ a:active {
         background-color: #2e3742;
         -webkit-box-shadow: 0 0 9px #2e3742;
     }
-}
-#btns-quick-start {
-    display: flex;
 }
 #btns-quick-start > a {
     display: inline-block;

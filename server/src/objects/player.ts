@@ -73,7 +73,7 @@ export class Team{
             player.game.playerBarn.livingTeams.splice(player.game.playerBarn.livingTeams.indexOf(this.id!),1)
         }
     }
-    teleportProxy(player:Player,size=4):void{
+    teleportProxy(player:Player,size=2):void{
         if(player){
             v2.set(player.pos,player.game.map.getRandomSpawnPos(()=>{
                 const pp=this.livingPlayers[util.randomInt(0,this.livingPlayers.length-1)]

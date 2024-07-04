@@ -28,9 +28,6 @@ class Application {
     constructor() {
         this.nameInput = $("#player-name-input-solo");
         this.serverSelect = $("#server-select-main");
-        this.playMode0Btn = $("#btn-start-mode-0");
-        this.playMode1Btn = $("#btn-start-mode-1");
-        this.playMode2Btn = $("#btn-start-mode-2");
         this.muteBtns = $(".btn-sound-toggle");
         this.aimLineBtn = $("#btn-game-aim-line");
         this.masterSliders = $(".sl-master-volume");
@@ -137,20 +134,15 @@ class Application {
             this.localization.setLocale(t);
             this.localization.populateLanguageSelect();
             this.startPingTest();
-            this.siteInfo.load();
+            this.siteInfo.load(this);
+            const opts=document.querySelector("#server-select-main")
+            opts.addEventListener("change",(e)=>{
+                this.siteInfo.load(this)
+            })
             this.localization.localizeIndex();
             this.account.init();
 
             this.nameInput.maxLength = net.Constants.PlayerNameMaxLen;
-            this.playMode0Btn.on("click", () => {
-                this.tryQuickStartGame(0);
-            });
-            this.playMode1Btn.on("click", () => {
-                this.tryQuickStartGame(1);
-            });
-            this.playMode2Btn.on("click", () => {
-                this.tryQuickStartGame(2);
-            });
             this.serverSelect.change(() => {
                 const t = this.serverSelect.find(":selected").val();
                 this.config.set("region", t);
@@ -543,18 +535,6 @@ class Application {
             opacity: hasError ? 1 : 0
         });
         this.serverWarning.html(this.errorMessage);
-
-        const updateButton = (ele, gameModeIdx) => {
-            ele.html(
-                this.quickPlayPendingModeIdx === gameModeIdx
-                    ? '<div class="ui-spinner"></div>'
-                    : this.localization.translate(ele.data("l10n"))
-            );
-        };
-
-        updateButton(this.playMode0Btn, 0);
-        updateButton(this.playMode1Btn, 1);
-        updateButton(this.playMode2Btn, 2);
     }
 
     waitOnAccount(cb) {
@@ -634,7 +614,7 @@ class Application {
                 version,
                 playerCount: 1,
                 autoFill: true,
-                gameModeIdx
+                gameMode:gameModeIdx
             };
 
             const tryQuickStartGameImpl = () => {
@@ -678,7 +658,7 @@ class Application {
             }
             const headers=new Headers()
             headers.set("Access-Control-Allow-Origin","*")
-            fetch(`http${region_name(This.config.get("region"))}/api/find_game`).then((res=>res.json())).then((data)=>{
+            fetch(`http${region_name(This.config.get("region"))}/api/find_game?gameMode=${matchArgs.gameMode}`).then((res=>res.json())).then((data)=>{
                 if (data?.err && data.err != "full") {
                     _cb(data.err);
                     return;

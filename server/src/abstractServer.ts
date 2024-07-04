@@ -38,7 +38,6 @@ export type Punishment={
     name:string,
     reason:string,
 }
-
 export abstract class AbstractServer {
     readonly logger = new Logger("Server");
 
@@ -72,18 +71,17 @@ export abstract class AbstractServer {
         }
     }
 
-    newGame(id?: number): number {
+    newGame(id?: number,mode:number=0): number {
         if (id !== undefined) {
             if (!this.games[id] || this.games[id]?.stopped) {
-                this.games[id] = new Game(id,Config.mode, Config);
-                //@ts-expect-error
+                this.games[id] = new Game(id,Config.modes[mode], Config);
                 this.games[id].onreport=(this.onreport.bind(this))
                 this.games[id]?.run()
                 return id;
             }
         } else {
             for (let i = 0; i < Config.maxGames; i++) {
-                if (!this.games[i] || this.games[i]?.stopped) return this.newGame(i);
+                if (!this.games[i] || this.games[i]?.stopped) return this.newGame(i,mode);
             }
         }
         return -1;
@@ -104,19 +102,20 @@ export abstract class AbstractServer {
         return game !== undefined && game.aliveCount < game.map.mapDef.gameMode.maxPlayers && !game.over;
     }
 
-    getSiteInfo() {
+    getInfo() {
         let playerCount = 0
         Object.values(this.games).forEach((a,_) => {
             playerCount+=(a ? a.playerBarn.livingPlayers.length : 0);
         }, 0);
 
         const data = {
-            modes: [
-                { mapName: Config.mode.map, teamMode: 1 }
-            ],
+            modes: new Array<any>(),
             players: playerCount,
             country: Config.country
         };
+        for(const m of Config.modes){
+            data.modes.push({teamMode:m.maxTeamSize,mapName:m.map})
+        }
         return data;
     }
 
@@ -235,7 +234,7 @@ export abstract class AbstractServer {
         container.player.msgsToSend.push({type:net.MsgType.Report,msg:msg})
     }
 
-    findGame() {
+    findGame(mode:number) {
         let response: {
             gameId: number,
             data: string
@@ -253,7 +252,7 @@ export abstract class AbstractServer {
             if(this.games[gameID]?.stopped){
                 this.endGame(gameID,false)
             }
-            if (this.canJoin(game) && game?.allowJoin) {
+            if (this.canJoin(game) && game?.allowJoin && game.mode.map==Config.modes[mode].map&&game.mode.maxTeamSize==Config.modes[mode].maxTeamSize) {
                 response.gameId = game.id;
                 foundGame = true;
                 break;
@@ -261,7 +260,7 @@ export abstract class AbstractServer {
         }
         if (!foundGame) {
             // Create a game if there's a free slot
-            const gameID = this.newGame();
+            const gameID = this.newGame(undefined,mode);
             if (gameID !== -1) {
                 response.gameId = gameID;
             } else {

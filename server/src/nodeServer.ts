@@ -144,12 +144,12 @@ class NodeServer extends AbstractServer {
                 ca_file_name:Config.ssl.caFile
             })
             : App();
-        app.get("/api/site_info", (res,req) => {
+        app.get("/api/info", (res,req) => {
             rateLimitMiddleware(res,req,()=>{
                 let aborted = false;
                 res.onAborted(() => { aborted = true; });
                 cors(res);
-                const data = this.getSiteInfo();
+                const data = this.getInfo();
                 if (!aborted) {
                     res.writeHeader("Content-Type","application/json")
                     res.end(JSON.stringify(data));
@@ -164,8 +164,8 @@ class NodeServer extends AbstractServer {
         });
         app.post("/api/find_game", (res, req) => {
             rateLimitMiddleware(res,req,()=>{
-                readPostedJSON(res, (_body: {version:number}) => {
-                    const response = this.findGame();
+                readPostedJSON(res, (_body: {version:number,mode:number}) => {
+                    const response = this.findGame(_body.mode);
                     cors(res)
                     res.writeHeader("Content-Type", "application/json");
                     res.end(JSON.stringify(response));
@@ -176,7 +176,9 @@ class NodeServer extends AbstractServer {
         });
         app.get("/api/find_game",(res,req)=>{
             rateLimitMiddleware(res,req,()=>{
-                const response = this.findGame();
+                const params=new URLSearchParams(req.getQuery());
+                const gameMode = Number(params.get("gameMode")||"0");
+                const response = this.findGame(gameMode);
                 cors(res)
                 res.end(JSON.stringify(response));
             })
