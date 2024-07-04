@@ -71,7 +71,7 @@ export const TinyMain: MapDef = {
                 loot_tier_1: {max:10,min:5},
                 loot_tier_beach: 5,
                 chest_01:{max:3,min:1},
-                stone_04:1,
+                stone_04:{min:1,max:3},
                 tree_03: {max:2,min:1},
             },
         ],

@@ -69,12 +69,7 @@ export class AirdropBarn {
                 let layer;
                 // Make some crate particles? = 0;
                 if (
-                    (!!util.sameLayer(layer, activePlayer.layer) ||
-                        !!(activePlayer.layer & 2)) &&
-                    (!(activePlayer.layer & 2) ||
-                        !map.insideStructureMask(
-                            collider.createCircle(airdrop.pos, 1)
-                        ))
+                    (util.sameLayer(layer, activePlayer.layer) || (activePlayer.layer & 2)) && ((activePlayer.layer & 2) || !map.insideStructureMask(collider.createCircle(airdrop.pos, 1)))
                 ) {
                     layer |= 2;
                 }

@@ -73,8 +73,20 @@ export class Team{
             player.game.playerBarn.livingTeams.splice(player.game.playerBarn.livingTeams.indexOf(this.id!),1)
         }
     }
-    teleportProxy(player:Player,size=1.5):void{
-        player.pos=player.game.map.getRandomSpawnPos(()=>{return v2.add(this.livingPlayers[util.randomInt(0,this.livingPlayers.length-1)].pos,v2.mul(v2.sub(v2.randomUnit(),v2.create(size,size)),size*2))})
+    teleportProxy(player:Player,size=4):void{
+        if(player){
+            v2.set(player.pos,player.game.map.getRandomSpawnPos(()=>{
+                const pp=this.livingPlayers[util.randomInt(0,this.livingPlayers.length-1)]
+                if(pp){
+                    return v2.add(pp.pos,v2.create(util.randomInt(-size,size),util.randomInt(-size,size)))
+                }else{
+                    return {
+                        x: util.random(player.game.map.shoreInset, player.game.map.width - player.game.map.shoreInset),
+                        y: util.random(player.game.map.shoreInset, player.game.map.height - player.game.map.shoreInset)
+                    }
+                }
+            }))
+        }
     }
 }
 export class PlayerBarn {
@@ -245,7 +257,7 @@ export class PlayerBarn {
 
         this.addToAutoTeam(player)
 
-        if ((this.game.teamMode?this.livingTeams.length:this.livingPlayers.length)>1 && !this.game.started) {
+        if (!this.game.started&&(this.game.teamMode?this.livingTeams.length:this.livingPlayers.length)>1) {
             this.game.started = true;
             this.game.start()
         }
