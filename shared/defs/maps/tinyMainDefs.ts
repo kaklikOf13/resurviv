@@ -113,7 +113,10 @@ export const TinyMain: MapDef = {
                     "container_03",
                     "container_04",
                     "container_05",
-                    {value:"container_06",chance:.1}
+                    {value:"container_06",chance:.1},
+                    {value:"container_07",chance:.1},
+                    {value:"container_08",chance:.6},
+                    {value:"container_09",chance:.95},
                 ],
                 choose:{min:6,max:10},
                 repeat:true

@@ -173,6 +173,17 @@ export const Main: MapDef = {
             { name: "8xscope", count: 1, weight: 0.049 },
             { name: "15xscope", count: 1, weight: 0.001 }
         ],
+        tier_saiga: [{ name: "saiga", count: 1, weight: 1 }],
+        tier_tinyd: [
+            { name: "saiga", count: 1, weight: .2 },
+            { name: "m870", count: 1, weight: .6 },
+            { name: "m1100", count: 1, weight: .65 },
+        ],
+        tier_mediumd: [
+            { name: "groza", count: 1, weight: .2 },
+            { name: "ak47", count: 1, weight: .6 },
+            { name: "mp5", count: 1, weight: .65 },
+        ],
         tier_mansion_floor: [
             { name: "outfitCasanova", count: 1, weight: 1 }
         ],

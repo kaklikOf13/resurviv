@@ -29934,6 +29934,29 @@ export const MapObjectDefs = {
         loot_spawner_01: "loot_tier_sv98",
         loot_spawner_02: "loot_tier_scopes_sniper"
     }),
+    container_07: createContainer({
+        open: false,
+        tint: 14365491,
+        ceilingSprite:
+            "map-building-container-ceiling-01.img",
+        loot_spawner_01: "loot_tier_saiga",
+    }),
+    container_08: createContainer({
+        open: true,
+        tint: 1126077,
+        ceilingSprite:
+            "map-building-container-open-ceiling-01.img",
+        loot_spawner_01: "loot_tier_tinyd",
+        loot_spawner_02: "loot_tier_mediumd",
+    }),
+    container_09: createContainer({
+        open: false,
+        tint: 6734412,
+        ceilingSprite:
+            "map-building-container-ceiling-01.img",
+        loot_spawner_01: "loot_container_09",
+        loot_spawner_02: "loot_container_09",
+    }),
     loot_tier_1: {
         type: "loot_spawner",
         loot: [tierLoot("tier_world", 1, 1)],
@@ -29970,6 +29993,24 @@ export const MapObjectDefs = {
         type: "loot_spawner",
         loot: [tierLoot("tier_sv98", 1, 1)]
     },
+    loot_tier_saiga: {
+        type: "loot_spawner",
+        loot: [tierLoot("tier_saiga",1,1)]
+    },
+    loot_tier_tinyd: {
+        type: "loot_spawner",
+        loot: [tierLoot("tier_tinyd",1,1)]
+    },
+    loot_tier_mediumd: {
+        type: "loot_spawner",
+        loot: [tierLoot("tier_mediumd",1)]
+    },
+    loot_container_09: createCrate({
+        type: "loot_spawner",
+        loot: [
+            tierLoot("tier_medical", 1,3),
+        ],
+    }),
     loot_tier_scopes_sniper: {
         type: "loot_spawner",
         loot: [tierLoot("tier_scopes_sniper", 1, 1)]
