@@ -260,7 +260,7 @@ export const BaseDefs = {
         type: "bullet",
         damage: 5,
         obstacleDamage: 1,
-        falloff: 0.25,
+        falloff: 0.6,
         speed: 66,
         distance: 25,
         variance: 0,
