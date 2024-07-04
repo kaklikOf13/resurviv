@@ -86,8 +86,13 @@ export const TinyMain: MapDef = {
                     "greenhouse_01",
                     "bank_01",
                     "warehouse_complex_01",
+                    "teahouse_complex_01su",
+                    "bunker_structure_02",
+                    "bunker_structure_03",
+                    "bunker_structure_04",
+                    "bunker_structure_05"
                 ],
-                choose: 5
+                choose: 4
             },
             {
                 spawns:[
@@ -95,7 +100,8 @@ export const TinyMain: MapDef = {
                     "house_red_01",
                     "house_red_02",
                     "barn_01",
-                    "barn_02"
+                    "barn_02",
+                    "bunker_structure_01",
                 ],
                 choose:{min:2,max:5},
                 repeat:true
