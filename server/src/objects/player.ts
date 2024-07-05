@@ -89,6 +89,17 @@ export class Team{
         }
     }
 }
+/**
+* Checks if an item is present in the player's loadout
+*/
+const isItemInLoadout = (item: string, category: string) => {
+    if (!UnlockDefs.unlock_default.unlocks.includes(item)) return false;
+
+    const def = GameObjectDefs[item];
+    if (!def || def.type !== category) return false;
+
+    return true;
+};
 export class PlayerBarn {
     players: Player[] = [];
     livingPlayers: Player[] = [];
@@ -156,18 +167,6 @@ export class PlayerBarn {
 
         player.isMobile = joinMsg.isMobile;
 
-        /**
-        * Checks if an item is present in the player's loadout
-        */
-        const isItemInLoadout = (item: string, category: string) => {
-            if (!UnlockDefs.unlock_default.unlocks.includes(item)) return false;
-
-            const def = GameObjectDefs[item];
-            if (!def || def.type !== category) return false;
-
-            return true;
-        };
-
         if (isItemInLoadout(joinMsg.loadout.outfit, "outfit")) {
             player.outfit = joinMsg.loadout.outfit;
         }
@@ -178,50 +177,7 @@ export class PlayerBarn {
 
         
         if(this.game.map.mapDef.gameMode.selectableGuns){
-            let maxAmmoCountPrimary = 0; 
-            let maxAmmoCountSecondary = 0;
-
-            interface GunDefinition {
-                maxClip: number;
-            }
-    
-            interface GunDefs {
-                [gun: string]: GunDefinition;
-            }
-    
-            const typedGunDefs: GunDefs = GunDefs;
-    
-            const MaxAmmoCounts: {[ammoCount: number]: string[]} = {};
-    
-            for (const gun in typedGunDefs) {
-                const ammoCount = typedGunDefs[gun].maxClip;
-                MaxAmmoCounts[ammoCount] = MaxAmmoCounts[ammoCount] || [];
-                MaxAmmoCounts[ammoCount].push(gun);
-            }
-            for (const [ammoCount, guns] of Object.entries(MaxAmmoCounts)) {
-                if (guns.includes(joinMsg.loadout.gun)) {
-                    maxAmmoCountPrimary = parseInt(ammoCount);
-                    break;
-                }
-            }
-    
-            for (const [ammoCount, guns] of Object.entries(MaxAmmoCounts)) {
-                if (guns.includes(joinMsg.loadout.gun2)) {
-                    maxAmmoCountSecondary = parseInt(ammoCount);
-                    break;
-                }
-            }
-            if(this.game.map.mapDef.gameMode.selectableGuns){
-                if (isItemInLoadout(joinMsg.loadout.gun, "gun")) {
-                    player.weapons[GameConfig.WeaponSlot.Primary].type = joinMsg.loadout.gun;
-                    player.weapons[GameConfig.WeaponSlot.Primary].ammo = maxAmmoCountPrimary;
-                }
-        
-                if (isItemInLoadout(joinMsg.loadout.gun2, "gun")) {
-                    player.weapons[GameConfig.WeaponSlot.Secondary].type = joinMsg.loadout.gun2;
-                    player.weapons[GameConfig.WeaponSlot.Secondary].ammo = maxAmmoCountSecondary;
-                }
-            }
+            player.giveGuns(joinMsg.loadout.gun as (keyof typeof GunDefs),joinMsg.loadout.gun2 as (keyof typeof GunDefs))
         }
 
         if (isItemInLoadout(joinMsg.loadout.heal, "heal")) {
@@ -653,15 +609,20 @@ export class Player extends BaseGameObject {
             this.inventory[item] = 0;
         }
         this.inventory["1xscope"] = 1;
-        for(const i of Object.keys(inventory_base)){
-            this.inventory[i]=inventory_base[i]
+        this.giveItems(default_equips,inventory_base)
+        this.inventory[this.scope] = 1;
+    }
+
+    giveItems(equips:Partial<{chest:string,backpack:string,helmet:string}>,inventory:Record<string,number>){
+        for(const i of Object.keys(inventory)){
+            this.inventory[i]=inventory[i]
             if(i.includes("scope")){
                 this.scope=i
             }else if(Object.hasOwn(ThrowableDefs,i)){
                 //@ts-expect-error
                 const def=ThrowableDefs[i]
                 if (def.type === "throwable" &&
-                    inventory_base[i] != 0 && !this.weapons[GameConfig.WeaponSlot.Throwable].type
+                    inventory[i] != 0 && !this.weapons[GameConfig.WeaponSlot.Throwable].type
                 ) {
                     this.weapons[GameConfig.WeaponSlot.Throwable].type = i;
                     this.weapsDirty = true;
@@ -675,9 +636,60 @@ export class Player extends BaseGameObject {
             this.boost=this.game.map.mapDef.gameMode.spawnStatus["boost"]??this.boost
         }
         this.inventory[this.scope] = 1;
-        this.helmet=default_equips["helmet"]??""
-        this.chest=default_equips["chest"]??""
-        this.backpack=default_equips["backpack"]??"backpack00"
+        this.helmet=equips["helmet"]??""
+        this.chest=equips["chest"]??""
+        this.backpack=equips["backpack"]??"backpack00"
+    }
+    giveGuns(slot1:keyof typeof GunDefs,slot2:keyof typeof GunDefs,drop:boolean=true){
+        let maxAmmoCountPrimary = 0; 
+        let maxAmmoCountSecondary = 0;
+
+        interface GunDefinition {
+            maxClip: number;
+        }
+
+        interface GunDefs {
+            [gun: string]: GunDefinition;
+        }
+
+        const typedGunDefs: GunDefs = GunDefs;
+
+        const MaxAmmoCounts: {[ammoCount: number]: string[]} = {};
+
+        if(drop){
+            this.dropAllWeapons(this.rad)
+        }
+
+        for (const gun in typedGunDefs) {
+            const ammoCount = typedGunDefs[gun].maxClip;
+            MaxAmmoCounts[ammoCount] = MaxAmmoCounts[ammoCount] || [];
+            MaxAmmoCounts[ammoCount].push(gun);
+        }
+        for (const [ammoCount, guns] of Object.entries(MaxAmmoCounts)) {
+            if (guns.includes(slot1)) {
+                maxAmmoCountPrimary = parseInt(ammoCount);
+                break;
+            }
+        }
+
+        for (const [ammoCount, guns] of Object.entries(MaxAmmoCounts)) {
+            if (guns.includes(slot2)) {
+                maxAmmoCountSecondary = parseInt(ammoCount);
+                break;
+            }
+        }
+        if(this.game.map.mapDef.gameMode.selectableGuns){
+
+            if (isItemInLoadout(slot1, "gun")) {
+                this.weapons[GameConfig.WeaponSlot.Primary].type = slot1;
+                this.weapons[GameConfig.WeaponSlot.Primary].ammo = maxAmmoCountPrimary;
+            }
+    
+            if (isItemInLoadout(slot2, "gun")) {
+                this.weapons[GameConfig.WeaponSlot.Secondary].type = slot2;
+                this.weapons[GameConfig.WeaponSlot.Secondary].ammo = maxAmmoCountSecondary;
+            }
+        }
     }
 
     visibleObjects = new Set<GameObject>();
@@ -1202,7 +1214,7 @@ export class Player extends BaseGameObject {
         this.game.events.emit(EventType.PlayerDie,{player:this,killer:params})
     }
 
-    dropAllItens(dropRadius:number){
+    dropAllWeapons(dropRadius:number){
         for (let i = 0; i < GameConfig.WeaponSlot.Count; i++) {
             const weap = this.weapons[i];
             if (!weap.type) continue;
@@ -1217,6 +1229,10 @@ export class Player extends BaseGameObject {
                 break;
             }
         }
+    }
+
+    dropAllItens(dropRadius:number){
+        this.dropAllWeapons(dropRadius)
 
         for (const item in GameConfig.bagSizes) {
             const def = GameObjectDefs[item] as AmmoDef | HealDef;
