@@ -134,43 +134,47 @@ export class Game {
     }
 
     update() {
-        const now = Date.now();
-        if (!this.now) this.now = now;
-        const dt = this.clock.deltaTime;
-        this.now = now;
-        //
-        // Update modules
-        //
-        this.gas.update(dt);
-        this.bulletBarn.update(dt);
-        this.lootBarn.update(dt);
-        this.projectileBarn.update(dt);
-        this.deadBodyBarn.update(dt);
-        this.airdropBarn.update(dt)
-        this.playerBarn.update(dt);
-        this.explosionBarn.update();
+        try{
+            const now = Date.now();
+            if (!this.now) this.now = now;
+            const dt = this.clock.deltaTime;
+            this.now = now;
+            //
+            // Update modules
+            //
+            this.gas.update(dt);
+            this.bulletBarn.update(dt);
+            this.lootBarn.update(dt);
+            this.projectileBarn.update(dt);
+            this.deadBodyBarn.update(dt);
+            this.airdropBarn.update(dt)
+            this.playerBarn.update(dt);
+            this.explosionBarn.update();
 
-        // second update:
-        // serialize objects and send msgs
-        this.objectRegister.serializeObjs();
-        this.playerBarn.sendMsgs();
+            // second update:
+            // serialize objects and send msgs
+            this.objectRegister.serializeObjs();
+            this.playerBarn.sendMsgs();
 
-        //
-        // reset stuff
-        //
-        this.playerBarn.flush();
-        this.bulletBarn.flush();
-        this.objectRegister.flush();
-        this.explosionBarn.flush();
-        this.gas.flush();
-        this.msgsToSend.length = 0;
+            //
+            // reset stuff
+            //
+            this.playerBarn.flush();
+            this.bulletBarn.flush();
+            this.objectRegister.flush();
+            this.explosionBarn.flush();
+            this.gas.flush();
+            this.msgsToSend.length = 0;
 
-        if (this.started && ((this.teamMode&&this.playerBarn.livingTeams.length<=1)||(this.playerBarn.livingPlayers.length<=1)) && !this.over) {
-            this.initGameOver();
-        }
-        this.events.emit(EventType.GameTick,this)
-        if(this.running){
-            this.clock.tick(this.update.bind(this))
+            if (this.started && (this.teamMode?this.playerBarn.livingTeams.length:this.playerBarn.livingPlayers.length)<=1 && !this.over) {
+                this.initGameOver();
+            }
+            this.events.emit(EventType.GameTick,this)
+            if(this.running){
+                this.clock.tick(this.update.bind(this))
+            }
+        }catch(err){
+            console.error(err)
         }
     }
     run(){

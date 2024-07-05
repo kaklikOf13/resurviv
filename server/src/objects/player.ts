@@ -62,6 +62,7 @@ export class Team{
         if(!player.dead){
             player.teamId=this.id
             player.team=this
+            player.groupId
             this.livingPlayers.push(player)
             this.players.push(player)
         }
