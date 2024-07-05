@@ -13,14 +13,15 @@ export function assert(condition: boolean | undefined, msg?: string) {
 }
 export type RandomVal=number|{max:number,min:number}
 export interface TimeRotation<TP>{
-    delay:Date,
+    delay:number,
     rotation:TP[]
 }
 export function isRotation(val:any):boolean{
     return Object.hasOwn(val,"rotation")
 }
 export function rotate<TP>(rot:TimeRotation<TP>,idx:number,acd:number):{acd:number,idx:number}{
-    return {idx:(Date.now()>=acd?((idx+1)%rot.rotation.length):idx),acd:Date.now()}
+    const ok=Date.now()>=acd
+    return {idx:(ok?((idx+1)%rot.rotation.length):idx),acd:(ok?Date.now()+rot.delay:acd)}
 }
 export class Clock {
     private frameDuration: number

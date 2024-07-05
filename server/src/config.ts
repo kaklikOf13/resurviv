@@ -16,8 +16,17 @@ export const Config = {
 
     modes:[
         {
-            maxTeamSize:1,
-            map:"tinymain"
+            rotation:[
+                {
+                    maxTeamSize:1,
+                    map:"tinymain"
+                },
+                {
+                    maxTeamSize:2,
+                    map:"tinymain"
+                },
+            ],
+            delay:1000*60*60*5
         },
         {
             rotation:[
@@ -30,7 +39,7 @@ export const Config = {
                     map:"monster_hunter"
                 }
             ],
-            delay:new Date(Date.UTC(0,0,0,5,0,0,0))
+            delay:1000*60*60*5
         }
     ],
 
