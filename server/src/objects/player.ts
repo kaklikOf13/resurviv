@@ -59,7 +59,7 @@ export class Team{
         this.livingPlayers=[]
     }
     addPlayer(player:Player){
-        if(!player.dead&&player.teamId!==undefined){
+        if(!player.dead){
             player.teamId=this.id
             player.team=this
             this.livingPlayers.push(player)
@@ -214,7 +214,6 @@ export class PlayerBarn {
         this.addToAutoTeam(player)
 
         if (!this.game.started&&(this.game.teamMode?this.livingTeams.length:this.livingPlayers.length)>1) {
-            this.game.started = true;
             this.game.start()
         }
 

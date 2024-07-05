@@ -118,6 +118,7 @@ export class Game {
     }
 
     start():void{
+        this.started = true
         this.gas.advanceGasStage();
         this.events.emit(EventType.GameStart,this)
         setTimeout(()=>{
