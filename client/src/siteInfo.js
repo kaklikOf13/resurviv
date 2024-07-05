@@ -102,7 +102,8 @@ export class SiteInfo {
                         o.classList.add(r.buttonCss);
                     }
                     ic.src=`${r.icon}`
-                    ic.style.width="16%"
+                    ic.style.width="13%"
+                    ic.style.left="2px"
                     ic.style.position="absolute"
                     ic.style.margin="auto"
                     ic.style.top="0px"
