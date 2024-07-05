@@ -6,7 +6,7 @@ import { Halloween } from "./maps/halloweenDefs";
 import { Main } from "./maps/baseDefs";
 import { MainSpring } from "./maps/mainSpringDefs";
 import { MainSummer } from "./maps/mainSummerDefs";
-import { Deathmatch } from "./maps/deathmatchDefs";
+import { Deathmatch } from "./maps/modes/deathmatchDefs";
 import { TinyMain } from "./maps/tinyMainDefs";
 import { Potato } from "./maps/potatoDefs";
 import { PotatoSpring } from "./maps/potatoSpringDefs";
@@ -21,10 +21,12 @@ import { GasDef } from "../../server/src/objects/gas";
 import { RandomVal } from "../utils/util";
 import { type GamePlugin } from "../../server/src/utils/plugins";
 import { PluginInstance } from "../../server/src/data/pluginsDefs";
+import { MonsterHunter } from "./maps/modes/monsterHunter";
 export const MapDefs = {
     main: Main,
     main_spring: MainSpring,
     main_summer: MainSummer,
+    monster_hunter:MonsterHunter,
     tinymain: TinyMain,
     deathmatch:Deathmatch,
     desert: Desert,

@@ -177,6 +177,12 @@ export class PlayerBarn {
 
         
         if(this.game.map.mapDef.gameMode.selectableGuns){
+            if (!isItemInLoadout(joinMsg.loadout.gun, "gun")) {
+                joinMsg.loadout.gun=""
+            }
+            if (!isItemInLoadout(joinMsg.loadout.gun2, "gun")) {
+                joinMsg.loadout.gun2=""
+            }
             player.giveGuns(joinMsg.loadout.gun as (keyof typeof GunDefs),joinMsg.loadout.gun2 as (keyof typeof GunDefs))
         }
 
@@ -638,6 +644,7 @@ export class Player extends BaseGameObject {
         this.helmet=equips["helmet"]??""
         this.chest=equips["chest"]??""
         this.backpack=equips["backpack"]??"backpack00"
+        this.inventoryDirty=true
     }
     giveGuns(slot1:keyof typeof GunDefs,slot2:keyof typeof GunDefs,drop:boolean=true){
         let maxAmmoCountPrimary = 0; 
@@ -677,18 +684,12 @@ export class Player extends BaseGameObject {
                 break;
             }
         }
-        if(this.game.map.mapDef.gameMode.selectableGuns){
-
-            if (isItemInLoadout(slot1, "gun")) {
-                this.weapons[GameConfig.WeaponSlot.Primary].type = slot1;
-                this.weapons[GameConfig.WeaponSlot.Primary].ammo = maxAmmoCountPrimary;
-            }
-    
-            if (isItemInLoadout(slot2, "gun")) {
-                this.weapons[GameConfig.WeaponSlot.Secondary].type = slot2;
-                this.weapons[GameConfig.WeaponSlot.Secondary].ammo = maxAmmoCountSecondary;
-            }
-        }
+        this.weapons[GameConfig.WeaponSlot.Primary].type = slot1;
+        this.weapons[GameConfig.WeaponSlot.Primary].ammo = maxAmmoCountPrimary;
+        
+        this.weapons[GameConfig.WeaponSlot.Secondary].type = slot2;
+        this.weapons[GameConfig.WeaponSlot.Secondary].ammo = maxAmmoCountSecondary;
+        this.weapsDirty=true
     }
 
     visibleObjects = new Set<GameObject>();

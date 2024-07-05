@@ -175,6 +175,7 @@ export class Game {
     }
     run(){
         this.running=true
+        this.events.emit(EventType.GameRun,this)
         this.update()
     }
 

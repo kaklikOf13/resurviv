@@ -1,9 +1,9 @@
-import { util } from "../../utils/util";
-import { type MapDef } from "../mapDefs";
-import { TinyMain } from "./tinyMainDefs";
+import { util } from "../../../utils/util";
+import { type MapDef } from "../../mapDefs";
+import { TinyMain } from "../tinyMainDefs";
 
 export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
-    mapId: 16,
+    mapId: 18,
     desc: { name: "deathmatch", icon: "img/gui/loadout-pump.svg", buttonCss: "deathmatch-button-style",buttonText:"deathmatch" },
     gameMode: {
         maxPlayers: 10,
