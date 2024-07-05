@@ -4,7 +4,7 @@ import { TinyMain } from "../tinyMainDefs";
 
 export const Deathmatch: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
     mapId: 18,
-    desc: { name: "deathmatch", icon: "img/gui/loadout-pump.svg", buttonCss: "deathmatch-button-style",buttonText:"deathmatch" },
+    desc: { name: "deathmatch", icon: "img/gui/loadout-pump.svg", buttonCss: "red-play-button-style",buttonText:"deathmatch" },
     gameMode: {
         maxPlayers: 10,
         killLeaderEnabled: true,

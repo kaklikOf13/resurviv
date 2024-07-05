@@ -618,7 +618,7 @@ a:active {
 }
 .btn-green {
     background:linear-gradient(#83af50,#006400);
-    border-bottom: 4px solid #5b7a38;
+    border-bottom: 5px solid #073010;
     color: #fff;
     cursor: pointer;
     font-size: 16px;

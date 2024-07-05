@@ -4,7 +4,7 @@ import { TinyMain } from "../tinyMainDefs";
 
 export const MonsterHunter: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
     mapId: 16,
-    desc: { name: "MonsterHunter", icon: "img/gui/loadout-pump.svg", buttonCss: "deathmatch-button-style",buttonText:"monster-hunter" },
+    desc: { name: "MonsterHunter", icon: "img/gui/player-the-hunted.svg", buttonCss: "red-play-button-style",buttonText:"monster-hunter" },
     gameMode: {
         maxPlayers: 15,
         joinTime:80,
@@ -41,7 +41,11 @@ export const MonsterHunter: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
                 },
             },
             {
-                id:"better_start"
+                id:"better_start",
+                values:{
+                    "min":2,
+                    "after":30
+                }
             },
             {
                 id:"everyone_in_same_team"
