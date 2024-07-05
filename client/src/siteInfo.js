@@ -83,23 +83,31 @@ export class SiteInfo {
             ) {
                 const r = e[t];
                 const a=`index-play-${e[t].buttonText}`
-                const o = document.createElement("a");
-                o.classList.add("btn-green","btn-darken","menu-option")
+                const o = document.createElement("button");
+                const ic=document.createElement("img")
+                ic.id="icon"
+                o.classList.add("menu-option","play-button")
                 o.id=`btn-start-mode-${t}`
                 o.innerText=this.localization.translate(a)
                 o.setAttribute("value",t)
                 o.setAttribute("l10n", a);
                 o.addEventListener("click",qs(t))
                 if (r.icon || r.buttonCss) {
-                    if (r.icon) {
+                    /*if (r.icon) {
                         o.classList.add("btn-custom-mode-no-indent");
                     } else {
                         o.classList.add("btn-custom-mode-main");
-                    }
+                    }*/
                     if(r.buttonCss){
                         o.classList.add(r.buttonCss);
                     }
-                    o.style.backgroundImage=`url(${r.icon})`
+                    ic.src=`${r.icon}`
+                    ic.style.width="16%"
+                    ic.style.position="absolute"
+                    ic.style.margin="auto"
+                    ic.style.top="0px"
+                    ic.style.bottom="0px"
+                    o.appendChild(ic)
                 }
                 btns.appendChild(o)
             }
