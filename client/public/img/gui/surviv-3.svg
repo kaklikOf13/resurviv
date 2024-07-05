@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="100mm"
+   height="100mm"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="surviv-3.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#000000"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#262626"
+     inkscape:document-units="mm"
+     inkscape:zoom="2.0485264"
+     inkscape:cx="146.69081"
+     inkscape:cy="126.67642"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="surviv"
+       inkscape:label="surviv"
+       transform="matrix(0.45277282,0,0,0.46047582,0.4722718,51.056976)"
+       style="stroke-width:2.19006">
+      <title
+         id="title1">surviv</title>
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:none;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none"
+         id="circle1"
+         cx="52.5"
+         cy="52.5"
+         r="42.5" />
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:#000000;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+         id="path1"
+         cx="84.452995"
+         cy="22.452997"
+         r="11.699999" />
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:#000000;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+         id="circle2"
+         cx="84.453003"
+         cy="82.452995"
+         r="11.7" />
+    </g>
+    <g
+       id="surviv-9"
+       inkscape:label="surviv"
+       transform="matrix(0.45277282,0,0,0.46047582,0.4722718,1.0569762)"
+       style="stroke-width:2.19006">
+      <title
+         id="title1-9">surviv</title>
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:none;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none"
+         id="circle1-6"
+         cx="52.5"
+         cy="52.5"
+         r="42.5" />
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:#000000;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+         id="path1-9"
+         cx="84.452995"
+         cy="22.452997"
+         r="11.699999" />
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:#000000;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+         id="circle2-7"
+         cx="84.453003"
+         cy="82.452995"
+         r="11.7" />
+    </g>
+    <g
+       id="g5"
+       inkscape:label="surviv"
+       transform="matrix(0.45277282,0,0,0.46047582,50.472272,22.497185)"
+       style="stroke-width:2.19006">
+      <title
+         id="title2">surviv</title>
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:none;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none"
+         id="circle3"
+         cx="52.5"
+         cy="52.5"
+         r="42.5" />
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:#000000;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+         id="circle4"
+         cx="84.452995"
+         cy="22.452997"
+         r="11.699999" />
+      <circle
+         style="fill:#f9ffff;fill-opacity:0.992925;stroke:#000000;stroke-width:4.38013;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+         id="circle5"
+         cx="84.453003"
+         cy="82.452995"
+         r="11.7" />
+    </g>
+  </g>
+</svg>

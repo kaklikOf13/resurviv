@@ -34,8 +34,15 @@ export class SiteInfo {
         const modeTypes = {
             1: "solo",
             2: "duo",
+            3: "trio",
             4: "squad"
         };
+        const icons={
+            1:"img/gui/surviv-1.svg",
+            2:"img/gui/surviv-2.svg",
+            3:"img/gui/surviv-3.svg",
+            4:"img/gui/surviv-4.svg",
+        }
         const availableModes = [];
         const modes = this.info[this.config.get("region")].modes || [];
         for (
@@ -46,10 +53,14 @@ export class SiteInfo {
             const mode = modes[i];
             const mapDef = (MapDefs[mode.mapName] || MapDefs.main).desc;
             const buttonText = mapDef.buttonText ? mapDef.buttonText : modeTypes[mode.teamMode];
+            let icon=mapDef.icon
+            if(!mapDef.buttonText){
+                icon=icons[mode.teamMode]
+            }
             availableModes.push({
-                icon: mapDef.icon,
+                icon: icon??"img/gui/surviv-1.svg",
                 buttonCss: mapDef.buttonCss,
-                buttonText
+                buttonText:buttonText??"solo"
             });
         }
         return availableModes;
