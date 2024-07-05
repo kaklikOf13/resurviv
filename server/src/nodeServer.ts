@@ -145,11 +145,11 @@ export class NodeServer extends AbstractServer {
             })
             : App();
         app.get("/api/info", (res,req) => {
-            rateLimitMiddleware(res,req,()=>{
+            rateLimitMiddleware(res,req,async()=>{
                 let aborted = false;
                 res.onAborted(() => { aborted = true; });
                 cors(res);
-                const data = this.getInfo();
+                const data = await this.getInfo();
                 if (!aborted) {
                     res.writeHeader("Content-Type","application/json")
                     res.end(JSON.stringify(data));

@@ -43,9 +43,10 @@ export abstract class AbstractServer {
 
     readonly games: Record<number,Game | undefined> = [];
 
+    main:boolean=true
+
     init(): void {
         this.logger.log(`Resurviv Server v${version}`);
-        this.logger.log(`Listening on ${Config.host}:${Config.port}`);
         this.logger.log("Press Ctrl+C to exit.");
 
         if(Config.punishmentsDatabase===""&&!existsSync("./punishments")){
@@ -56,13 +57,6 @@ export abstract class AbstractServer {
         }
 
         //this.newGame(0);
-
-        setInterval(() => {
-            const memoryUsage = process.memoryUsage().rss;
-            const perfString = `Memory usage: ${Math.round(memoryUsage / 1024 / 1024 * 100) / 100} MB`;
-
-            this.logger.log(perfString);
-        }, 60000);
     }
 
     execute(cmd:string,gameID:number): void {
@@ -102,11 +96,22 @@ export abstract class AbstractServer {
         return game !== undefined && game.aliveCount < game.map.mapDef.gameMode.maxPlayers && !game.over;
     }
 
-    getInfo() {
+    async getInfo() {
         let playerCount = 0
         Object.values(this.games).forEach((a,_) => {
             playerCount+=(a ? a.playerBarn.livingPlayers.length : 0);
         }, 0);
+        if(this.main){
+            for(const p of Config.childPorts){
+                try{
+                    const ip=`http${Config.ssl?"s":""}://localhost:${p}/api/info`
+                    const js=await(await fetch(ip)).json()
+                    playerCount+=js["players"]
+                }catch{
+                    playerCount+=0
+                }
+            }
+        }
 
         const data = {
             modes: new Array<any>(),
