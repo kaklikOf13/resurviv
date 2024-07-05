@@ -7,7 +7,6 @@ import {
     type TemplatedApp,
     HttpRequest
 } from "uWebSockets.js";
-import NanoTimer from "nanotimer";
 import { URLSearchParams } from "node:url";
 import jwt from 'jsonwebtoken';
 import { AbstractServer, type PlayerContainer } from "./abstractServer";
@@ -90,6 +89,10 @@ function rateLimitMiddleware(res: HttpResponse, req: HttpRequest, next: () => vo
         return
     }
     const ip = req.getHeader('x-forwarded-for') || Buffer.from(res.getRemoteAddressAsText()).toString();
+    if(Config.security.antiddos.whitelist.includes(ip)){
+        next()
+        return
+    }
     if (!ipRequestCounts[ip]) {
       ipRequestCounts[ip] = { count: 1, timestamp: Date.now() };
     } else {
@@ -144,16 +147,19 @@ export class NodeServer extends AbstractServer {
                 ca_file_name:Config.ssl.caFile
             })
             : App();
-        app.get("/api/info", (res,req) => {
+        app.get("/api/info", async(res,req) => {
             rateLimitMiddleware(res,req,async()=>{
                 let aborted = false;
                 res.onAborted(() => { aborted = true; });
                 cors(res);
-                const data = await this.getInfo();
-                if (!aborted) {
-                    res.writeHeader("Content-Type","application/json")
-                    res.end(JSON.stringify(data));
-                }
+                const data=await this.getInfo()
+                res.cork(()=>{
+                    if (!aborted) {
+                        res.writeHeader("Content-Type","application/json")
+                        res.writeStatus('200')
+                        res.end(JSON.stringify(data))
+                    }
+                })
             })
         });
         app.post("/api/user/profile", (res, req) => {

@@ -1,12 +1,12 @@
 import { type URLSearchParams } from "url";
 import { Config } from "./config";
-import { Game } from "./game";
+import { Game, GameMode } from "./game";
 import { type Player } from "./objects/player";
 import { Logger } from "./utils/logger";
 import { version } from "../../package.json";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { ReportMsg } from "../../shared/msgs/reportMsg";
-import { util } from "../../shared/utils/util";
+import { isRotation, rotate, TimeRotation, util } from "../../shared/utils/util";
 import * as net from "../../shared/net";
 
 export interface PlayerContainer {
@@ -41,9 +41,11 @@ export type Punishment={
 export abstract class AbstractServer {
     readonly logger = new Logger("Server");
 
-    readonly games: Record<number,Game | undefined> = [];
+    readonly games: Partial<Record<number,Game | undefined>> = [];
 
     main:boolean=true
+
+    rotations:Record<number,{acd:number,idx:number}>={}
 
     init(): void {
         this.logger.log(`Resurviv Server v${version}`);
@@ -65,10 +67,22 @@ export abstract class AbstractServer {
         }
     }
 
+    getMode(idx:number=0):GameMode{
+        if(isRotation(Config.modes[idx])){
+            if(this.rotations[idx]){
+                this.rotations[idx]=rotate(Config.modes[idx] as TimeRotation<GameMode>,this.rotations[idx].idx,this.rotations[idx].acd)
+            }else{
+                this.rotations[idx]=rotate(Config.modes[idx] as TimeRotation<GameMode>,0,Date.now())
+            }
+            return (Config.modes[idx] as TimeRotation<GameMode>).rotation[this.rotations[idx].idx]
+        }
+        return Config.modes[idx] as GameMode
+    }
+
     newGame(id?: number,mode:number=0): number {
         if (id !== undefined) {
             if (!this.games[id] || this.games[id]?.stopped) {
-                this.games[id] = new Game(id,Config.modes[mode], Config);
+                this.games[id] = new Game(id,this.getMode(mode), Config);
                 this.games[id]!.onreport=(this.onreport.bind(this))
                 this.games[id]?.run()
                 return id;
@@ -119,8 +133,9 @@ export abstract class AbstractServer {
             country: Config.country,
             childPorts:Config.childPorts
         };
-        for(const m of Config.modes){
-            data.modes.push({teamMode:m.maxTeamSize,mapName:m.map})
+        for(let m=0;m<Config.modes.length;m++){
+            const mm=this.getMode(m)
+            data.modes.push({teamMode:mm.maxTeamSize,mapName:mm.map})
         }
         return data;
     }
@@ -258,7 +273,8 @@ export abstract class AbstractServer {
             if(this.games[gameID]?.stopped){
                 this.endGame(gameID,false)
             }
-            if (this.canJoin(game) && game?.allowJoin && game.mode.map==Config.modes[mode].map&&game.mode.maxTeamSize==Config.modes[mode].maxTeamSize) {
+            const mm=this.getMode(mode)
+            if (this.canJoin(game) && game?.allowJoin && game.mode.map==mm.map&&game.mode.maxTeamSize==mm.maxTeamSize) {
                 response.gameId = game.id;
                 foundGame = true;
                 break;

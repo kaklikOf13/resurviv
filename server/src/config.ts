@@ -1,3 +1,4 @@
+import { TimeRotation } from "../../shared/utils/util";
 import { type Vec2 } from "../../shared/utils/v2";
 import { type GameMode } from "./game";
 
@@ -11,7 +12,7 @@ export enum SpawnMode {
 export const Config = {
     host: "0.0.0.0",
     port: 8000,
-    childPorts:[8001],
+    childPorts:[8001,8002],
 
     modes:[
         {
@@ -19,8 +20,17 @@ export const Config = {
             map:"tinymain"
         },
         {
-            maxTeamSize:1,
-            map:"deathmatch"
+            rotation:[
+                {
+                    maxTeamSize:1,
+                    map:"deathmatch"
+                },
+                {
+                    maxTeamSize:1,
+                    map:"monster_hunter"
+                }
+            ],
+            delay:new Date(Date.UTC(0,0,0,5,0,0,0))
         }
     ],
 
@@ -38,7 +48,8 @@ export const Config = {
         terminalPassword:"123",
         antiddos:{
             limit_request:30,
-            window_limit:50
+            window_limit:50,
+            whitelist:["127.0.0.1"],
         }
     },
 
@@ -60,7 +71,7 @@ export interface ConfigType {
         readonly caFile: string
     }
 
-    readonly modes: GameMode[]
+    readonly modes: (GameMode|TimeRotation<GameMode>)[]
 
     /**
      * There are 5 spawn modes: Random, Radius, Fixed, and Center.
@@ -98,6 +109,7 @@ export interface ConfigType {
         readonly antiddos?:{
             window_limit:number,
             limit_request:number
+            whitelist:string[]
         }
         //Security Key
         readonly adminCryptKey?:string

@@ -1,3 +1,4 @@
+import { GameMode } from "../../server/src/game";
 import { type AABB } from "./coldet";
 import { math } from "./math";
 import { v2 } from "./v2";
@@ -11,6 +12,16 @@ export function assert(condition: boolean | undefined, msg?: string) {
     }
 }
 export type RandomVal=number|{max:number,min:number}
+export interface TimeRotation<TP>{
+    delay:Date,
+    rotation:TP[]
+}
+export function isRotation(val:any):boolean{
+    return Object.hasOwn(val,"rotation")
+}
+export function rotate<TP>(rot:TimeRotation<TP>,idx:number,acd:number):{acd:number,idx:number}{
+    return {idx:(Date.now()>=acd?((idx+1)%rot.rotation.length):idx),acd:Date.now()}
+}
 export class Clock {
     private frameDuration: number
     private lastFrameTime: number
