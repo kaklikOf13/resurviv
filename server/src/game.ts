@@ -133,6 +133,8 @@ export class Game {
         plugin.initSignals()
     }
 
+    playerStatusDirty:boolean=false
+    playerStatusTime:number=0
     update() {
         try{
             const now = Date.now();
@@ -150,6 +152,14 @@ export class Game {
             this.airdropBarn.update(dt)
             this.playerBarn.update(dt);
             this.explosionBarn.update();
+
+            if(this.playerStatusTime==0){
+                this.playerStatusTime=this.config.tps
+                this.playerStatusDirty=true
+            }else{
+                this.playerStatusTime--
+                this.playerStatusDirty=false
+            }
 
             // second update:
             // serialize objects and send msgs

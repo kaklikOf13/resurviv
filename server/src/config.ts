@@ -54,7 +54,7 @@ export const Config = {
 
     security:{
         adminCryptKey:"admin",
-        terminalPassword:"123",
+        terminalPassword:"admin",
         antiddos:{
             limit_request:30,
             window_limit:50,

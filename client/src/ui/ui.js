@@ -1007,12 +1007,12 @@ export class UiManager {
                     ? "player-map-inner.img"
                     : "player-map-downed.img";
             }
-            let tint = sameGroup
+            /*let tint = sameGroup
                 ? playerBarn.getGroupColor(playerId)
                 : playerBarn.getTeamColor(playerInfo.teamId);
             if (map.factionMode && customMapIcon) {
                 tint = playerBarn.getTeamColor(playerInfo.teamId);
-            }
+            }*/
             const dotScale = device.uiLayout == device.UiLayout.Sm ? 0.15 : 0.2;
             let scale = dotScale;
 
@@ -1026,7 +1026,7 @@ export class UiManager {
                     ? dotScale * 1.25
                     : dotScale * 0.75;
 
-            addSprite(playerStatus.pos, scale, playerStatus.minimapAlpha, playerStatus.minimapVisible, zOrder, texture, tint);
+            addSprite(playerStatus.pos, scale, playerStatus.minimapAlpha, playerStatus.minimapVisible, zOrder, texture, 32511);
 
             // Add an outer sprite if this player is in our group
             if (sameGroup) {

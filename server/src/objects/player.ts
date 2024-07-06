@@ -34,6 +34,7 @@ import { IDAllocator } from "../IDAllocator";
 import { GunDefs } from "../../../shared/defs/gameObjects/gunDefs";
 import { EventType } from "../utils/plugins";
 import { ThrowableDefs } from "../../../shared/defs/gameObjects/throwableDefs";
+import { PlayerStatus } from "../../../client/clientTypes";
 
 export class Emote {
     playerId: number;
@@ -60,6 +61,9 @@ export class Team{
     }
     addPlayer(player:Player){
         if(!player.dead){
+            if(player.team){
+                player.team.removePlayer(player)
+            }
             player.teamId=this.id
             player.team=this
             player.groupId
@@ -108,6 +112,8 @@ export class PlayerBarn {
     deletedPlayers: number[] = [];
     groupIdAllocator = new IDAllocator(8);
     aliveCountDirty = false;
+
+    playerInfoDirty:Player[]=[]
 
     emotes: Emote[] = [];
     teams:Partial<Record<number,Team>>={}
@@ -244,22 +250,30 @@ export class PlayerBarn {
         }
     }
 
+    removePlayer(player:Player,i:number){
+        player.dropAllItens(player.rad)
+        this.players.splice(i, 1);
+        const lp=this.livingPlayers.indexOf(player)
+        if(lp!==-1){
+            this.livingPlayers.splice(lp,1)
+        }
+        this.deletedPlayers.push(player.__id);
+        const livingIdx = this.livingPlayers.indexOf(player);
+        if (livingIdx !== -1) {
+            this.livingPlayers.splice(livingIdx, 1);
+        }
+        player.team?.removePlayer(player)
+        player.destroy();
+        this.aliveCountDirty=true
+    }
+
     update(dt: number) {
         for (let i = 0; i < this.players.length; i++) {
             const player = this.players[i];
             // completely remove player if alive for less than 5 seconds
             if (player.disconnected && player.canDespawn) {
-                this.players.splice(i, 1);
-                this.livingPlayers.splice(this.livingPlayers.indexOf(player),1)
-                this.deletedPlayers.push(player.__id);
-                const livingIdx = this.livingPlayers.indexOf(player);
-                if (livingIdx !== -1) {
-                    this.livingPlayers.splice(livingIdx, 1);
-                }
-                player.team?.removePlayer(player)
-                player.destroy();
-                this.aliveCountDirty=true
-                continue;
+                this.removePlayer(player,i)
+                continue
             }
 
             player.update(dt);
@@ -279,6 +293,7 @@ export class PlayerBarn {
         this.deletedPlayers.length = 0;
         this.emotes=[];
         this.aliveCountDirty = false;
+        this.playerInfoDirty.length=0
 
         for (let i = 0; i < this.players.length; i++) {
             const player = this.players[i];
@@ -697,6 +712,7 @@ export class Player extends BaseGameObject {
 
     lastInputMsg = new InputMsg();
 
+
     update(dt: number): void {
         if (this.dead) return;
 
@@ -886,6 +902,8 @@ export class Player extends BaseGameObject {
         }
     }
 
+    hasData=true
+
     private _firstUpdate = true;
 
     canDespawn=true
@@ -943,11 +961,20 @@ export class Player extends BaseGameObject {
 
         if(this._firstUpdate){
             updateMsg.fullObjects=game.objectRegister.objects
+            //@ts-expect-error
+            updateMsg.playerInfos = playerBarn.players;
         }else{
             updateMsg.delObjIds=game.objectRegister.deletedObjsId
-            //updateMsg.delObjIds=game.objectRegister.delObjs
             updateMsg.partObjects=game.objectRegister.dpObjs
             updateMsg.fullObjects=game.objectRegister.dfObjs
+
+            //@ts-expect-error
+            updateMsg.playerInfos=[...playerBarn.newPlayers,...playerBarn.playerInfoDirty]
+        }
+        if(game.playerStatusDirty){
+            updateMsg.playerStatusDirty=true
+            //@ts-expect-error
+            updateMsg.playerStatus.players=this.team?this.team.players:[this]
         }
 
         updateMsg.activePlayerId = player.__id;
@@ -980,9 +1007,6 @@ export class Player extends BaseGameObject {
             updateMsg.activePlayerIdDirty = player.activeIdDirty;
             updateMsg.activePlayerData = player;
         }
-
-        //@ts-expect-error
-        updateMsg.playerInfos = player._firstUpdate ? playerBarn.players : playerBarn.newPlayers;
         updateMsg.deletedPlayerIds = playerBarn.deletedPlayers;
 
         for (const emote of playerBarn.emotes) {

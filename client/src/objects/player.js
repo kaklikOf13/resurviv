@@ -2426,26 +2426,6 @@ export class PlayerBarn {
             status.timeSinceVisible += dt;
             status.timeSinceUpdate += dt;
 
-            const fade =
-                !status.dead ||
-                    (playerInfo.teamId != activeInfo.teamId && status.role != "leader")
-                    ? 0
-                    : 0.6;
-
-            status.minimapAlpha =
-                math.smoothstep(status.timeSinceVisible, 0, 0.1) *
-                math.lerp(
-                    math.smoothstep(status.timeSinceUpdate, 2, 2.5),
-                    1,
-                    fade
-                );
-
-            // @HACK: Fix issue in non-faction mode when spectating and swapping
-            // between teams. We don't want the old player indicators to fade out
-            // after moving to the new team
-            if (!map.factionMode && playerInfo.teamId != activeInfo.teamId) {
-                status.minimapAlpha = 0;
-            }
             status.minimapVisible = status.minimapAlpha > 0.01;
         }
     }
@@ -2592,6 +2572,8 @@ export class PlayerBarn {
         for (let o = 0; o < playerIds.length; o++) {
             const playerId = playerIds[o];
             const status = playerStatus.players[o];
+            status.minimapVisible=true
+            status.minimapAlpha=1
             if (status.hasData) {
                 this.setPlayerStatus(playerId, status);
             }
@@ -2613,8 +2595,8 @@ export class PlayerBarn {
             role: "",
             timeSinceUpdate: 0,
             timeSinceVisible: 0,
-            minimapAlpha: 0,
-            minimapVisible: false
+            minimapAlpha: .8,
+            minimapVisible: true
         };
 
         if (!status.minimapVisible) {
@@ -2670,7 +2652,7 @@ export class PlayerBarn {
 
     getGroupColor(playerId) {
         const playerInfo = this.getPlayerInfo(playerId);
-        const group = this.getGroupInfo(playerInfo.groupId);
+        const group = this.getGroupInfo(playerInfo.teamId);
         const groupIdx = group ? group.playerIds.indexOf(playerId) : 0;
         if (groupIdx >= 0 && groupIdx < GameConfig.groupColors.length) {
             return GameConfig.groupColors[groupIdx];

@@ -67,6 +67,7 @@ export class GiveItensAfterRunPlugin extends GamePlugin{
     }
     start(){
         const p=this.game.playerBarn.randomPlayer()
+        p.game.playerBarn.playerInfoDirty.push(p)
         p.dropAllItens(1)
         p.giveItems(this.equips,this.items)
         p.giveGuns(this.weapons.slot1 as keyof typeof GunDefs,this.weapons.slot2 as keyof typeof GunDefs,true)

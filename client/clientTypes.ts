@@ -9,39 +9,36 @@ export abstract class AbstractObject {
     abstract init(): void;
     abstract free(): void;
 }
+export interface PlayerInfo {
+    playerId: number;
+    teamId: number;
+    groupId: number;
+    name: string;
+
+    loadout: Loadout
+}
 interface Loadout {
     heal: string
     boost: string
-    boolean: string
-}
-
-export interface PlayerInfo {
-    playerId: number
-    groupId: number|undefined
-    teamId: number|undefined
-    name: string
-    nameTruncated: string
-    anonName: string
-    loadout: Loadout
 }
 
 export interface PlayerStatus {
-    playerId: number
-    pos: Vec2
-    posTarget: Vec2
-    posDelta: number
-    health: number
-    posInterp: number
-    visible: boolean
-    dead: boolean
-    downed: boolean
-    disconnected: boolean
-    role: string
-    timeSinceUpdate: number
-    timeSinceVisible: number
-    minimapAlpha: number
-    minimapVisible: boolean
-    hasData: boolean
+    playerId?: number;
+    pos: Vec2;
+    posTarget?: Vec2;
+    posDelta?: number;
+    health?: number;
+    posInterp?: number;
+    visible: boolean;
+    dead: boolean;
+    downed: boolean;
+    disconnected?: boolean;
+    role: string;
+    timeSinceUpdate?: number;
+    timeSinceVisible?: number;
+    minimapAlpha?: number;
+    minimapVisible?: boolean;
+    hasData: boolean;
 }
 
 export interface GroupStatus {

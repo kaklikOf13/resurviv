@@ -109,16 +109,12 @@ export class Creator {
         const obj = this.getObjById(id);
         if (obj) {
             obj.updateData(data, false, false, ctx);
-        } else {
-            console.error("updateObjPart, missing object", id);
         }
     }
 
     deleteObj(id) {
         const obj = this.getObjById(id);
-        if (obj === undefined) {
-            console.error("deleteObj, missing object", id);
-        } else {
+        if (obj !== undefined) {
             this.types[obj.__type].free(obj);
             delete this.idToObj[id];
         }
