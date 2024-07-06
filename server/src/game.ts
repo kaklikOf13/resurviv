@@ -176,9 +176,6 @@ export class Game {
             this.gas.flush();
             this.msgsToSend.length = 0;
 
-            if (this.started && (this.teamMode?this.playerBarn.livingTeams.length:this.playerBarn.livingPlayers.length)<=1 && !this.over) {
-                this.initGameOver();
-            }
             this.events.emit(EventType.GameTick,this)
             if(this.running){
                 this.clock.tick(this.update.bind(this))
@@ -255,7 +252,7 @@ export class Game {
     initGameOver(): void {
         if (this.over) return;
         this.over = true;
-        const winningPlayers = this.teamMode?this.playerBarn.teams[this.playerBarn.livingTeams[0]]!.players:this.playerBarn.livingPlayers;
+        const winningPlayers = this.playerBarn.livingPlayers
         if (winningPlayers.length>0) {
             for(const p of winningPlayers){
                 p.addGameOverMsg(p.teamId);

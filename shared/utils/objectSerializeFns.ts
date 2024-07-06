@@ -107,6 +107,7 @@ export interface ObjectsFullData {
             droppable: boolean
         }>
 
+        reflective:boolean
     }
     [ObjectType.Obstacle]: {
         healthT: number
@@ -217,6 +218,8 @@ export const ObjectSerializeFns: {
             s.writeBoolean(data.frozen);
             s.writeBits(data.frozenOri, 2);
 
+            s.writeBoolean(data.reflective)
+
             s.writeBoolean(data.hasHaste);
             if (data.hasHaste) {
                 s.writeBits(data.hasteType, 3);
@@ -275,6 +278,9 @@ export const ObjectSerializeFns: {
             data.frozenOri = s.readBits(2); // frozen ori
             data.hasteType = 0;
             data.hasteSeq = -1;
+
+            data.reflective=s.readBoolean()
+
             if (s.readBoolean()) {
                 // has haste
                 data.hasteType = s.readBits(3); // haste type

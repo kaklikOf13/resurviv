@@ -298,7 +298,7 @@ export class BulletBarn {
                                 layer: player.layer,
                                 collidable: true
                             });
-                            if (player.hasPerk("steelskin")) {
+                            if (player.hasPerk("steelskin")||player.reflective) {
                                 colObjs.push({
                                     type: "pan",
                                     point: v2.add(

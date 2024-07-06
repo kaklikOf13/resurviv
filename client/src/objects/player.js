@@ -257,6 +257,7 @@ export class Player {
         this.playedDryFire = false;
         this.lastSwapIdx = -1;
         this.hasteSeq = -1;
+        this.reflective=false
         this.cycleSoundInstance = null;
         this.actionSoundInstance = null;
         this.useItemEmitter = null;
@@ -416,6 +417,7 @@ export class Player {
             this.netData.actionItem = data.actionItem;
             this.netData.scale = data.scale;
             this.netData.role = data.role;
+            this.reflective=data.reflective
 
             if (!!isNew || !perksEqual(this.netData.perks, data.perks)) {
                 this.perksDirty = true;

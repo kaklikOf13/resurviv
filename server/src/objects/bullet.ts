@@ -386,7 +386,7 @@ export class Bullet {
                             normal: collision.normal,
                             collidable: true
                         }),
-                        obj.hasPerk("steelskin") &&
+                        (obj.hasPerk("steelskin")||obj.reflective) &&
                             collisions.push({
                                 object: obj,
                                 reflect: true,
@@ -475,6 +475,12 @@ export class Bullet {
                 }
             } else if (obj instanceof Player) {
                 stopBullet = collision.collidable;
+
+                if(collision.reflect){
+                    finalDamage*=.75
+                    //console.log(collision.normal)
+                    //this.reflect(this.pos,collision.normal,obj.__id)
+                }
 
                 this.bulletManager.damages.push({
                     obj,

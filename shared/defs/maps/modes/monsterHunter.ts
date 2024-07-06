@@ -32,7 +32,7 @@ export const MonsterHunter: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
                     "frag":3,
                     "mirv":1,
                     "smoke":2
-                },{maxHealth:150,health:150,boost:100,scale:1.4},{
+                },{maxHealth:200,health:200,boost:100,scale:1.4,reflective:true},{
                     slot1:"m870",
                     slot2:"awc"
                 }],
@@ -44,7 +44,7 @@ export const MonsterHunter: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
                 id:"better_start",
                 values:{
                     "min":2,
-                    "after":30
+                    "after":60
                 }
             },
             {

@@ -314,21 +314,30 @@ export class Player extends BaseGameObject {
 
     bounds = collider.toAabb(collider.createCircle(v2.create(0, 0), GameConfig.player.maxVisualRadius));
 
-    scale = 1;
+    _scale = 1;
     reportCode:string=""
     __ip=""
 
+    reflective:boolean=false
+
+    get scale():number{
+        return this._scale
+    }
+    set scale(value:number){
+        this._scale=value
+        this.collider.rad=this.rad
+    }
+
     get hasScale(): boolean {
-        return this.scale !== 1;
+        return this._scale !== 1;
     }
 
     get rad(): number {
-        return GameConfig.player.radius * this.scale;
+        return GameConfig.player.radius * this._scale;
     }
 
     set rad(rad: number) {
         this.collider.rad = rad;
-        this.rad = rad;
     }
 
     get playerId() {
@@ -1139,8 +1148,15 @@ export class Player extends BaseGameObject {
     kill(params: DamageParams): void {
         if(this.team){
             this.team.livingPlayers.splice(this.team.livingPlayers.findIndex((p)=>{p.__id===this.__id}),1)
+            if (this.game.started && this.game.playerBarn.livingTeams.length<=1 && !this.game.over) {
+                this.game.initGameOver();
+            }
             if(this.team.livingPlayers.length===0){
                 this.game.playerBarn.livingTeams.splice(this.game.playerBarn.livingTeams.indexOf(this.teamId!),1)
+            }
+        }else{
+            if (this.game.started && this.game.playerBarn.livingPlayers.length<=1 && !this.game.over) {
+                this.game.initGameOver();
             }
         }
         this.dead = true;
