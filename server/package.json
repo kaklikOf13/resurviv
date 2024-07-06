@@ -4,6 +4,7 @@
     "build": "tsc",
     "start": "nodemon --exitcrash --enable-source-maps dist/server/main.ts --childPorts",
     "dev": "node -r ts-node/register main.ts --childPorts",
+    "stress": "node  -r ts-node/register stressTest.ts",
     "client": "cd client; pnpm dev",
     "lint": "eslint . --fix --ext .ts,.js",
     "lint:ci": "eslint . --ext .ts,.js"
@@ -11,12 +12,15 @@
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.14.5",
+    "@types/ws": "^8.5.10",
     "bit-buffer": "^0.2.5",
     "jsonwebtoken": "^9.0.2",
     "nanotimer": "^0.3.15",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.43.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.43.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/bun": "^1.1.4",

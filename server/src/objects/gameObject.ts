@@ -30,22 +30,25 @@ export interface DamageParams {
 const MAX_ID = 65535;
 
 export class ObjectRegister {
-    objects: Array<GameObject | undefined> = [];
-    idToObj: Array<GameObject | null> = [];
+    objects: GameObject[] = [];
+    idToObj: Record<number,GameObject> = {}
+    grid!:Grid
 
     idToType = new Uint8Array(MAX_ID);
     dirtyPart = new Uint8Array(MAX_ID);
     dirtyFull = new Uint8Array(MAX_ID);
 
-    deletedObjs: GameObject[] = [];
+    deletedObjsId:number[]=[]
 
     idNext = 1;
     freeLists = {} as Record<ObjectType, number[]>;
 
-    constructor(readonly grid: Grid) {
-        for (let i = 0; i < MAX_ID; i++) {
-            this.idToObj[i] = null;
-        }
+    visibleObjects:Array<GameObject>=[]
+    delObjs:number[]=[]
+    dpObjs:GameObject[]=[]
+    dfObjs:GameObject[]=[]
+    constructor(grid:Grid){
+        this.grid=grid
     }
 
     getById(id: number) {
@@ -94,7 +97,7 @@ export class ObjectRegister {
             this.objects[obj.__arrayIdx] = lastObj;
             lastObj.__arrayIdx = obj.__arrayIdx;
         }
-        this.idToObj[obj.__id] = null;
+        delete this.idToObj[obj.__id];
 
         this.freeId(obj.__type, obj.__id);
 
@@ -108,22 +111,33 @@ export class ObjectRegister {
     }
 
     serializeObjs() {
+        this.delObjs.length=0
+        this.dpObjs.length=0
+        this.dfObjs.length=0
+        for (const obj of this.visibleObjects) {
+            if (!this.idToObj[obj.__id]) {
+                this.delObjs.push(obj.__id);
+            }
+        }
         for (let i = 0; i < this.objects.length; i++) {
             const obj = this.objects[i]!;
             const id = obj.__id;
             if (this.dirtyFull[id]) {
+                this.dfObjs.push(obj);
                 obj.serializeFull();
             } else if (this.dirtyPart[id]) {
+                this.dpObjs.push(obj);
                 obj.serializePartial();
             }
         }
+        this.visibleObjects = this.objects;
     }
 
     flush() {
-        for (let i = 0; i < this.deletedObjs.length; i++) {
-            this.unregister(this.deletedObjs[i]);
+        for (const i of this.deletedObjsId) {
+            this.unregister(this.idToObj[i]);
         }
-        this.deletedObjs.length = 0;
+        this.deletedObjsId.length = 0;
         this.dirtyFull.fill(0);
         this.dirtyPart.fill(0);
     }
@@ -202,7 +216,7 @@ export abstract class BaseGameObject {
             return;
         }
         this.game.grid.remove(this as unknown as GameObject);
-        this.game.objectRegister.deletedObjs.push(this as unknown as GameObject);
+        this.game.objectRegister.deletedObjsId.push(this.__id);
         this.destroyed = true;
     }
 }

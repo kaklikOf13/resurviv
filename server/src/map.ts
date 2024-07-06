@@ -157,8 +157,7 @@ function checkCollision(collsA: GroundBunkerColliders, collsB: Collider[], layer
 export class GameMap {
     game: Game;
 
-    width: number;
-    height: number;
+    size:Vec2
 
     center: Vec2;
 
@@ -200,23 +199,22 @@ export class GameMap {
         this.mapDef = mapDef;
 
         const mapConfig = mapDef.mapGen.map;
-        this.width = (mapConfig.baseWidth * mapConfig.scale.small) + mapConfig.extension;
-        this.height = (mapConfig.baseHeight * mapConfig.scale.small) + mapConfig.extension;
+        this.size=v2.create((mapConfig.baseWidth * mapConfig.scale.small) + mapConfig.extension,(mapConfig.baseHeight * mapConfig.scale.small) + mapConfig.extension)
 
-        this.bounds = collider.createAabb(v2.create(0, 0), v2.create(this.width, this.height));
+        this.bounds = collider.createAabb(v2.create(0, 0), v2.create(this.size.x, this.size.y));
 
         this.msg.mapName = game.mode.map;
         this.msg.seed = this.seed;
-        this.msg.width = this.width;
-        this.msg.height = this.height;
+        this.msg.width = this.size.x;
+        this.msg.height = this.size.y;
         this.msg.rivers = this.riverDescs;
-        this.center = v2.create(this.width / 2, this.height / 2);
+        this.center = v2.create(this.size.x / 2, this.size.y / 2);
         this.grassInset = this.msg.grassInset = mapConfig.grassInset;
         this.shoreInset = this.msg.shoreInset = mapConfig.shoreInset;
     }
 
     generate(){
-        /* const lootPos = v2.create(this.width / 2, this.height / 2);
+        /* const lootPos = v2.create(this.size.x / 2, this.size.y / 2);
         for (const loot in GameObjectDefs) {
             const def = GameObjectDefs[loot];
             if ("lootImg" in def) {
@@ -224,8 +222,8 @@ export class GameMap {
                 // this.game.grid.addObject(new Loot(this.game, loot, v2.add(lootPos, { x: 1, y: 1 }), 0, 1, 0));
 
                 lootPos.x += 3.5;
-                if (lootPos.x > this.width / 2 + 80) {
-                    lootPos.x = this.width / 2;
+                if (lootPos.x > this.size.x / 2 + 80) {
+                    lootPos.x = this.size.x / 2;
                     lootPos.y -= 3.5;
                 }
             }
@@ -234,8 +232,8 @@ export class GameMap {
             this.generateTerrain()
 
             this.terrain = generateTerrain(
-                this.width,
-                this.height,
+                this.size.x,
+                this.size.y,
                 this.shoreInset,
                 this.grassInset,
                 this.riverDescs,
@@ -280,7 +278,7 @@ export class GameMap {
                 const points: Vec2[] = [];
 
                 const center = v2.add(v2.mulElems(
-                    v2.create(this.width, this.height),
+                    v2.create(this.size.x, this.size.y),
                     lake.spawnBound.pos
                 ), util.randomPointInCircle(lake.spawnBound.rad));
 
@@ -314,16 +312,16 @@ export class GameMap {
             // Generate rivers
             //
             const widths = util.weightedRandom(weightedWidths, riverWeights, randomGenerator);
-            const halfWidth = this.width / 2;
-            const halfHeight = this.height / 2;
+            const halfWidth = this.size.x / 2;
+            const halfHeight = this.size.y / 2;
 
             const riverRect = collider.createAabb(
                 v2.create(1, 1),
-                v2.create(this.width - 1, this.height - 1)
+                v2.create(this.size.x - 1, this.size.y - 1)
             );
             const center = v2.create(halfWidth, halfHeight);
-            const mapWidth = this.width - 1;
-            const mapHeight = this.height - 1;
+            const mapWidth = this.size.x - 1;
+            const mapHeight = this.size.y - 1;
 
             for (let i = 0; i < widths.length;) {
                 let start: Vec2;
@@ -435,7 +433,7 @@ export class GameMap {
                 pos = v2.add(
                     util.randomPointInCircle(customSpawnRule.rad),
                     v2.mulElems(customSpawnRule.pos,
-                        v2.create(this.width, this.height)));
+                        v2.create(this.size.x, this.size.y)));
 
                 if (this.canSpawn(customSpawnRule.type, pos, ori)) {
                     break;
@@ -675,8 +673,8 @@ export class GameMap {
         if (!waterEdge) return;
 
         const aabb = collider.toAabb(mapHelpers.getBoundingCollider(type));
-        // const width = aabb.max.x - aabb.min.x;
-        const height = aabb.max.y - aabb.min.y;
+        // const size.x = aabb.max.x - aabb.min.x;
+        const width = aabb.max.y - aabb.min.y;
 
         let ori: number;
         let pos: Vec2 | undefined;
@@ -707,8 +705,8 @@ export class GameMap {
                 dist -= 24;
             }
 
-            const min = v2.create(this.shoreInset + dist, this.shoreInset + height);
-            const max = v2.create(min.x, this.height - this.shoreInset - height);
+            const min = v2.create(this.shoreInset + dist, this.shoreInset + width);
+            const max = v2.create(min.x, this.size.y - this.shoreInset - width);
 
             // generate a position and rotate it based on the orientation and map center
             const tempPos = {
@@ -744,8 +742,8 @@ export class GameMap {
 
         const getPos = () => {
             return {
-                x: util.random(this.shoreInset + width, this.width - this.shoreInset - width),
-                y: util.random(this.shoreInset + height, this.height - this.shoreInset - height)
+                x: util.random(this.shoreInset + width, this.size.x - this.shoreInset - width),
+                y: util.random(this.shoreInset + height, this.size.y - this.shoreInset - height)
             };
         };
 
@@ -785,7 +783,7 @@ export class GameMap {
             const rot = math.oriToRad(side);
 
             const min = v2.create(this.shoreInset + width, this.shoreInset + width + this.grassInset);
-            const max = v2.create(min.x, this.height - this.shoreInset - height);
+            const max = v2.create(min.x, this.size.y - this.shoreInset - height);
 
             // generate a position and rotate it based on the orientation and map center
             const tempPos = {
@@ -964,8 +962,8 @@ export class GameMap {
 
     getRandomSpawnPos(getPos:()=>Vec2 = () => {
         return {
-            x: util.random(this.shoreInset, this.width - this.shoreInset),
-            y: util.random(this.shoreInset, this.height - this.shoreInset)
+            x: util.random(this.shoreInset, this.size.x - this.shoreInset),
+            y: util.random(this.shoreInset, this.size.y - this.shoreInset)
         };
     }): Vec2 {
         let attempts = 0;

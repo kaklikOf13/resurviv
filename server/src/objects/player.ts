@@ -82,8 +82,8 @@ export class Team{
                     return v2.add(pp.pos,v2.create(util.randomInt(-size,size),util.randomInt(-size,size)))
                 }else{
                     return {
-                        x: util.random(player.game.map.shoreInset, player.game.map.width - player.game.map.shoreInset),
-                        y: util.random(player.game.map.shoreInset, player.game.map.height - player.game.map.shoreInset)
+                        x: util.random(player.game.map.shoreInset, player.game.map.size.x - player.game.map.shoreInset),
+                        y: util.random(player.game.map.shoreInset, player.game.map.size.y - player.game.map.shoreInset)
                     }
                 }
             }))
@@ -250,6 +250,7 @@ export class PlayerBarn {
             // completely remove player if alive for less than 5 seconds
             if (player.disconnected && player.canDespawn) {
                 this.players.splice(i, 1);
+                this.livingPlayers.splice(this.livingPlayers.indexOf(player),1)
                 this.deletedPlayers.push(player.__id);
                 const livingIdx = this.livingPlayers.indexOf(player);
                 if (livingIdx !== -1) {
@@ -257,6 +258,7 @@ export class PlayerBarn {
                 }
                 player.team?.removePlayer(player)
                 player.destroy();
+                this.aliveCountDirty=true
                 continue;
             }
 
@@ -275,7 +277,7 @@ export class PlayerBarn {
     flush() {
         this.newPlayers.length = 0;
         this.deletedPlayers.length = 0;
-        this.emotes.length = 0;
+        this.emotes=[];
         this.aliveCountDirty = false;
 
         for (let i = 0; i < this.players.length; i++) {
@@ -693,8 +695,6 @@ export class Player extends BaseGameObject {
         this.weapsDirty=true
     }
 
-    visibleObjects = new Set<GameObject>();
-
     lastInputMsg = new InputMsg();
 
     update(dt: number): void {
@@ -713,9 +713,9 @@ export class Player extends BaseGameObject {
             movement.y = this.lastInputMsg.touchMoveDir.y;
         } else {
             if (input.moveUp) movement.y++;
-            if (input.moveDown) movement.y--;
+            else if (input.moveDown) movement.y--;
             if (input.moveLeft) movement.x--;
-            if (input.moveRight) movement.x++;
+            else if (input.moveRight) movement.x++;
 
             if (movement.x * movement.y !== 0) { // If the product is non-zero, then both of the components must be non-zero
                 movement.x *= Math.SQRT1_2;
@@ -871,7 +871,7 @@ export class Player extends BaseGameObject {
         this.pos = math.v2Clamp(
             this.pos,
             v2.create(this.rad, this.rad),
-            v2.create(this.game.map.width - this.rad, this.game.map.height - this.rad)
+            v2.create(this.game.map.size.x - this.rad, this.game.map.size.y - this.rad)
         );
 
         if (!v2.eq(this.pos, this.posOld)) {
@@ -941,29 +941,14 @@ export class Player extends BaseGameObject {
             player = this.spectating;
         }
 
-        const radius = player.zoom + 4;
-        const rect = coldet.circleToAabb(player.pos, radius);
-
-        const newVisibleObjects = new Set(game.grid.intersectCollider(rect));
-        // client crashes if active player is not visible
-        // so make sure its always added to visible objects
-        newVisibleObjects.add(this);
-
-        for (const obj of this.visibleObjects) {
-            if (!newVisibleObjects.has(obj)) {
-                updateMsg.delObjIds.push(obj.__id);
-            }
+        if(this._firstUpdate){
+            updateMsg.fullObjects=game.objectRegister.objects
+        }else{
+            updateMsg.delObjIds=game.objectRegister.deletedObjsId
+            //updateMsg.delObjIds=game.objectRegister.delObjs
+            updateMsg.partObjects=game.objectRegister.dpObjs
+            updateMsg.fullObjects=game.objectRegister.dfObjs
         }
-
-        for (const obj of newVisibleObjects) {
-            if (!this.visibleObjects.has(obj) || game.objectRegister.dirtyFull[obj.__id]) {
-                updateMsg.fullObjects.push(obj);
-            } else if (game.objectRegister.dirtyPart[obj.__id]) {
-                updateMsg.partObjects.push(obj);
-            }
-        }
-
-        this.visibleObjects = newVisibleObjects;
 
         updateMsg.activePlayerId = player.__id;
         if (this.startedSpectating) {
@@ -1001,42 +986,23 @@ export class Player extends BaseGameObject {
         updateMsg.deletedPlayerIds = playerBarn.deletedPlayers;
 
         for (const emote of playerBarn.emotes) {
-            const emotePlayer = game.objectRegister.getById(emote.playerId);
-            if (emotePlayer && player.visibleObjects.has(emotePlayer) && !player.dead) {
+            const emotePlayer = game.objectRegister.getById(emote.playerId) as Player|undefined;
+            if (emotePlayer&&!emotePlayer.dead) {
                 updateMsg.emotes.push(emote);
-            }else if(emote.isPing&&(["ping_airdrop"].includes(emote.itemType))||emote.playerId===0){
+            }else if(emote.isPing&&(["ping_airdrop"].includes(emote.type)||(game.teamMode&&emotePlayer&&!emotePlayer.dead&&player.teamId==emotePlayer.teamId))){
                 updateMsg.emotes.push(emote)
             }
         }
 
-        let newBullets = [];
-        const extendedRadius = 1.1 * radius;
-        const radiusSquared = extendedRadius * extendedRadius;
+        updateMsg.bullets = game.bulletBarn.newBullets;
 
-        const bullets = game.bulletBarn.newBullets;
-        for (let i = 0; i < bullets.length; i++) {
-            const bullet = bullets[i];
-            if (v2.lengthSqr(v2.sub(bullet.pos, player.pos)) < radiusSquared ||
-                v2.lengthSqr(v2.sub(bullet.clientEndPos, player.pos)) < radiusSquared ||
-                coldet.intersectSegmentCircle(bullet.pos, bullet.clientEndPos, this.pos, extendedRadius)
-            ) {
-                newBullets.push(bullet);
-            }
-        }
-        if (newBullets.length > 255) {
-            console.error("Too many new bullets created!", newBullets.length);
-            newBullets = newBullets.slice(0, 255);
+        if (updateMsg.bullets.length > 255) {
+            console.error("Too many new bullets created!", updateMsg.bullets.length);
+            updateMsg.bullets = updateMsg.bullets.slice(0, 255);
         }
 
-        updateMsg.bullets = newBullets;
+        updateMsg.explosions=game.explosionBarn.explosions
 
-        for (let i = 0; i < game.explosionBarn.explosions.length; i++) {
-            const explosion = game.explosionBarn.explosions[i];
-            const rad = explosion.rad + extendedRadius;
-            if (v2.lengthSqr(v2.sub(explosion.pos, player.pos)) < rad * rad && updateMsg.explosions.length < 255) {
-                updateMsg.explosions.push(explosion);
-            }
-        }
         if (updateMsg.explosions.length > 255) {
             console.error("Too many new explosions created!", updateMsg.explosions.length);
             updateMsg.explosions = updateMsg.explosions.slice(0, 255);

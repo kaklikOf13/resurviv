@@ -86,13 +86,13 @@ export class Game {
 
         this.clock=new Clock(this.config.tps,1)
         this.map = new GameMap(this);
-        this.grid = new Grid(this.map.width, this.map.height);
+        this.grid = new Grid(this.map.size.x, this.map.size.y);
         this.objectRegister = new ObjectRegister(this.grid);
         this.map.generate()
 
         this.teamMode=this.map.mapDef.gameMode.teamsMode||this.mode.maxTeamSize>1
 
-        this.gas = new Gas(this.map,this);
+        this.gas = new Gas(this.map.size,this);
 
         this.allowJoin = true;
         this.events=new EventsManager()

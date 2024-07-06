@@ -17,7 +17,7 @@ export enum ObjectType {
     Smoke,
     Airdrop
 }
-
+export type ObjectData<T extends ObjectType> = ObjectsFullData[T] & ObjectsPartialData[T];
 export interface ObjectsPartialData {
     [ObjectType.Invalid]: null
     [ObjectType.Player]: {

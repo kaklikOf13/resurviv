@@ -66,13 +66,8 @@ export class AirdropBarn {
                     0,
                     1
                 );
-                let layer;
+                let layer=2;
                 // Make some crate particles? = 0;
-                if (
-                    (util.sameLayer(layer, activePlayer.layer) || (activePlayer.layer & 2)) && ((activePlayer.layer & 2) || !map.insideStructureMask(collider.createCircle(airdrop.pos, 1)))
-                ) {
-                    layer |= 2;
-                }
                 if (
                     airdrop.landed &&
                     !airdrop.playedLandFx &&

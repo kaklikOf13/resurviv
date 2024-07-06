@@ -11,6 +11,7 @@ import { Structure } from "./structure";
 import { type Player } from "./player";
 import { MapDefs } from "../../../shared/defs/mapDefs";
 import { ObjectType } from "../../../shared/utils/objectSerializeFns";
+import { math } from "../../../shared/utils/math";
 
 export class LootBarn {
     loots: Loot[] = [];
@@ -187,11 +188,14 @@ export class Loot extends BaseGameObject {
             return displacement;
         };
 
-        this.pos = v2.add(this.pos, calculateSafeDisplacement());
         this.vel = v2.mul(this.vel, this.dragConstant);
 
-        this.pos = v2.add(this.pos, calculateSafeDisplacement());
-
+        this.pos=math.v2Clamp(
+            v2.add(this.pos, calculateSafeDisplacement()),
+            v2.create(this.rad, this.rad),
+            v2.create(this.game.map.size.x - this.rad, this.game.map.size.y - this.rad)
+        );
+        
         const objects = this.game.grid.intersectCollider(this.collider);
         for (const obj of objects) {
             switch(obj.__type){
@@ -213,7 +217,7 @@ export class Loot extends BaseGameObject {
                     if (obj !== this && coldet.test(this.collider, obj.collider)) {
                         const res = coldet.intersectCircleCircle(this.pos, this.collider.rad, obj.pos, obj.collider.rad);
                         if (res) {
-                            this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.3));
+                            this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.4));
                             const norm = res.dir;
                             const vRelativeVelocity = v2.create(this.vel.x - obj.vel.x, this.vel.y - obj.vel.y);
         

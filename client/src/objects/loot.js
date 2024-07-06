@@ -179,8 +179,8 @@ export class LootBarn {
                     loot.emitter.layer = loot.layer;
                 }
 
-                const scaleIn = math.delerp(loot.ticker, 0, .6);
-                const scale = math.easeOutElastic(scaleIn, 0.95);
+                const scaleIn = math.delerp(loot.ticker, 0, 1);
+                const scale = math.easeOutElastic(scaleIn, 0.80);
                 const screenPos = camera.pointToScreen(loot.pos);
                 const screenScale = camera.pixels(loot.imgScale * scale);
 

@@ -128,15 +128,15 @@ export class Gas {
     doDamage = false;
     gasC:GasDef
     constructor(
-        readonly map: { readonly width: number, height: number },readonly game:Game
+        readonly map: Vec2,readonly game:Game
     ) {
-        const mapSize = (map.width + map.height) / 2;
+        const mapSize = (map.x + map.y) / 2;
         this.gasC=this.game.map.mapDef.gameConfig.gas??GameConfig.gas
         this.radNew = this.radOld = this.currentRad = this.gasC.initWidth * mapSize;
 
         this.posOld = v2.create(
-            map.width / 2,
-            map.height / 2
+            map.x / 2,
+            map.y / 2
         );
 
         this.posNew = v2.copy(this.posOld);
@@ -193,7 +193,7 @@ export class Gas {
                 const rad = this.radNew;
                 this.posNew = math.v2Clamp(this.posNew,
                     v2.create(rad, rad),
-                    v2.create(this.map.width - rad, this.map.height - rad)
+                    v2.create(this.map.x - rad, this.map.y - rad)
                 );
             }
 
