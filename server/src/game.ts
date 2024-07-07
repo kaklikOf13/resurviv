@@ -92,6 +92,8 @@ export class Game {
         this.objectRegister = new ObjectRegister(this.grid);
         this.map.generate()
 
+        this.mode.maxTeamSize=this.map.mapDef.gameMode.maxTeamSize??this.mode.maxTeamSize
+
         this.teamMode=this.map.mapDef.gameMode.teamsMode||this.mode.maxTeamSize>1
 
         this.gas = new Gas(this.map.size,this);

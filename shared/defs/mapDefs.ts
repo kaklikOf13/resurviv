@@ -105,6 +105,7 @@ export interface MapDef {
         },
         plugins?:PluginInstance[]
         teamsMode?:boolean
+        maxTeamSize?:number
     }
     gameConfig: {
         planes: {

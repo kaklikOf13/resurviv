@@ -65,14 +65,16 @@ export class Team{
             }
             player.teamId=this.id
             player.team=this
-            player.groupId
+            player.groupId=this.id
             this.livingPlayers.push(player)
             this.players.push(player)
+            //console.log("append",this.id,Object.keys(this.livingPlayers),player.game.playerBarn.livingTeams)
         }
     }
     removePlayer(player:Player){
-        this.players.splice(this.players.findIndex((p)=>{player.__id===p.__id}),1)
-        this.livingPlayers.splice(this.livingPlayers.findIndex((p)=>{player.__id===p.__id}),1)
+        //console.log("remotion",this.id,Object.keys(this.livingPlayers),player.game.playerBarn.livingTeams)
+        this.players.splice(this.livingPlayers.indexOf(player),1)
+        this.livingPlayers.splice(this.livingPlayers.indexOf(player),1)
         if(this.livingPlayers.length===0){
             player.game.playerBarn.livingTeams.splice(player.game.playerBarn.livingTeams.indexOf(this.id!),1)
         }
@@ -237,19 +239,19 @@ export class PlayerBarn {
 
         return player;
     }
-    newTeam():Team{
-        const team=new Team(this.lastTeam+1)
+    newTeam(id:number):Team{
+        const team=new Team(id)
         this.teams[team.id]=team
         this.livingTeams.push(team.id)
         return team
     }
     addToAutoTeam(player:Player){
-        if(this.game.mode.maxTeamSize>1){
+        if(this.game.teamMode&&this.game.mode.maxTeamSize>1){
             if(this.teams[this.lastTeam]&&this.teams[this.lastTeam]!.players.length<this.game.mode.maxTeamSize){
                 this.teams[this.lastTeam]!.addPlayer(player)
                 this.teams[this.lastTeam]?.teleportProxy(player)
             }else{
-                const team=this.newTeam()
+                const team=this.getTeam()
                 team.addPlayer(player)
             }
         }
@@ -274,6 +276,16 @@ export class PlayerBarn {
             this.game.stop()
         }
         this.game.tryGameOver()
+    }
+    getTeam(id?:number):Team{
+        if(!id){
+            id=this.lastTeam+1
+        }
+        if(this.teams[id]){
+            return this.teams[id]!
+        }else{
+            return this.newTeam(id)
+        }
     }
 
     update(dt: number) {
@@ -1155,12 +1167,6 @@ export class Player extends BaseGameObject {
     killedBy: Player | undefined;
 
     kill(params: DamageParams): void {
-        if(this.team){
-            this.team.livingPlayers.splice(this.team.livingPlayers.findIndex((p)=>{p.__id===this.__id}),1)
-            if(this.team.livingPlayers.length===0){
-                this.game.playerBarn.livingTeams.splice(this.game.playerBarn.livingTeams.indexOf(this.teamId!),1)
-            }
-        }
         this.dead = true;
         this.boost = 0;
         this.actionType = this.actionSeq = 0;
@@ -1171,6 +1177,13 @@ export class Player extends BaseGameObject {
         this.weaponManager.clearTimeouts();
 
         this.game.playerBarn.aliveCountDirty = true;
+        //console.log("kill",this.teamId,this.game.playerBarn.livingTeams,Object.keys(this.team!.livingPlayers))
+        if(this.team){
+            this.team.livingPlayers.splice(this.team.livingPlayers.indexOf(this),1)
+            if(this.team.livingPlayers.length===0){
+                this.game.playerBarn.livingTeams.splice(this.game.playerBarn.livingTeams.indexOf(this.teamId!),1)
+            }
+        }
         this.game.playerBarn.livingPlayers.splice(this.game.playerBarn.livingPlayers.indexOf(this), 1);
 
         //

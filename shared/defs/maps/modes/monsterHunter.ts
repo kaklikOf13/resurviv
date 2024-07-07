@@ -8,6 +8,7 @@ export const MonsterHunter: MapDef = util.mergeDeep(util.cloneDeep(TinyMain),{
     gameMode: {
         maxPlayers: 15,
         joinTime:120,
+        maxTeamSize:1,
         teamsMode:true,
         plugins:[
             {

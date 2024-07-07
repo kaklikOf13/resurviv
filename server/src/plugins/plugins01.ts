@@ -63,9 +63,9 @@ export class GiveItensAfterRunPlugin extends GamePlugin{
         this.weapons=weapons
     }
     initSignals(): void {
-        this.on(EventType.GameStart,(e)=>{this.apply()})
+        this.on(EventType.GameStart,this.apply.bind(this))
     }
-    apply(){
+    apply(_e:any){
         const p=this.game.playerBarn.randomPlayer()
         if(!p){
             return
@@ -75,15 +75,8 @@ export class GiveItensAfterRunPlugin extends GamePlugin{
         p.giveItems(this.equips,this.items)
         p.giveGuns(this.weapons.slot1 as keyof typeof GunDefs,this.weapons.slot2 as keyof typeof GunDefs,true)
         if(this.separate){
-            if(p.team){
-                p.team.removePlayer(p)
-            }
-            if(this.game.playerBarn.teams[this.separate]){
-                this.game.playerBarn.teams[this.separate]!.addPlayer(p)
-            }else{
-                const team=this.game.playerBarn.newTeam()
-                team.addPlayer(p)
-            }
+            const team=this.game.playerBarn.getTeam(this.separate)
+            team.addPlayer(p)
         }
         for(const i in this.status){
             //@ts-expect-error
@@ -120,15 +113,8 @@ export class EveroneInSameTeamPlugin extends GamePlugin{
     }
     initSignals(): void {
         this.on(EventType.PlayerJoin,(e)=>{
-            if(e.team){
-                e.team.removePlayer(e)
-            }
-            if(e.game.playerBarn.teams[1]){
-                e.game.playerBarn.teams[1]!.addPlayer(e)
-            }else{
-                const team=e.game.playerBarn.newTeam()
-                team.addPlayer(e)
-            }
+            const team=e.game.playerBarn.getTeam(1)
+            team.addPlayer(e)
         })
     }
 }
