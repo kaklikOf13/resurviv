@@ -7,7 +7,7 @@ function defineSkin(baseType, params) {
 export const BaseDefs = {
     bullet_mp5: {
         type: "bullet",
-        damage: 11,
+        damage: 12.1,
         obstacleDamage: 1,
         falloff: 0.8,
         distance: 100,
