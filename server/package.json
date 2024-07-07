@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "nodemon --exitcrash --enable-source-maps dist/server/main.ts --childPorts",
+    "start": "nodemon --exitcrash --enable-source-maps dist/server/main.js --childPorts",
     "dev": "node -r ts-node/register main.ts --childPorts",
     "stress": "node  -r ts-node/register stressTest.ts",
     "client": "cd client; pnpm dev",
