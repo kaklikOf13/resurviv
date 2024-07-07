@@ -112,6 +112,12 @@ function serializePlayerStatus(s: BitStream, data: { players: PlayerStatus[] }) 
     s.writeUint8(data.players.length);
     for (let i = 0; i < data.players.length; i++) {
         const info = data.players[i];
+        let id=0
+        if(Object.hasOwn(info,"__id")){
+            //@ts-expect-error
+            id=info.__id
+        }
+        s.writeUint16(id)
         s.writeBoolean(info.hasData);
 
         if (info.hasData) {
@@ -133,6 +139,7 @@ function deserializePlayerStatus(s: BitStream, data: { players: PlayerStatus[] }
     const count = s.readUint8();
     for (let i = 0; i < count; i++) {
         const p = {} as PlayerStatus & { hasData: boolean };
+        p.playerId=s.readUint16()
         p.hasData = s.readBoolean();
         if (p.hasData) {
             p.pos = s.readVec(0, 0, 1024, 1024, 11);

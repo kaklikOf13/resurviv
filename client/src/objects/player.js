@@ -2559,21 +2559,9 @@ export class PlayerBarn {
     }
 
     updatePlayerStatus(teamId, playerStatus, factionMode) {
-        // In factionMode, playerStatus refers to all playerIds in the game.
-        // In all other modes, playerStatus refers to only playerIds in our team.
-        const team = this.getTeamInfo(teamId);
-        const playerIds = factionMode ? this.playerIds : team.playerIds;
-
-        if (playerIds.length != playerStatus.players.length) {
-            console.error(
-                `PlayerIds and playerStatus.players out of sync. OurLen: ${playerIds.length} MsgLen: ${playerStatus.players.length} FactionMode: ${factionMode}`
-            );
-            return;
-        }
-
-        for (let o = 0; o < playerIds.length; o++) {
-            const playerId = playerIds[o];
+        for (let o = 0; o < playerStatus.players.length; o++) {
             const status = playerStatus.players[o];
+            const playerId = status.playerId;
             status.minimapVisible=true
             status.minimapAlpha=1
             if (status.hasData) {

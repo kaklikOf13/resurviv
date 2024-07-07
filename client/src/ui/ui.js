@@ -981,7 +981,9 @@ export class UiManager {
             const playerStatus = playerBarn.playerStatus[keys[i]];
             const playerId = playerStatus.playerId;
             const playerInfo = playerBarn.getPlayerInfo(playerId);
-            const sameGroup = playerInfo.groupId == activePlayerInfo.groupId;
+            if(!(playerInfo.teamId === activePlayerInfo.teamId)){
+                continue
+            }
             let zOrder = 65535 + playerId * 2;
             if (playerId == activePlayerInfo.playerId) {
                 zOrder += 65535 * 2;
@@ -1016,7 +1018,9 @@ export class UiManager {
             const dotScale = device.uiLayout == device.UiLayout.Sm ? 0.15 : 0.2;
             let scale = dotScale;
 
-            scale = sameGroup
+            const player=playerInfo.playerId == activePlayerInfo.playerId
+
+            scale = player
                 ? playerStatus.dead
                     ? dotScale * 1.5
                     : customMapIcon
@@ -1029,7 +1033,7 @@ export class UiManager {
             addSprite(playerStatus.pos, scale, playerStatus.minimapAlpha, playerStatus.minimapVisible, zOrder, texture, 32511);
 
             // Add an outer sprite if this player is in our group
-            if (sameGroup) {
+            if (player) {
                 const scale = device.uiLayout == device.UiLayout.Sm ? 0.25 : 0.3;
                 const visible = playerStatus.minimapVisible && !customMapIcon;
 
