@@ -74,6 +74,7 @@ export class Game {
     readonly clock:Clock
     running:boolean
     onreport:((container:PlayerContainer)=>void)|undefined=undefined
+    readonly mp:number
     constructor(id: number,mode:GameMode, config: ConfigType) {
         this.id = id;
         this.logger = new Logger(`Game #${this.id}`);
@@ -83,6 +84,7 @@ export class Game {
         this.console=new GameTerminal(this)
         this.config = config;
         this.mode=mode;
+        this.mp=1/this.config.tps
 
         this.clock=new Clock(this.config.tps,1)
         this.map = new GameMap(this);
@@ -136,52 +138,48 @@ export class Game {
     playerStatusDirty:boolean=false
     playerStatusTime:number=0
     update() {
-        try{
-            const now = Date.now();
-            if (!this.now) this.now = now;
-            const dt = this.clock.deltaTime;
-            this.now = now;
-            //
-            // Update modules
-            //
-            this.gas.update(dt);
-            this.bulletBarn.update(dt);
-            this.lootBarn.update(dt);
-            this.projectileBarn.update(dt);
-            this.deadBodyBarn.update(dt);
-            this.airdropBarn.update(dt)
-            this.playerBarn.update(dt);
-            this.explosionBarn.update();
+        const now = Date.now();
+        if (!this.now) this.now = now;
+        const dt = this.clock.deltaTime;
+        this.now = now;
+        //
+        // Update modules
+        //
+        this.gas.update(dt);
+        this.bulletBarn.update(dt);
+        this.lootBarn.update(dt);
+        this.projectileBarn.update(dt);
+        this.deadBodyBarn.update(dt);
+        this.airdropBarn.update(dt)
+        this.playerBarn.update(dt);
+        this.explosionBarn.update();
 
-            if(this.playerStatusTime==0){
-                this.playerStatusTime=this.config.tps
-                this.playerStatusDirty=true
-            }else{
-                this.playerStatusTime--
-                this.playerStatusDirty=false
-            }
+        if(this.playerStatusTime==0){
+            this.playerStatusTime=this.config.tps
+            this.playerStatusDirty=true
+        }else{
+            this.playerStatusTime--
+            this.playerStatusDirty=false
+        }
 
-            // second update:
-            // serialize objects and send msgs
-            this.objectRegister.serializeObjs();
-            this.playerBarn.sendMsgs();
+        // second update:
+        // serialize objects and send msgs
+        this.objectRegister.serializeObjs();
+        this.playerBarn.sendMsgs();
 
-            //
-            // reset stuff
-            //
-            this.playerBarn.flush();
-            this.bulletBarn.flush();
-            this.objectRegister.flush();
-            this.explosionBarn.flush();
-            this.gas.flush();
-            this.msgsToSend.length = 0;
+        //
+        // reset stuff
+        //
+        this.playerBarn.flush();
+        this.bulletBarn.flush();
+        this.objectRegister.flush();
+        this.explosionBarn.flush();
+        this.gas.flush();
+        this.msgsToSend.length = 0;
 
-            this.events.emit(EventType.GameTick,this)
-            if(this.running){
-                this.clock.tick(this.update.bind(this))
-            }
-        }catch(err){
-            console.error(err)
+        this.events.emit(EventType.GameTick,this)
+        if(this.running){
+            this.clock.tick(this.update.bind(this))
         }
     }
     run(){

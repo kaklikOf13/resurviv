@@ -34,7 +34,6 @@ import { IDAllocator } from "../IDAllocator";
 import { GunDefs } from "../../../shared/defs/gameObjects/gunDefs";
 import { EventType } from "../utils/plugins";
 import { ThrowableDefs } from "../../../shared/defs/gameObjects/throwableDefs";
-import { PlayerStatus } from "../../../client/clientTypes";
 
 export class Emote {
     playerId: number;
@@ -76,6 +75,9 @@ export class Team{
         this.livingPlayers.splice(this.livingPlayers.findIndex((p)=>{player.__id===p.__id}),1)
         if(this.livingPlayers.length===0){
             player.game.playerBarn.livingTeams.splice(player.game.playerBarn.livingTeams.indexOf(this.id!),1)
+        }
+        if(this.players.length==0){
+            delete player.game.playerBarn.teams[this.id]
         }
     }
     teleportProxy(player:Player,size=2):void{
@@ -265,6 +267,9 @@ export class PlayerBarn {
         player.team?.removePlayer(player)
         player.destroy();
         this.aliveCountDirty=true
+        if(this.livingPlayers.length==0){
+            this.game.stop()
+        }
     }
 
     update(dt: number) {
@@ -1148,11 +1153,11 @@ export class Player extends BaseGameObject {
     kill(params: DamageParams): void {
         if(this.team){
             this.team.livingPlayers.splice(this.team.livingPlayers.findIndex((p)=>{p.__id===this.__id}),1)
-            if (this.game.started && this.game.playerBarn.livingTeams.length<=1 && !this.game.over) {
-                this.game.initGameOver();
-            }
             if(this.team.livingPlayers.length===0){
                 this.game.playerBarn.livingTeams.splice(this.game.playerBarn.livingTeams.indexOf(this.teamId!),1)
+            }
+            if (this.game.started && this.game.playerBarn.livingTeams.length<=1 && !this.game.over) {
+                this.game.initGameOver();
             }
         }else{
             if (this.game.started && this.game.playerBarn.livingPlayers.length<=1 && !this.game.over) {

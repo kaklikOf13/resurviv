@@ -177,21 +177,15 @@ export class Loot extends BaseGameObject {
 
         this.oldPos = v2.copy(this.pos);
 
-        const halfDt = dt / 2;
-
-        const calculateSafeDisplacement = (): Vec2 => {
-            let displacement = v2.mul(this.vel, halfDt);
-            if (v2.lengthSqr(displacement) >= 1) {
-                displacement = v2.normalizeSafe(displacement);
-            }
-
-            return displacement;
-        };
-
         this.vel = v2.mul(this.vel, this.dragConstant);
+        
+        let displacement = v2.mul(this.vel, this.game.mp);
+        if (v2.lengthSqr(displacement) >= 1) {
+            displacement = v2.normalizeSafe(displacement);
+        }
 
         this.pos=math.v2Clamp(
-            v2.add(this.pos, calculateSafeDisplacement()),
+            v2.add(this.pos,displacement),
             v2.create(this.rad, this.rad),
             v2.create(this.game.map.size.x - this.rad, this.game.map.size.y - this.rad)
         );
@@ -217,11 +211,11 @@ export class Loot extends BaseGameObject {
                     if (obj !== this && coldet.test(this.collider, obj.collider)) {
                         const res = coldet.intersectCircleCircle(this.pos, this.collider.rad, obj.pos, obj.collider.rad);
                         if (res) {
-                            this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.4));
+                            this.vel = v2.sub(this.vel, v2.mul(res.dir, 0.35));
                             const norm = res.dir;
                             const vRelativeVelocity = v2.create(this.vel.x - obj.vel.x, this.vel.y - obj.vel.y);
         
-                            const speed = (vRelativeVelocity.x * norm.x + vRelativeVelocity.y * norm.y);
+                            const speed = (vRelativeVelocity.x * norm.x + vRelativeVelocity.y * norm.y)/2.5;
         
                             if (speed < 0) continue;
         
@@ -264,9 +258,7 @@ export class Loot extends BaseGameObject {
 
         if (this.layer !== originalLayer) {
             this.setDirty();
-        }
-
-        if (!v2.eq(this.oldPos, this.pos)) {
+        }else if (!v2.eq(this.oldPos, this.pos)) {
             this.setPartDirty();
             this.game.grid.updateObject(this);
         }

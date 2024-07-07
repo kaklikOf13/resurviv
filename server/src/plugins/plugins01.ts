@@ -63,10 +63,13 @@ export class GiveItensAfterRunPlugin extends GamePlugin{
         this.weapons=weapons
     }
     initSignals(): void {
-        this.on(EventType.GameStart,(e)=>{this.start()})
+        this.on(EventType.GameStart,(e)=>{this.apply()})
     }
-    start(){
+    apply(){
         const p=this.game.playerBarn.randomPlayer()
+        if(!p){
+            return
+        }
         p.game.playerBarn.playerInfoDirty.push(p)
         p.dropAllItens(1)
         p.giveItems(this.equips,this.items)
