@@ -80,6 +80,9 @@ export class Team{
             delete player.game.playerBarn.teams[this.id]
         }
     }
+    update(){
+        
+    }
     teleportProxy(player:Player,size=2):void{
         if(player){
             v2.set(player.pos,player.game.map.getRandomSpawnPos(()=>{
@@ -1154,6 +1157,9 @@ export class Player extends BaseGameObject {
     kill(params: DamageParams): void {
         if(this.team){
             this.team.livingPlayers.splice(this.team.livingPlayers.findIndex((p)=>{p.__id===this.__id}),1)
+            if(this.team.livingPlayers.length===0){
+                this.game.playerBarn.livingTeams.splice(this.game.playerBarn.livingTeams.indexOf(this.teamId!),1)
+            }
         }
         this.dead = true;
         this.boost = 0;
