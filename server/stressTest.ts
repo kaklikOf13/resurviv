@@ -17,8 +17,8 @@ import { GunDefs } from "../shared/defs/gameObjects/gunDefs";
 
 const config = {
     address: "localhost:8000",
-    gameModeIdx: 0,
-    botCount: 100,
+    gameModeIdx: 1,
+    botCount: 19,
     joinDelay: 100
 };
 

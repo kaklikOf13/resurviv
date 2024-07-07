@@ -270,6 +270,7 @@ export class PlayerBarn {
         if(this.livingPlayers.length==0){
             this.game.stop()
         }
+        this.game.tryGameOver()
     }
 
     update(dt: number) {
@@ -1153,16 +1154,6 @@ export class Player extends BaseGameObject {
     kill(params: DamageParams): void {
         if(this.team){
             this.team.livingPlayers.splice(this.team.livingPlayers.findIndex((p)=>{p.__id===this.__id}),1)
-            if(this.team.livingPlayers.length===0){
-                this.game.playerBarn.livingTeams.splice(this.game.playerBarn.livingTeams.indexOf(this.teamId!),1)
-            }
-            if (this.game.started && this.game.playerBarn.livingTeams.length<=1 && !this.game.over) {
-                this.game.initGameOver();
-            }
-        }else{
-            if (this.game.started && this.game.playerBarn.livingPlayers.length<=1 && !this.game.over) {
-                this.game.initGameOver();
-            }
         }
         this.dead = true;
         this.boost = 0;
@@ -1224,6 +1215,7 @@ export class Player extends BaseGameObject {
             );
         }
         this.game.events.emit(EventType.PlayerDie,{player:this,killer:params})
+        this.game.tryGameOver()
     }
 
     dropAllWeapons(dropRadius:number){

@@ -247,6 +247,12 @@ export class Game {
         }
     }
 
+    tryGameOver(){
+        if (this.started && (this.teamMode?this.playerBarn.livingTeams.length:this.playerBarn.livingPlayers.length)<=1 && !this.over) {
+            this.initGameOver();
+        }
+    }
+
     initGameOver(): void {
         if (this.over) return;
         this.over = true;
